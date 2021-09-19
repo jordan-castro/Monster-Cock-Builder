@@ -146,6 +146,32 @@ def ipfs_url(ipfs_hash):
     return f'https://ipfs.io/ipfs/{ipfs_hash}'
 
 
+def replace_pixels(pixels, color_replace: list, color_find: list):
+    """
+    Cambiamos los pixels a un color especificado.
+
+    Params:
+        - <pixels: list[tuple[int,int,int]]> Los pixels
+        - <color_replace: list[tuple[int,int,int]]> los colores en RGB que queremos poner.
+        - <color_find: list[tuple[int,int,int]]> los colores en RGB que queremos cambiar.
+
+    IMPORTANT:
+        - color_replace y color_find debe tener los colores en el mismo index.
+
+    Returns: <list[tuple[int,int,int]]>
+    """
+    # Los nuevo pixels
+    npixels = []
+    for pixel in pixels:
+        # Cambia a (R,G,B)
+        p = conver_to_3(pixel)
+        if p in color_find:
+            p = color_replace[color_find.index(p)]
+        # Ponemos pxel
+        npixels.append(p)
+    return npixels
+
+
 if __name__ == "__main__":
     data = Colors(ChickenType.HEN)
     for d in data.after:
