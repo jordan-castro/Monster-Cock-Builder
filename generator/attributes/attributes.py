@@ -12,6 +12,8 @@ class Attribute(Enum):
     GEN_1 = 6
     GEN_2 = 7
     MIRRORED = 8
+    MOON = 9
+    GRADIENT = 10
 
 
 def convert_attribute_to_string(attribute: Attribute):
@@ -42,5 +44,9 @@ def convert_attribute_to_string(attribute: Attribute):
         data = ["generation", 2]
     elif attribute == Attribute.MIRRORED:
         data = ["direction", "mirrored"]
+    elif attribute == Attribute.MOON:
+        data = ["background", "moon"]
+    elif attribute == Attribute.GRADIENT:
+        data = ["background", "gradient"]
 
     return data
