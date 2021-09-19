@@ -33,20 +33,21 @@ def main():
         else:
             ch_attr = []
 
-        gen = ImageGen(ChickenType.COCK, [Attribute.SUN])
+        gen = ImageGen(ChickenType.COCK, [Attribute.GRADIENT_H, Attribute.SUN])
         mck = gen.draw()
+        print(mck)
 
         # data.append({f'attribute for {mck}': AttributesBuilder.pretty_attributes(gen.color_data, gen.attributes)})
 
-        uploader = Uploader(
-            gen.chicken_type, 
-            mck, 
-            AttributesBuilder.pretty_attributes(gen.color_data, gen.attributes)
-        )
-        _hash = uploader.upload()
-        data.append({'hash': _hash, 'url': ipfs_url(_hash)})
-        res = minter.mint(_hash)
-        print(f"Resulta para min {_hash} es {res}")
+        # uploader = Uploader(
+        #     gen.chicken_type, 
+        #     mck, 
+        #     AttributesBuilder.pretty_attributes(gen.color_data, gen.attributes)
+        # )
+        # _hash = uploader.upload()
+        # data.append({'hash': _hash, 'url': ipfs_url(_hash)})
+        # res = minter.mint(_hash)
+        # print(f"Resulta para min {_hash} es {res}")
 
 
     with open("test.json", "w") as test:
