@@ -1,0 +1,3 @@
+web3==5.22.0
+Pillow==8.2.0
+webcolors==1.11.1
