@@ -19,8 +19,16 @@ def randomifycolor():
     )
 
 
-def randomifyflip():
+def randomifyflip(amount_so_far: int)-> bool:
     """
     Deberiamos hacer flip?
+
+    Params:
+        - <amount_so_far: int> El numero de monster cocks ahora
+    
+    Returns: <bool>
     """
-    pass
+    # Chequea si deberiamos hacer flip
+    mod = amount_so_far % 1000
+    flip = randomify(range(mod, mod + 10)) % 10 == 0
+    return flip

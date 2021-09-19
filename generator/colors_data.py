@@ -14,13 +14,17 @@ class Colors(object):
         self.nose = None
         self.wing = None
         self.feet = None
+        
+        self.decide()
+        self.aura = self.random_bck()
+        self.bckg = self.random_bck()
         super().__init__()
 
     def decide(self):
         """
         Decide los colores del MCK.
         """
-        if self.chicken_type == ChickenType.CHICK:
+        if self.chicken_type == ChickenType.HEN:
             border = (0, 0, 0)
             cuerpo = (249, 249, 249)
             eye =    (64, 0, 64)
@@ -53,50 +57,21 @@ class Colors(object):
         self.feet = feet
 
         # Popula los negros!
-        self.before = [border, cuerpo, eye, thingy, nose, wing, feet]
+        self.before = [border, cuerpo, eye, thingy, nose, wing]
         self.after = []
+
+        # Chequea para feet
+        if self.feet:
+            for f in self.feet:
+                self.before.append(f)
+
         for color in self.before:
-            self.after.append(randomifycolor)
+            self.after.append(randomifycolor())
 
     def random_bck(self):
-        """
-        Tira un random background para el negro
-        """
         bckg = randomifycolor()
-        # Chequea que no esta en cualquier
+        # Chequea si el bckg esta en despues
+        while bckg in self.after:
+            bckg = randomifycolor()
 
-# class Colors:
-#     def __init__(self, chicken_type: ChickenType, ignore=[]):
-#         self.decide(chicken_type, ignore)
-
-#     def decide(self, type, ignore=[]):
-#         """
-#         Decide los colores para el photo.
-#         """
-#         if type == ChickenType.HEN:
-#             # Colores para hen
-#             self.before = [(0,0,0), (249, 249, 249), (64, 0, 64), (186, 69, 69),  (255, 174, 201), (136, 0, 21), (255, 127, 39), (185, 74, 0)]
-#             # ODER        border,   cuerpo,          eye,         thingy          nariz            wing          feet1           feet2
-
-#         elif type == ChickenType.COCK:
-#             # Colores para Cock
-#             self.before = [(0,0,0), (141, 10, 16), (87, 6, 11), (255, 127, 39), (255, 242, 0), (196, 0, 30)]
-
-#         # Chequea por ignore
-#         for color in ignore:
-#             if color in self.before:
-#                 # Saca lo!
-#                 del self.before[color]
-
-#         self.after = []
-#         # Ponemos los colores!!!
-#         for color in self.before:
-#             self.after.append(randomifycolor())
-
-#     def random_bck(self):
-#         bckg = randomifycolor()
-#         # Chequea si el bckg esta en despues
-#         while bckg in self.after:
-#             bckg = randomifycolor()
-
-#         return bckg
+        return bckg

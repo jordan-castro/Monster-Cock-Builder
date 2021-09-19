@@ -1,26 +1,28 @@
+from generator.attributes.attribute_builder import AttributesBuilder
+from generator.attributes.canvas import get_canvas
+from generator.utils import conver_to_3, create_image, current_amount
 from generator.attributes.attributes import Attribute
-from generator.random_data import randomify
+from generator.random_data import randomify, randomifycolor, randomifyflip
 from generator.chicken_type import ChickenType
 from PIL import Image, ImageOps
 from generator.colors_data import Colors
-from glob import glob
 
 
 class ImageGen:
-    def __init__(self, chicken_type: ChickenType, attribute: Attribute=None):
+    def __init__(self, chicken_type: ChickenType, attributes: list=None):
         self.chicken_type = chicken_type
-        self.image = self.open()
         self.name = self.decide_name()
         self.color_data = Colors(chicken_type)
-        self.attribute = attribute
+        self.attributes = attributes
+        self.image = self.open()
 
     def decide_name(self):
         if self.chicken_type == ChickenType.HEN:
-            return "hen"
+            return "Sexy Hen"
         elif self.chicken_type == ChickenType.COCK:
-            return "cock"
+            return "Monster Cock"
         else:
-            return "chick"
+            return "Chick"
 
     def draw(self):
         """
@@ -29,14 +31,14 @@ class ImageGen:
         # Priemero tocamos los colores
         before = self.color_data.before
         after = self.color_data.after
-        bckg = self.color_data.random_bck()
+        bckg = self.color_data.bckg
 
         # Dibuja!
         pixels = self.image.getdata()
         new_pixels = []
         # Loop sobre pixels
         for pixel in pixels:
-            p = self.conver_to_3(pixel)
+            p = conver_to_3(pixel)
             # Chequea si tiene que cambiar!
             if p in before:
                 p = after[before.index(p)]
@@ -50,24 +52,22 @@ class ImageGen:
         new_image = Image.new("RGB", self.image.size)
         new_image.putdata(new_pixels)
 
-        number_of = glob('*.png')
+        number_of = current_amount()
 
-        # Chequea si deberiamos hacer flip
-        mod = len(number_of) % 1000
-        flip = randomify(range(mod, mod + 10)) % 10 == 0
+        flip = randomifyflip(len(number_of))
 
         if flip:
+            self.attributes.append(Attribute.MIRRORED)
             new_image = self.flip(new_image)
 
-        new_image.save(f'{self.name} ({len(number_of) + 1}).png')
+        # Crea el nombre
+        name = f"{self.name} {len(number_of) + 1}"
 
-    def conver_to_3(self, pixel):
-        """
-        Converte un tupple de 4 a un tupple de 3
+        # Hacemos los attributos
+        builder = AttributesBuilder(new_image, f"{name}.png")
+        builder.build(self.chicken_type, self.attributes, self.color_data)
 
-        Returns: <tupple>
-        """
-        return (pixel[0], pixel[1], pixel[2])
+        return name
 
     def flip(self, image):
         """
@@ -86,9 +86,11 @@ class ImageGen:
         """
         if self.chicken_type == ChickenType.HEN:
             # Abre el hen
-            return Image.open("hen_base.png")
+            return create_image('base_art/hen_only.png', get_canvas(self.attributes), self.attributes, self.color_data)
+            # return Image.open("hen_base.png")
         elif self.chicken_type == ChickenType.COCK:
             # Abre el cock
-            return Image.open("cock_base.png")
+            return create_image('base_art/cock_only.png', get_canvas(self.attributes), self.attributes, self.color_data)
+            # return Image.open("cock_base.png")
         else:
             return False
