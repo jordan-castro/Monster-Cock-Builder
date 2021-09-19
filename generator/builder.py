@@ -1,7 +1,7 @@
 from generator.uploader.blockchain_con import Minter
 import json
 from generator.attributes.attribute_builder import AttributesBuilder
-from generator.random_data import randomify
+from generator.random_data import randomify, randomifyattributes
 from generator.attributes.attributes import Attribute
 from generator.image_gen import ImageGen
 from generator.chicken_type import ChickenType
@@ -15,25 +15,11 @@ def main():
     # clear(ChickenType.HEN)
     start = time.time()
 
-    attributes = [
-        Attribute.NINJA,
-        Attribute.SUN,
-        Attribute.AURA
-    ]
-
     data = []
     minter = Minter()
 
-    for x in range(1):
-        first_range = randomify(range(-10, 10))
-        second_range = randomify(range(-10, 10))
-
-        if first_range > 0 and second_range > 10:
-            ch_attr = attributes[first_range % 3:second_range % 3]
-        else:
-            ch_attr = []
-
-        gen = ImageGen(ChickenType.COCK, [Attribute.GRADIENT_H, Attribute.SUN])
+    for x in range(3):
+        gen = ImageGen(ChickenType.COCK, randomifyattributes(Attribute.GEN_0))
         mck = gen.draw()
         print(mck)
 
