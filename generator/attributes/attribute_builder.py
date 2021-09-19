@@ -1,5 +1,5 @@
 from generator.random_data import randomifyflip
-from generator.utils import conver_to_3, current_amount, rgb_to_name
+from generator.utils import conver_to_3, current_amount, replace_pixels, rgb_to_name
 from generator.colors_data import Colors
 from generator.chicken_type import ChickenType
 from generator.attributes.attributes import Attribute, convert_attribute_to_string
@@ -73,7 +73,6 @@ class AttributesBuilder:
                 _attr[1] = rgb_to_name(colors.aura)
             # Chequea si esta attribu ya existe
             for inner in attributes:
-                print("Te encontre!")
                 if inner['trait_type'] == _attr[0]:
                     del attributes[attributes.index(inner)]
                     break
@@ -118,15 +117,8 @@ class AttributesBuilder:
         """
         # Buscamos la data.
         pixels = self.image.getdata()
-        new_pixels = []
 
-        # Hacemos loop
-        for pixel in pixels:
-            p = conver_to_3(pixel)
-            if p == self.colors.bckg:
-                p = (25,25,25)
-            # Pon lo
-            new_pixels.append(p)
+        new_pixels = replace_pixels(pixels, [(25,25,25)], [self.colors.bckg])
 
         # Cambiamos la data
         self.update_image_pixels(new_pixels)
@@ -145,11 +137,6 @@ class AttributesBuilder:
             x = self.image.size[0] - 150
 
         self.add_new_image("base_art/sun.png", (x,y), flip=flip)
-
-    def gradientfy(self):
-        """
-        Cambiamos el atras a un color de gradient usando su background.
-        """
 
     def stripefy(self):
         """
