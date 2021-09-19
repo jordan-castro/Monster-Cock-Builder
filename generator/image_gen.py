@@ -1,8 +1,8 @@
 from generator.attributes.attribute_builder import AttributesBuilder
-from generator.attributes.canvas import get_canvas
-from generator.utils import conver_to_3, create_image, current_amount
+from generator.attributes.canvas import get_canvas, create_image
+from generator.utils import conver_to_3, current_amount, replace_pixels
 from generator.attributes.attributes import Attribute
-from generator.random_data import randomify, randomifycolor, randomifyflip
+from generator.random_data import randomifyflip
 from generator.chicken_type import ChickenType
 from PIL import Image, ImageOps
 from generator.colors_data import Colors
@@ -35,18 +35,7 @@ class ImageGen:
 
         # Dibuja!
         pixels = self.image.getdata()
-        new_pixels = []
-        # Loop sobre pixels
-        for pixel in pixels:
-            p = conver_to_3(pixel)
-            # Chequea si tiene que cambiar!
-            if p in before:
-                p = after[before.index(p)]
-            elif p == (255, 255, 255):
-                p = bckg
-
-            # Pon el nuevo pixel
-            new_pixels.append(p)
+        new_pixels = replace_pixels(pixels, after + [bckg], before + [(255,255,255)])
 
         # Crea la imagen
         new_image = Image.new("RGB", self.image.size)
