@@ -146,6 +146,11 @@ class AttributesBuilder:
 
         self.add_new_image("base_art/sun.png", (x,y), flip=flip)
 
+    def gradientfy(self):
+        """
+        Cambiamos el atras a un color de gradient usando su background.
+        """
+
     def stripefy(self):
         """
         Creamos unos stripes en el cuerpo del monstercock!
