@@ -131,6 +131,10 @@ def replace_pixels(pixels, color_replace: list, color_find: list):
     return npixels
 
 
+def attribute_json(trait, value):
+    return {'trait_type': trait, 'value': value}
+
+
 if __name__ == "__main__":
     # data = Colors(ChickenType.HEN)
     # for d in data.after:
@@ -138,4 +142,4 @@ if __name__ == "__main__":
     #     print(rgb_to_name(d))
     #     print()
     # print(rgb_to_name(data))
-    make_transparent('base_art/sun.png')
+    make_transparent('base_art/detailed_cock.png')
