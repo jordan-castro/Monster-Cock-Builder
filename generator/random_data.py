@@ -1,3 +1,4 @@
+from re import A
 from generator.attributes.attributes import Attribute
 import random
 
@@ -33,6 +34,16 @@ def randomifyflip(amount_so_far: int)-> bool:
     mod = amount_so_far % 1000
     flip = randomify(range(mod, mod + 10)) % 10 == 0
     return flip
+    
+
+def randombool()-> bool:
+    """
+    Hacemos un bool random.
+
+    Returns: <bool>
+    """
+    x = random.randint(0, 200)
+    return True if x % 2 == 0 else False
 
 
 def randomifyattributes(generation: Attribute)-> list:
@@ -45,7 +56,7 @@ def randomifyattributes(generation: Attribute)-> list:
     Returns: <list>
     """
     # Los attributos para regresar
-    attributes = []
+    attributes = [generation]
 
     # Los attributos possibles
     possible_attributes = [
@@ -84,40 +95,48 @@ def randomifyattributes(generation: Attribute)-> list:
     random.shuffle(possible_attributes)
     attributes = possible_attributes[start:end]
 
-    # Chequea que solo tiene un tipo de Gradient
-    if Attribute.GRADIENT_H in attributes or Attribute.GRADIENT_V in attributes or Attribute.GRADIENT_W in attributes:
-        only = random.randint(0, len(gradients) - 1)
-        for x in gradients:
-            try:
-                attributes.remove(gradients[x])
-            except:
-                continue
-
-        attributes.append(gradients[only]) 
-        
-        if Attribute.NINJA in attributes:
-            # No pueden tener ninja si tiene gradient
-            attributes.remove(Attribute.NINJA)
-
-        if Attribute.AURA in attributes:
-            # No puede tener aura entonces
-            attributes.remove(Attribute.AURA)
-    
-    # Chequea si hay luna!
-    if Attribute.MOON_P1 in attributes or Attribute.MOON_P2 in attributes or Attribute.MOON_P3 in attributes:
-        only = random.randint(0, len(moon_phases) - 1)
-        for x in moon_phases:
-            try:
-                attributes.remove(moon_phases[x])
-            except:
-                continue
-        attributes.append(only)
-
-        if Attribute.SUN in attributes:
-            # Quita el sol si hay
-            attributes.remove(Attribute.SUN)
+    attributes = __can_have_attr__(attributes, gradients + [Attribute.AURA, Attribute.NINJA])
+    attributes = __can_have_attr__(attributes, moon_phases + [Attribute.SUN])
 
     # Ponemos su generation
     attributes.append(generation)
 
     return attributes
+
+
+def __can_have_attr__(current_list: list[Attribute], black_list: list[Attribute]):
+    """
+    Para saber si un lista de attributos puden tener el attributo.
+
+    Params:
+        - <current_list: list[Attribute]> Los attributos antes de ser limpiado.
+        - <black_list: list[Attribute]> Los attributos que solo pueden tener un pie en la puerta de `current_list`.
+    
+    Returns: <list>
+    """
+    attributes = []
+    has_foud = False
+
+    # Loop de la lista currentamente
+    for attribute in current_list:
+        # Chequea si esta en black_list pero que attributes no tiene uno de los black_list
+        if attribute in black_list and not has_foud:
+            # Solo podemos tener uno!
+            only = random.randint(0, len(black_list) - 1)
+            for black in black_list:
+                index = black_list.index(black)
+                # Chequeamos el index es only.
+                if index == only:
+                    attributes.append(black)
+                    has_foud = True
+                    break
+        elif not attribute in black_list:
+            attributes.append(attribute)
+        else:
+            continue
+
+    return attributes 
+
+
+if __name__ == "__main__":
+    randomifyattributes(Attribute.GEN_0)
