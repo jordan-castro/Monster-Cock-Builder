@@ -23,7 +23,7 @@ def main():
         mck = gen.draw()
         print(mck)
 
-        # data.append({f'attribute for {mck}': AttributesBuilder.pretty_attributes(gen.color_data, gen.attributes)})
+        data.append({f'attribute for {mck}': AttributesBuilder.pretty_attributes(gen.color_data, gen.attributes)})
 
         # uploader = Uploader(
         #     gen.chicken_type, 
