@@ -54,8 +54,22 @@ def randomifyattributes(generation: Attribute)-> list:
         Attribute.AURA,
         Attribute.NINJA,
         Attribute.SUN,
-        Attribute.MOON,
+        Attribute.MOON_P1,
+        # Attribute.MOON_P2,
+        # Attribute.MOON_P3,
+        # Attribute.MOON_P4,  
         # Attribute.GRADIENT_W
+    ]
+
+    gradients = [
+        Attribute.GRADIENT_H,
+        Attribute.GRADIENT_V,
+    ]
+
+    moon_phases = [
+        Attribute.MOON_P1,
+        # Attribute.MOON_P2,
+        # Attribute.MOON_P3,
     ]
 
     # Ahora dos randoms
@@ -68,24 +82,45 @@ def randomifyattributes(generation: Attribute)-> list:
 
     # Hacemos un random shuffle
     random.shuffle(possible_attributes)
+    print(possible_attributes)
     attributes = possible_attributes[start:end]
 
     # Chequea que solo tiene un tipo de Gradient
-    if Attribute.GRADIENT_H in attributes and Attribute.GRADIENT_V in attributes and Attribute.GRADIENT_W in attributes:
-        only = random.randint(0, 2)
-        if only == 0:
-            attributes.remove(Attribute.GRADIENT_V)
-            attributes.remove(Attribute.GRADIENT_W)
-        elif only == 1:
-            attributes.remove(Attribute.GRADIENT_H)
-            attributes.remove(Attribute.GRADIENT_W)
-        elif only == 2:
-            attributes.remove(Attribute.GRADIENT_H)
-            attributes.remove(Attribute.GRADIENT_V)
-        # No puede tener aura entonces
-        attributes.remove(Attribute.AURA)
+    if Attribute.GRADIENT_H in attributes or Attribute.GRADIENT_V in attributes or Attribute.GRADIENT_W in attributes:
+        only = random.randint(0, len(gradients) - 1)
+        for x in gradients:
+            try:
+                attributes.remove(gradients[x])
+            except:
+                continue
+
+        attributes.append(gradients[only]) 
+        
+        if Attribute.NINJA in attributes:
+            # No pueden tener ninja si tiene gradient
+            attributes.remove(Attribute.NINJA)
+
+        if Attribute.AURA in attributes:
+            # No puede tener aura entonces
+            attributes.remove(Attribute.AURA)
     
+    # Chequea si hay luna!
+    if Attribute.MOON_P1 in attributes or Attribute.MOON_P2 in attributes or Attribute.MOON_P3 in attributes:
+        only = random.randint(0, len(moon_phases) - 1)
+        for x in moon_phases:
+            try:
+                attributes.remove(moon_phases[x])
+            except:
+                continue
+        attributes.append(only)
+
+        if Attribute.SUN in attributes:
+            # Quita el sol si hay
+            attributes.remove(Attribute.SUN)
+
     # Ponemos su generation
     attributes.append(generation)
+
+    print(attributes)
 
     return attributes
