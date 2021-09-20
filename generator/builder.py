@@ -18,7 +18,7 @@ def main():
     data = []
     minter = Minter()
 
-    for x in range(3):
+    for x in range(1):
         gen = ImageGen(ChickenType.COCK, randomifyattributes(Attribute.GEN_0))
         mck = gen.draw()
         print(mck)

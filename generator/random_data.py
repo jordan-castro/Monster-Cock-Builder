@@ -82,7 +82,6 @@ def randomifyattributes(generation: Attribute)-> list:
 
     # Hacemos un random shuffle
     random.shuffle(possible_attributes)
-    print(possible_attributes)
     attributes = possible_attributes[start:end]
 
     # Chequea que solo tiene un tipo de Gradient
@@ -120,7 +119,5 @@ def randomifyattributes(generation: Attribute)-> list:
 
     # Ponemos su generation
     attributes.append(generation)
-
-    print(attributes)
 
     return attributes
