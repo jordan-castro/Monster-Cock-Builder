@@ -32,6 +32,8 @@ class AttributesBuilder:
                 self.stripefy()
             elif attribute == Attribute.SUN:
                 self.add_sun()
+            if attribute == Attribute.MOON_P1 or attribute == Attribute.MOON_P2 or attribute == Attribute.MOON_P3:
+                self.moonify(attribute)
 
         self.finish()
 
@@ -80,7 +82,7 @@ class AttributesBuilder:
 
         return attributes
 
-    def update_image_pixels(self, pixels):
+    def __update_image_pixels__(self, pixels):
         """
         Actualizamos la imagen con nuevo pixels!
 
@@ -89,7 +91,7 @@ class AttributesBuilder:
         """
         self.image.putdata(pixels)
 
-    def add_new_image(self, source, xy: tuple[int,int], flip: bool=False):
+    def __add_new_image__(self, source, xy: tuple[int,int], flip: bool=False):
         """
         Pon un nuevo imagen... Watermark
 
@@ -121,7 +123,7 @@ class AttributesBuilder:
         new_pixels = replace_pixels(pixels, [(25,25,25)], [self.colors.bckg])
 
         # Cambiamos la data
-        self.update_image_pixels(new_pixels)
+        self.__update_image_pixels__(new_pixels)
 
     def add_sun(self):
         """
@@ -130,13 +132,26 @@ class AttributesBuilder:
         x = 0
         y = 0
 
-        flip = randomifyflip(len(current_amount()))
+        self.__add_new_image__("base_art/sun.png", (x,y))
 
-        # Si flip, entonces cambia el x
-        if flip:
-            x = self.image.size[0] - 150
+    def moonify(self, phase: Attribute):
+        """
+        Ponemos una luna.
 
-        self.add_new_image("base_art/sun.png", (x,y), flip=flip)
+        Params:
+            - <phase: Attribute> El phase de la luna.
+        """
+        x = self.image.size[0] - 150
+        y = 10
+
+        if phase == Attribute.MOON_P1:
+            moon = "moon_p1"
+        elif phase == Attribute.MOON_P2:
+            moon = "moon_p2"
+        elif phase == Attribute.MOON_P3:
+            moon = "moon_p3"
+
+        self.__add_new_image__(f"base_art/{moon}.png", (x,y))
 
     def stripefy(self):
         """
