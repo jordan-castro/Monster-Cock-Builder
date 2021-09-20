@@ -84,8 +84,9 @@ class AttributesBuilder:
         # Ahora hacemos overide para los attributos invicos
         for attribute in attr:
             _attr = convert_attribute_to_string(attribute)
-            print(f'Attributo es {attribute}')
-            print(f'Y todos los attributos son {attr}')
+            # Chequea si no encontramos algo con los attributos.
+            if not _attr:
+                continue
             # Chequea si estamos haciendo como negro con aura.
             if _attr[0] == "aura":
                 _attr[1] = rgb_to_name(colors.aura)
