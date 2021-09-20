@@ -1,5 +1,5 @@
 from generator.random_data import randomifyflip
-from generator.utils import conver_to_3, current_amount, replace_pixels, rgb_to_name
+from generator.utils import attribute_json, conver_to_3, current_amount, replace_pixels, rgb_to_name
 from generator.colors_data import Colors
 from generator.chicken_type import ChickenType
 from generator.attributes.attributes import Attribute, convert_attribute_to_string
@@ -46,30 +46,46 @@ class AttributesBuilder:
         """
         attributes = []
 
-        def correct_json(trait, value):
-            return {"trait_type": trait, "value": value}
+        def data_builder(trait, value):
+            # Chequea si value es un tuple
+            if value is tuple:
+                # String
+                _colors = []
+                for color in value:
+                    if color in colors.before:
+                        _colors.append(rgb_to_name(correct_color(color)))
+                if _colors:
+                    # attributes.append({'trait_type': trait, 'value': '-'.join(_colors)})
+                    attributes.append(attribute_json(trait, '-'.join(_colors)))
+                return
+            
+            if value in colors.before:
+                # Si esta!
+                # attributes.append({"trait_type": trait, "value": rgb_to_name(correct_color(value))})
+                attributes.append(attribute_json(trait, rgb_to_name(correct_color(value))))
 
         def correct_color(before):
             return colors.after[colors.before.index(before)]
 
         # Primero los colores
-        attributes.append(correct_json('background', rgb_to_name(colors.bckg)))
-
-        attributes.append(correct_json('eye', rgb_to_name(correct_color(colors.eye))))
-        attributes.append(correct_json('body', rgb_to_name(correct_color(colors.cuerpo))))
-        attributes.append(correct_json('border', rgb_to_name(correct_color(colors.border))))
-        attributes.append(correct_json('comb', rgb_to_name(correct_color(colors.thingy))))
-        attributes.append(correct_json('nose', rgb_to_name(correct_color(colors.nose))))
-        attributes.append(correct_json('wing', rgb_to_name(correct_color(colors.wing))))
-
-        # Chequeamos para pies
-        if colors.feet:
-            attributes.append(correct_json('foot', rgb_to_name(colors.feet[0])))
-            attributes.append(correct_json('heel', rgb_to_name(colors.feet[1])))
+        data_builder('background', colors.bckg)
+        data_builder('eye', colors.eye)
+        data_builder('body', colors.cuerpo)
+        data_builder('border', colors.border)
+        data_builder('comb', colors.thingy)
+        data_builder('nose', colors.nose)
+        data_builder('wing', colors.wing)
+        data_builder('neck', (colors.neck, colors.neck_2))
+        data_builder('head', colors.head)
+        data_builder('chest', colors.chest)
+        data_builder('tail', (colors.tail_1, colors.tail_2))
+        data_builder('feet', (colors.feet1, colors.feet2))
 
         # Ahora hacemos overide para los attributos invicos
         for attribute in attr:
             _attr = convert_attribute_to_string(attribute)
+            print(f'Attributo es {attribute}')
+            print(f'Y todos los attributos son {attr}')
             # Chequea si estamos haciendo como negro con aura.
             if _attr[0] == "aura":
                 _attr[1] = rgb_to_name(colors.aura)
@@ -78,7 +94,7 @@ class AttributesBuilder:
                 if inner['trait_type'] == _attr[0]:
                     del attributes[attributes.index(inner)]
                     break
-            attributes.append(correct_json(_attr[0], _attr[1]))
+            attributes.append(attribute_json(_attr[0], _attr[1]))
 
         return attributes
 

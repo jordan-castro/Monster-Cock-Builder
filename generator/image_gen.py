@@ -21,6 +21,19 @@ class ImageGen:
             return "Sexy Hen"
         elif self.chicken_type == ChickenType.COCK:
             return "Monster Cock"
+        elif self.chicken_type == ChickenType.DETAILED_COCK:
+            return "Monster Cock"
+        else:
+            return "Chick"
+
+    def decide_image(self):
+        base = "base_art/"
+        if self.chicken_type == ChickenType.HEN:
+            return f"{base}hen_only.png"
+        elif self.chicken_type == ChickenType.COCK:
+            return f"{base}cock_only.png"
+        elif self.chicken_type == ChickenType.DETAILED_COCK:
+            return f"{base}detailed_cock.png"
         else:
             return "Chick"
 
@@ -73,13 +86,4 @@ class ImageGen:
 
         Returns: <Image>
         """
-        if self.chicken_type == ChickenType.HEN:
-            # Abre el hen
-            return create_image('base_art/hen_only.png', get_canvas(self.attributes), self.attributes, self.color_data)
-            # return Image.open("hen_base.png")
-        elif self.chicken_type == ChickenType.COCK:
-            # Abre el cock
-            return create_image('base_art/cock_only.png', get_canvas(self.attributes), self.attributes, self.color_data)
-            # return Image.open("cock_base.png")
-        else:
-            return False
+        return create_image(self.decide_image(), get_canvas(self.attributes), self.attributes, self.color_data)
