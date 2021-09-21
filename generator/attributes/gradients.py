@@ -49,7 +49,7 @@ class Gradients:
         """
         Crea el palette.
         """
-        amount = randomify(range(0, 200)) % 4
+        amount = randomify(range(0, 5))
         self.color_palette = []
 
         # Cheqeua se es menos de uno
