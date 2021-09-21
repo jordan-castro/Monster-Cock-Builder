@@ -63,7 +63,7 @@ def randomifyattributes(generation: Attribute)-> list:
         Attribute.GRADIENT_H,
         Attribute.GRADIENT_V,
         Attribute.AURA,
-        Attribute.NINJA,
+        # Attribute.NINJA,
         Attribute.SUN,
         Attribute.MOON_P1,
         # Attribute.MOON_P2,
@@ -95,7 +95,7 @@ def randomifyattributes(generation: Attribute)-> list:
     random.shuffle(possible_attributes)
     attributes = possible_attributes[start:end]
 
-    attributes = __can_have_attr__(attributes, gradients + [Attribute.AURA, Attribute.NINJA])
+    attributes = __can_have_attr__(attributes, gradients + [Attribute.AURA])
     attributes = __can_have_attr__(attributes, moon_phases + [Attribute.SUN])
 
     # Ponemos su generation
