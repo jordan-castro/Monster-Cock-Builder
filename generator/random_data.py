@@ -1,4 +1,3 @@
-from re import A
 from generator.attributes.attributes import Attribute
 import random
 
