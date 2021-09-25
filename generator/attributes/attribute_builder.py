@@ -1,6 +1,5 @@
-from generator.random_data import randomifyflip
-from generator.utils import attribute_json, conver_to_3, current_amount, replace_pixels, rgb_to_name
-from generator.colors_data import Colors
+from generator.utils import replace_pixels, rgb_to_name
+from generator.colors_data import Color, Colors
 from generator.chicken_type import ChickenType
 from generator.attributes.attributes import Attribute, convert_attribute_to_string
 from PIL import Image, ImageOps
@@ -46,41 +45,37 @@ class AttributesBuilder:
         """
         attributes = []
 
-        def data_builder(trait, value):
-            # Chequea si value es un tuple
-            if value is tuple:
-                # String
-                _colors = []
-                for color in value:
-                    if color in colors.before:
-                        _colors.append(rgb_to_name(correct_color(color)))
-                if _colors:
-                    # attributes.append({'trait_type': trait, 'value': '-'.join(_colors)})
-                    attributes.append(attribute_json(trait, '-'.join(_colors)))
-                return
-            
-            if value in colors.before:
-                # Si esta!
-                # attributes.append({"trait_type": trait, "value": rgb_to_name(correct_color(value))})
-                attributes.append(attribute_json(trait, rgb_to_name(correct_color(value))))
+        def grab_colors(value):
+            return filter(
+                None, 
+                list(
+                    map(
+                        lambda c: c.value if c.title == value else None, 
+                        colors.colors
+                    )
+                )
+            )
 
-        def correct_color(before):
-            return colors.after[colors.before.index(before)]
+        def create_attr_from_colors(colors: list[Color]):
+            return '-'.join(colors)
 
-        # Primero los colores
-        data_builder('background', colors.bckg)
-        data_builder('eye', colors.eye)
-        data_builder('body', colors.cuerpo)
-        data_builder('border', colors.border)
-        data_builder('comb', colors.thingy)
-        data_builder('nose', colors.nose)
-        data_builder('wing', colors.wing)
-        data_builder('neck', (colors.neck, colors.neck_2))
-        data_builder('head', colors.head)
-        data_builder('chest', colors.chest)
-        data_builder('tail', (colors.tail_1, colors.tail_2))
-        data_builder('feet', (colors.feet1, colors.feet2))
+        comb_colors = grab_colors('Comb')
+        nose_colors = grab_colors('Nose')
+        eye_color = grab_colors('Eye')
+        neck_colors = grab_colors('Neck')
+        back_color = grab_colors('Back')
+        chest_colors = grab_colors('Chest')
+        wing_colors = grab_colors('Wing')
+        leg_colors = grab_colors('Leg')
 
+        attributes.append(attribute_dict('Comb color', create_attr_from_colors(comb_colors)))
+        attributes.append(attribute_dict('Nose color', create_attr_from_colors(nose_colors)))
+        attributes.append(attribute_dict('Eye color', create_attr_from_colors(eye_color)))
+        attributes.append(attribute_dict('Neck color', create_attr_from_colors(neck_colors)))
+        attributes.append(attribute_dict('Back color', create_attr_from_colors(back_color)))
+        attributes.append(attribute_dict('Chest color', create_attr_from_colors(chest_colors)))
+        attributes.append(attribute_dict('Wing color', create_attr_from_colors(wing_colors)))
+        attributes.append(attribute_dict('Leg color', create_attr_from_colors(leg_colors)))
         # Ahora hacemos overide para los attributos invicos
         for attribute in attr:
             _attr = convert_attribute_to_string(attribute)
@@ -95,7 +90,7 @@ class AttributesBuilder:
                 if inner['trait_type'] == _attr[0]:
                     del attributes[attributes.index(inner)]
                     break
-            attributes.append(attribute_json(_attr[0], _attr[1]))
+            attributes.append(attribute_dict(_attr[0], _attr[1]))
 
         return attributes
 
@@ -175,3 +170,7 @@ class AttributesBuilder:
         Creamos unos stripes en el cuerpo del monstercock!
         """
         pass
+
+
+def attribute_dict(trait, value):
+    return {'trait_type': trait, 'value': value}
