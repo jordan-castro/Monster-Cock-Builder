@@ -33,7 +33,7 @@ class ImageGen:
         elif self.chicken_type == ChickenType.COCK:
             return f"{base}cock_only.png"
         elif self.chicken_type == ChickenType.DETAILED_COCK:
-            return f"{base}detailed_cock.png"
+            return f"{base}FinalCockHR.png"
         else:
             return "Chick"
 
@@ -42,8 +42,8 @@ class ImageGen:
         Dibuja un monster cock.
         """
         # Priemero tocamos los colores
-        before = self.color_data.before
-        after = self.color_data.after
+        before = list(map(lambda c: c.before, self.color_data.colors))
+        after = list(map(lambda c: c.after, self.color_data.colors))
         bckg = self.color_data.bckg
 
         # Dibuja!
