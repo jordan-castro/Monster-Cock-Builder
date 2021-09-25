@@ -14,7 +14,8 @@ def get_canvas(attributes: list):
     Returns: <str>
     """
     base = "base_art/"
-    canvas = "canvas"
+    canvas = "canvas_large"
+    
     # Loop
     for attribute in attributes:
         # if attribute == Attribute.SUN:
@@ -64,8 +65,8 @@ def create_image(source, canvas, attributes: list, color_data: Colors):
     if Attribute.AURA in attributes:
         x1 = x - 50
         y1 = y - 50
-        x2 = x + chicken.size[0] + 50
-        y2 = y + chicken.size[1] + 50
+        x2 = x + chicken.size[0] + 70
+        y2 = y + chicken.size[1] + 70
         color = color_data.aura
         drawing.ellipse((x1, y1, x2, y2), fill=color, outline=color)
 
