@@ -5,7 +5,6 @@ from generator.random_data import randomify, randomifyattributes
 from generator.attributes.attributes import Attribute
 from generator.image_gen import ImageGen
 from generator.chicken_type import ChickenType
-from generator.utils import clear, ipfs_url
 from generator.uploader.upload import Uploader
 import time
 
@@ -18,8 +17,8 @@ def main():
     data = []
     minter = Minter()
 
-    for x in range(1):
-        gen = ImageGen(ChickenType.COCK, randomifyattributes(Attribute.GEN_0))
+    for x in range(10):
+        gen = ImageGen(ChickenType.DETAILED_COCK, randomifyattributes(Attribute.GEN_0))
         mck = gen.draw()
         print(mck)
 
