@@ -1,8 +1,5 @@
 from generator.chicken_type import ChickenType
-from generator.colors_data import Colors
-from generator.attributes.attributes import Attribute
-from generator.random_data import randomifycolor
-from PIL import Image, ImageDraw
+from PIL import Image
 import glob
 import os
 import webcolors
@@ -131,8 +128,18 @@ def replace_pixels(pixels, color_replace: list, color_find: list):
     return npixels
 
 
-def attribute_json(trait, value):
-    return {'trait_type': trait, 'value': value}
+def change_size(source, size):
+    """
+    Cambia el size del imagen.
+
+    Params:
+        - <source: str> El imagen para cambiar
+        - <size: tuple[int,int]> El size (width, height)
+    """
+    image = Image.open(source)
+    image = image.resize(size, Image.ANTIALIAS)
+
+    image.save(source)
 
 
 if __name__ == "__main__":
@@ -142,4 +149,5 @@ if __name__ == "__main__":
     #     print(rgb_to_name(d))
     #     print()
     # print(rgb_to_name(data))
-    make_transparent('base_art/detailed_cock.png')
+    # make_transparent('base_art/detailed_cock.png')
+    change_size("base_art/FinalCockHR.png", (379, 415))
