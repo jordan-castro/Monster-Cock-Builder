@@ -25,11 +25,16 @@ def clear(chicken_type: ChickenType):
                 os.unlink(file)
 
 
-def make_transparent(source, color=None):
+def make_transparent(source, color=None, save=True):
     """
     Hacemos un photo tener transperencia!
+
+    Params:
+        - <source: str | Image> El imagen para hacer transparent.
+        - <color: tuple[int,int,int] = None> El color para hacer transparent.
+        - <sve: bool = True> Deberiamos guardar?
     """
-    img = Image.open(source)
+    img = Image.open(source) if type(source) is str else source
     img = img.convert('RGBA')
 
     pixels = img.getdata()
@@ -44,7 +49,10 @@ def make_transparent(source, color=None):
             new_pixels.append(pixel)
 
     img.putdata(new_pixels)
-    img.save(source, "PNG")
+    if save:
+        img.save(source, "PNG")
+    else:
+        return img
 
 
 def conver_to_3(pixel):
