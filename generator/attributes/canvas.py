@@ -27,6 +27,23 @@ def get_canvas(attributes: list):
     return f"{base}{canvas}.png"
 
 
+def center_image(canvas, center)-> Image:
+    """
+    Ponemos un imagen `center` en el centro del `canvas`.
+
+    Params:
+        - <canvas: Image> El imagen del canvas
+        - <center: Image> El imagen para poner en el centro.
+
+    Returns: <Image>
+    """
+    x = int((canvas.size[0] / 2) - (center.size[0] / 2))
+    y = int((canvas.size[1] / 2) - (center.size[1] / 2))
+
+    canvas.paste(center, (x,y), center)
+    return canvas
+
+
 def create_image(source, canvas, attributes: list, color_data: Colors):
     """
     Crea el imagen del monstercock para editar.
