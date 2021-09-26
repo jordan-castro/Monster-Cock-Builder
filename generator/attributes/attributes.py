@@ -18,6 +18,7 @@ class Attribute(Enum):
     GRADIENT_W = 12
     MOON_P2 = 13
     MOON_P3 = 14
+    CRAZY_CIRCLES = 15
 
 
 def convert_attribute_to_string(attribute: Attribute):
@@ -60,6 +61,8 @@ def convert_attribute_to_string(attribute: Attribute):
         data = ["moon", "Phase 2"]
     elif attribute == Attribute.MOON_P3:
         data = ["moon", "Phase 3"]
+    elif attribute == Attribute.CRAZY_CIRCLES:
+        data = ['background', 'circles']
     else:
         print(attribute)
 
