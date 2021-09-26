@@ -4,7 +4,7 @@ from generator.fractals.box_size import BoxSize
 from PIL import Image, ImageDraw
 
 
-def crazy_circles(box_size: BoxSize, circle_radius=100, amount=5, minimum=0, width=1)-> Image:
+def crazy_circles(box_size: BoxSize, circle_radius=100, amount=5, minimum=0, width=1, image=None)-> Image:
     """
     Function para dibujar fractals de circulos.
 
@@ -12,8 +12,10 @@ def crazy_circles(box_size: BoxSize, circle_radius=100, amount=5, minimum=0, wid
         - <box_size: BoxSize> El box de la negro
         - <anount: int = 5> Ceuntos circulos deberiamos dibjuar?
     """
+    box_size = BoxSize(width=image.width, height=image.height) if image else box_size
+
     # Abre un nuevo imagen
-    image = Image.new('RGB', (box_size.width, box_size.height))
+    image = image or Image.new('RGB', (box_size.width, box_size.height))
 
     if amount <= minimum:
         amount += 10
