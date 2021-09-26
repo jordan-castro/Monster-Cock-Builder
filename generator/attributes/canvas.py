@@ -39,7 +39,6 @@ def center_image(canvas, center)-> Image:
     """
     x = int((canvas.size[0] / 2) - (center.size[0] / 2))
     y = int((canvas.size[1] / 2) - (center.size[1] / 2))
-
     canvas.paste(center, (x,y), center)
     return canvas
 
