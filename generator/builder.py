@@ -18,7 +18,7 @@ def main():
     minter = Minter()
 
     for x in range(10):
-        gen = ImageGen(ChickenType.DETAILED_COCK, randomifyattributes(Attribute.GEN_0))
+        gen = ImageGen(ChickenType.DETAILED_COCK, [Attribute.CRAZY_CIRCLES])
         mck = gen.draw()
         print(mck)
 
