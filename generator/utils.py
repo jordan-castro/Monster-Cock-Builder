@@ -25,7 +25,7 @@ def clear(chicken_type: ChickenType):
                 os.unlink(file)
 
 
-def make_transparent(source):
+def make_transparent(source, color=None):
     """
     Hacemos un photo tener transperencia!
     """
@@ -35,8 +35,10 @@ def make_transparent(source):
     pixels = img.getdata()
     new_pixels = []
 
+    color = color or (255,255,255)
+
     for pixel in pixels:
-        if pixel[0] == 255 and pixel[1] == 255 and pixel[2] == 255:
+        if pixel[0] == color[0] and pixel[1] == color[1] and pixel[2] == color[2]:
             new_pixels.append((pixel[0], pixel[1], pixel[2], 0))
         else:
             new_pixels.append(pixel)
@@ -140,6 +142,24 @@ def change_size(source, size):
     image = image.resize(size, Image.ANTIALIAS)
 
     image.save(source)
+
+
+def darken_color(color):
+    dark = (
+        int(color[0] * 1.2),
+        int(color[1] * 1.2),
+        int(color[2] * 1.2)
+    )
+
+    # Para saber si es negro
+    black = (0,0,0)
+
+    # Si los dos son negro entonces regresa blano
+    if dark == black and color == black:
+        return (255,255,255)
+
+    # Si no? regresa dark
+    return dark
 
 
 if __name__ == "__main__":
