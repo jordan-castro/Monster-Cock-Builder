@@ -38,15 +38,12 @@ def make_transparent(source, color=None, save=True):
     img = img.convert('RGBA')
 
     pixels = img.getdata()
-    new_pixels = []
 
     color = color or (255,255,255)
 
-    for pixel in pixels:
-        if pixel[0] == color[0] and pixel[1] == color[1] and pixel[2] == color[2]:
-            new_pixels.append((pixel[0], pixel[1], pixel[2], 0))
-        else:
-            new_pixels.append(pixel)
+    new_pixels = replace_pixels(pixels, [(0,0,0,0)], [color])
+
+    # new_pixels = list(map(lambda p: is_color(p), pixels))
 
     img.putdata(new_pixels)
     if save:
@@ -126,15 +123,22 @@ def replace_pixels(pixels, color_replace: list, color_find: list):
 
     Returns: <list[tuple[int,int,int]]>
     """
-    # Los nuevo pixels
-    npixels = []
-    for pixel in pixels:
-        # Cambia a (R,G,B)
+    def is_color(pixel):
         p = conver_to_3(pixel)
         if p in color_find:
-            p = color_replace[color_find.index(p)]
-        # Ponemos pxel
-        npixels.append(p)
+            return color_replace[color_find.index(p)]
+        else:
+            return pixel
+
+    npixels = list(map(lambda p: is_color(p), pixels))
+
+    # for pixel in pixels:
+    #     # Cambia a (R,G,B)
+    #     p = conver_to_3(pixel)
+    #     if p in color_find:
+    #         p = color_replace[color_find.index(p)]
+    #     # Ponemos pxel
+    #     npixels.append(p)
     return npixels
 
 
@@ -168,6 +172,22 @@ def darken_color(color):
 
     # Si no? regresa dark
     return dark
+
+
+def center_image(canvas, center)-> Image:
+    """
+    Ponemos un imagen `center` en el centro del `canvas`.
+
+    Params:
+        - <canvas: Image> El imagen del canvas
+        - <center: Image> El imagen para poner en el centro.
+
+    Returns: <Image>
+    """
+    x = int((canvas.size[0] / 2) - (center.size[0] / 2))
+    y = int((canvas.size[1] / 2) - (center.size[1] / 2))
+    canvas.paste(center, (x,y), center)
+    return canvas
 
 
 if __name__ == "__main__":
