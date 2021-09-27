@@ -1,3 +1,4 @@
+import random
 from generator.chicken_type import ChickenType
 from PIL import Image
 import glob
