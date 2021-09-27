@@ -1,7 +1,4 @@
-from generator.attributes.canvas import center_image
-import random
-from generator.random_data import randomifycolor
-from generator.utils import darken_color, make_transparent, replace_pixels, rgb_to_name
+from generator.utils import replace_pixels, rgb_to_name
 from generator.colors_data import Color, Colors
 from generator.chicken_type import ChickenType
 from generator.attributes.attributes import Attribute, convert_attribute_to_string
@@ -38,8 +35,8 @@ class AttributesBuilder:
                 self.add_sun()
             elif attribute == Attribute.MOON_P1 or attribute == Attribute.MOON_P2 or attribute == Attribute.MOON_P3:
                 self.moonify(attribute)
-            elif attribute == Attribute.CRAZY_CIRCLES:
-                self.crazy_circles()
+            # elif attribute == Attribute.CRAZY_CIRCLES:
+            #     self.crazy_circles()
 
         self.finish()
 
@@ -178,37 +175,39 @@ class AttributesBuilder:
         """
         pass
 
-    def crazy_circles(self):
-        """
-        Usamos el Crazy Circles function.
-        """
-        # Crea un nuevo canvas con los crazy circles!
-        image = crazy_circles(
-            BoxSize(
-                self.image.width, 
-                self.image.height
-            ),
-            circle_radius=random.randint(10, 100), 
-            amount=random.randint(1, 10), 
-            width=random.randint(1, 9)
-        )
-        # Toma los pixels del imagen
-        pixels = image.getdata()
-        # Cambia los pixels a colores random
-        new_pixels = replace_pixels(pixels, [randomifycolor(), self.colors.bckg], [(0,0,0), (255,255,255)])
-        # Actualiza
-        image.putdata(new_pixels)
+    # def crazy_circles(self):
+    #     """
+    #     Usamos el Crazy Circles function.
+    #     """
+    #     # Crea un nuevo canvas con los crazy circles!
+    #     image = crazy_circles(
+    #         BoxSize(
+    #             self.image.width, 
+    #             self.image.height
+    #         ),
+    #         circle_radius=random.randint(10, 100), 
+    #         amount=random.randint(1, 10), 
+    #         width=random.randint(1, 9),
+    #         # image=self.image,
+    #     )
+
+    #     # Toma los pixels del imagen
+    #     pixels = image.getdata()
+    #     # Cambia los pixels a colores random
+    #     new_pixels = replace_pixels(pixels, [randomifycolor(), self.colors.bckg], [(0,0,0), (255,255,255)])
+    #     # Actualiza
+    #     image.putdata(new_pixels)
         
-        # Gurda el photo y hacemos transparent
-        self.finish()
-        make_transparent(self.output, self.colors.bckg)
+    #     # Gurda el photo y hacemos transparent
+    #     self.finish()
+    #     make_transparent(self.output, self.colors.bckg)
 
-        self.image = Image.open(self.output)
-        self.image = center_image(image, self.image)
+    #     self.image = Image.open(self.output)
+    #     self.image = center_image(image, self.image)
 
-        # Pon el cock en el canvas
-        # image.paste(self.image, (0,0), self.image)
-        # self.image = image
+    #     #Pon el cock en el canvas
+    #     image.paste(self.image, (0,0), self.image)
+    #     self.image = image
 
 def attribute_dict(trait, value):
     return {'trait_type': trait, 'value': value}
