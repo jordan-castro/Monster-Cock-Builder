@@ -1,7 +1,8 @@
 from generator.attributes.gradients import Gradients
-from generator.colors_data import Colors
+from generator.colors_data import Color, Colors
 from generator.attributes.attributes import Attribute
 from PIL import Image, ImageDraw
+from generator.fractals.fractals import Fractals
 
 
 def get_canvas(attributes: list):
@@ -25,22 +26,6 @@ def get_canvas(attributes: list):
         pass
 
     return f"{base}{canvas}.png"
-
-
-def center_image(canvas, center)-> Image:
-    """
-    Ponemos un imagen `center` en el centro del `canvas`.
-
-    Params:
-        - <canvas: Image> El imagen del canvas
-        - <center: Image> El imagen para poner en el centro.
-
-    Returns: <Image>
-    """
-    x = int((canvas.size[0] / 2) - (center.size[0] / 2))
-    y = int((canvas.size[1] / 2) - (center.size[1] / 2))
-    canvas.paste(center, (x,y), center)
-    return canvas
 
 
 def create_image(source, canvas, attributes: list, color_data: Colors):
@@ -70,12 +55,17 @@ def create_image(source, canvas, attributes: list, color_data: Colors):
     y = int((background.size[1] / 2) - (chicken.size[1] / 2))
 
     ### Chequa los attributes
-    
+
     # Gradients
     if Attribute.GRADIENT_V in attributes:
-        Gradients(new_image, drawing, color_data, Attribute.GRADIENT_V)
+        Gradients(new_image, drawing, color_data, Attribute.GRADIENT_V).draw()
     elif Attribute.GRADIENT_H in attributes:
-        Gradients(new_image, drawing, color_data, Attribute.GRADIENT_H)
+        Gradients(new_image, drawing, color_data, Attribute.GRADIENT_H).draw()
+
+    if Attribute.CRAZY_CIRCLES in attributes:
+        Fractals(background, Attribute.CRAZY_CIRCLES)
+    elif Attribute.CRAZY_POLYGONS in attributes:
+        Fractals(background, Attribute.CRAZY_POLYGONS)
 
     # Aura
     if Attribute.AURA in attributes:
