@@ -19,7 +19,6 @@ class Attribute(Enum):
     MOON_P2 = 13
     MOON_P3 = 14
     CRAZY_CIRCLES = 15
-    CRAZY_POLYGONS = 16
 
 
 def convert_attribute_to_string(attribute: Attribute):
@@ -64,8 +63,6 @@ def convert_attribute_to_string(attribute: Attribute):
         data = ["moon", "Phase 3"]
     elif attribute == Attribute.CRAZY_CIRCLES:
         data = ['fractal', 'circles']
-    elif attribute == Attribute.CRAZY_POLYGONS:
-        data = ['fractal', 'polygon']
     else:
         print(attribute)
 
