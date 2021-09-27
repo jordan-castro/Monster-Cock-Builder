@@ -4,7 +4,7 @@ from generator.fractals.box_size import BoxSize
 from PIL import Image, ImageDraw
 
 
-def crazy_circles(box_size: BoxSize, circle_radius=100, amount=5, minimum=0, width=1, image=None)-> Image:
+def crazy_circles(box_size: BoxSize, circle_radius=100, amount=5, minimum=0, width=1, image=None, fill=None, outline=None)-> Image:
     """
     Function para dibujar fractals de circulos.
 
@@ -12,8 +12,6 @@ def crazy_circles(box_size: BoxSize, circle_radius=100, amount=5, minimum=0, wid
         - <box_size: BoxSize> El box de la negro
         - <anount: int = 5> Ceuntos circulos deberiamos dibjuar?
     """
-    box_size = BoxSize(width=image.width, height=image.height) if image else box_size
-
     # Abre un nuevo imagen
     image = image or Image.new('RGB', (box_size.width, box_size.height))
 
@@ -31,10 +29,12 @@ def crazy_circles(box_size: BoxSize, circle_radius=100, amount=5, minimum=0, wid
         drawing.ellipse(
             (x1, y1, x2, y2),
             width=width,
+            fill=fill,
+            outline=outline
         )
 
         # Crea los coordinatos siguientes
-        x1 += random.randint(x1, x1+ 200)
+        x1 += random.randint(x1, x1 + 200)
         x2 -= random.randint(x1, x1 + 200)
         y1 += random.randint(y1, y1 + 200)
         y2 -= random.randint(y1, y1 + 200)
@@ -45,42 +45,41 @@ def crazy_circles(box_size: BoxSize, circle_radius=100, amount=5, minimum=0, wid
 
     # Para tocar todo el lado
     for y in range(box_size.height):
-        con = False
         if y % mod == 0:
-            con = y % 20 != 0 or y % 15 != 0 or y % 10 != 0
+            ycon = y % 20 != 0 or y % 15 != 0
         else:
-            con = y % 20 != 0 and y % 15 != 0
+            ycon = y % 20 != 0 and y % 15 != 0
 
-        if con:
+        if ycon:
             continue
-            # if y > 600:
-                # break
         for x in range(box_size.width):
-            con = False
             if x % mod == 0:
-                con = x % 20 != 0 or x % 15 != 0 or x % 10 != 0
+                xcon = x % 20 != 0 or x % 15 != 0
             else:
-                con = x % 20 != 0 and x % 15 != 0
+                xcon = x % 20 != 0 and x % 15 != 0
             
-            if con:
+            if xcon:
                 continue
             # Dibuja
             draw_circles(image, x, y, x + circle_radius, y + circle_radius, amount)
 
     # Hacemos crop
-    image = image.crop(box_size.box(105,105))
+    image = image.crop(box_size.box(120, 120))
 
-    all_white = list(map(lambda p: conver_to_3(p) == (255,255,255), image.getdata()))
+    color = fill or (255,255,255)
+
+    all_white = list(map(lambda p: conver_to_3(p) == color, image.getdata()))
+    print(False in all_white)
     while not False in all_white:
         image = crazy_circles(box_size, circle_radius, amount, minimum, width)
-        all_white = list(map(lambda p: conver_to_3(p) == (255,255,255), image.getdata()))
+        all_white = list(map(lambda p: conver_to_3(p) == color, image.getdata()))
 
     return image
 
 
 if __name__ == "__main__":
     i = crazy_circles(
-        BoxSize(width=1200, height=1200), 
+        BoxSize(width=5000, height=6000), 
         circle_radius=random.randint(10, 100), 
         amount=random.randint(1, 10), 
         width=random.randint(1, 9)
@@ -95,4 +94,4 @@ if __name__ == "__main__":
     #         new_pixels.append((255,255,255))
     # i.putdata(new_pixels)
 
-    i.show()
+    i.save("nigga.png")
