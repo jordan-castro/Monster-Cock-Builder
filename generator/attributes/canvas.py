@@ -63,18 +63,9 @@ def create_image(source, canvas, attributes: list, color_data: Colors):
         Gradients(new_image, drawing, color_data, Attribute.GRADIENT_H).draw()
 
     if Attribute.CRAZY_CIRCLES in attributes:
-        Fractals(background, Attribute.CRAZY_CIRCLES)
+        Fractals(background, Attribute.CRAZY_CIRCLES).fractilate()
     elif Attribute.CRAZY_POLYGONS in attributes:
-        Fractals(background, Attribute.CRAZY_POLYGONS)
-
-    # Aura
-    if Attribute.AURA in attributes:
-        x1 = x - 50
-        y1 = y - 50
-        x2 = x + chicken.size[0] + 70
-        y2 = y + chicken.size[1] + 70
-        color = color_data.aura
-        drawing.ellipse((x1, y1, x2, y2), fill=color, outline=color)
+        Fractals(background, Attribute.CRAZY_POLYGONS).fractilate()
 
     # Edita el nuevo imagen
     new_image.paste(background, (0,0))
