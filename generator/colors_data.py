@@ -1,4 +1,4 @@
-from generator.utils import rgb_to_name
+from generator.utils import darken_color, rgb_to_name
 from generator.chicken_type import ChickenType
 from generator.random_data import randomifycolor
 
@@ -47,7 +47,10 @@ class Colors(object):
             self.colors.append(Color((102, 81, 86), title='Leg')) # Leg siguiente
 
         for color in self.colors:
-            color.after = self.random_bck()
+            if color.title == "Eye":
+                color.after = darken_color(self.random_bck())
+            else:
+                color.after = self.random_bck()
             color.value = rgb_to_name(color.after)
 
     def random_bck(self):
