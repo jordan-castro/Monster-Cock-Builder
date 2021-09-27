@@ -1,13 +1,13 @@
-from generator.attributes.canvas import center_image
+from generator.colors_data import Color
 import math
 from PIL import Image, ImageDraw
 from generator.fractals.box_size import BoxSize
-from generator.utils import make_transparent
-import random
+from generator.utils import make_transparent, center_image
 from generator.random_data import randomifycolor
+import random
 
 
-def crazy_polygons(box_size:BoxSize=None, amount=1, side=8, fill=None, outline=None)-> Image:
+def crazy_polygons(box_size:BoxSize=None, amount=1, side=8, fill=None, outline=None,image=None)-> Image:
     """
     Function para crear unos polygonos crazy!
 
@@ -17,16 +17,19 @@ def crazy_polygons(box_size:BoxSize=None, amount=1, side=8, fill=None, outline=N
         - <side: int = 8> Cuantos sides para el polygon.
         - <fill: tuple[int,int,int] = None> El color para el fill.
         - <outlie: tuple[int,int,int] = None> El color del outline.
+        - <image: Image = None> Possible un imagen?
 
     Returns: <Image>
     """
     # Function para recursion!
     def draw_polygon(image, box_size, side, fill, outline):
+        width = random.randint(10, box_size.width)
+        height = random.randint(10, box_size.height)
         # Busca el XY. De verdad tengo ni idea como funciona?
         xy = [
             (
-                (math.cos(th) + 1) * (box_size.width),
-                (math.sin(th) + 1) * (box_size.height)
+                (math.cos(th) + 1) * (width),
+                (math.sin(th) + 1) * (height)
             )
             for th in [
                 i * (2 * math.pi) / side
@@ -39,24 +42,23 @@ def crazy_polygons(box_size:BoxSize=None, amount=1, side=8, fill=None, outline=N
         drawing.polygon(xy, fill, outline)
 
     # El imagen main
-    image = Image.new('RGB', (box_size.width, box_size.height))
+    main_image = image or Image.new('RGB', (box_size.width, box_size.height))
     # Una lista de los imagenes para hacer paste
     images = []
 
-    size_difference = random.randint(1, 10)
-    print(size_difference)
+    size_difference = random.randint(10, 500)
 
     # Loop sobre la cuenta
     for i in range(amount):
         # EL width y height se hace mas pequeno cada ves
         width = (box_size.width - (i * size_difference))
-        height = (box_size.height - (i * size_difference))
+        height = (box_size.height - (i * size_difference + (i * 2)))
 
         if width <= 0 or height <= 0:
             break
 
         # El imagen currentamente para poner solor UN polygon
-        img = Image.new('RGB', (width, height))
+        img = Image.new('RGB', (width, height)) # Los colores
         # Dibuja!!
         draw_polygon(img, BoxSize(int(width / 2), int(height / 2)), side, fill, outline)
         images.append(img)
@@ -65,10 +67,10 @@ def crazy_polygons(box_size:BoxSize=None, amount=1, side=8, fill=None, outline=N
     for img in images:
         # Hacemos transparent
         img = make_transparent(img, (0,0,0), False)
-        # CENTRO!!
-        image = center_image(image, img)
+        # CENTRO !!
+        main_image = center_image(main_image, img)
 
-    return image
+    return main_image
 
 if __name__ == "__main__":
     # img = Image.new("RGB", (1200,1200))
