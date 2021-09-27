@@ -1,3 +1,4 @@
+from generator.utils import conver_to_3
 from generator.fractals.box_size import BoxSize
 from generator.fractals.crazy_circles import crazy_circles
 from generator.fractals.polygon import crazy_polygons
@@ -12,9 +13,7 @@ class Fractals:
         self.image = image
         self.type = fractal_type
 
-        self.__fractilate__()
-    
-    def __fractilate__(self):
+    def fractilate(self):
         """
         Dibjuo los fractals.
         """
@@ -24,6 +23,8 @@ class Fractals:
             self.circles()
         else:
             return
+
+        return self.image
 
     def polygons(self):
         """
@@ -61,39 +62,7 @@ class Fractals:
             circle_radius=random.randint(10, 100), 
             amount=random.randint(1, 10), 
             width=random.randint(1, 9),
-            image = self.image
+            image = self.image,
+            outline=randomifycolor()
         )
-
-        # def crazy_circles(self):
-        # """
-        # Usamos el Crazy Circles function.
-        # """
-        # # Crea un nuevo canvas con los crazy circles!
-        # image = crazy_circles(
-        #     BoxSize(
-        #         self.image.width, 
-        #         self.image.height
-        #     ),
-        #     circle_radius=random.randint(10, 100), 
-        #     amount=random.randint(1, 10), 
-        #     width=random.randint(1, 9),
-        #     # image=self.image,
-        # )
-
-        # # Toma los pixels del imagen
-        # pixels = image.getdata()
-        # # Cambia los pixels a colores random
-        # new_pixels = replace_pixels(pixels, [randomifycolor(), self.colors.bckg], [(0,0,0), (255,255,255)])
-        # # Actualiza
-        # image.putdata(new_pixels)
         
-        # # Gurda el photo y hacemos transparent
-        # self.finish()
-        # make_transparent(self.output, self.colors.bckg)
-
-        # self.image = Image.open(self.output)
-        # self.image = center_image(image, self.image)
-
-        # #Pon el cock en el canvas
-        # image.paste(self.image, (0,0), self.image)
-        # self.image = image
