@@ -3,6 +3,7 @@ from generator.colors_data import Color, Colors
 from generator.attributes.attributes import Attribute
 from PIL import Image, ImageDraw
 from generator.fractals.fractals import Fractals
+from generator.utils import center_image
 
 
 def get_canvas(attributes: list):
@@ -67,7 +68,10 @@ def create_image(source, canvas, attributes: list, color_data: Colors):
     elif Attribute.CRAZY_POLYGONS in attributes:
         Fractals(background, Attribute.CRAZY_POLYGONS).fractilate()
 
+
     # Edita el nuevo imagen
     new_image.paste(background, (0,0))
-    new_image.paste(chicken, (x,y), chicken)
+    new_image = new_image.crop((100,100,new_image.width, new_image.height))
+
+    new_image = center_image(new_image, chicken)
     return new_image
