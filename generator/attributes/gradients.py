@@ -21,7 +21,7 @@ class Rect(object):
 
 
 class Gradients:
-    def __init__(self,image, drawing, colors: Colors, gradiant_type: Attribute) -> None:
+    def __init__(self,image, drawing, colors: Colors, gradiant_type: Attribute):
         if gradiant_type not in [Attribute.GRADIENT_W, Attribute.GRADIENT_H, Attribute.GRADIENT_V]:
             # Tiramos error
             raise Exception(f"{gradiant_type} No es un Gradient!")
@@ -32,11 +32,9 @@ class Gradients:
         self.drawing = drawing
         # El rectangle
         self.rect = Rect(0, 0, self.image.size[0], self.image.size[1])
-
         self.__palette__()
-        self.__draw__()
 
-    def __draw__(self):
+    def draw(self):
         """
         Dibjua el gradient.
         """
@@ -44,6 +42,8 @@ class Gradients:
             self.vertical_gradient()
         elif self.type  == Attribute.GRADIENT_H:
             self.horizontal_gradient()
+
+        return self.color_palette
         
     def __palette__(self):
         """
