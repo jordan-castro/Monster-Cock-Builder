@@ -1,41 +1,51 @@
-from generator.utils import conver_to_3
+from generator.fractals.stripes import draw_stripes
+from generator.fractals.squares import draw_round_squares, draw_squares
+from PIL import Image
+from generator.fractals.fractify import FractalBuilder
 from generator.fractals.box_size import BoxSize
-from generator.fractals.crazy_circles import crazy_circles
-from generator.colors_data import Colors
+from generator.fractals.crazy_circles import draw_circles
 from generator.attributes.attributes import Attribute
 from generator.random_data import randomifycolor
 import random
 
 
-class Fractals:
-    def __init__(self, image, fractal_type: Attribute) -> None:
-        self.image = image
-        self.type = fractal_type
+def draw_fractal(image, attribute: Attribute)-> Image:
+    """
+    Dibuja un fractal.
 
-    def fractilate(self):
-        """
-        Dibjuo los fractals.
-        """
-        if self.type == Attribute.CRAZY_CIRCLES:
-            self.circles()
-        else:
-            return
+    Params:
+        - <image: Image> El imagen para dibujar por.
+        - <attribute: Attribute> El attribute del fractal.
 
-        return self.image
+    Returns: <Image>
+    """
+    radius = random.randint(1, 15)
+    size = random.randint(10, 100)
+    amount = random.randint(1, 10)
+    width = random.randint(1, 9)
 
-    def circles(self):
-        """
-        Dibuja los circulos.
-        """
-        self.image = crazy_circles(
-            BoxSize(
-                self.image.width,
-                self.image.height
-            ),
-            circle_radius=random.randint(10, 100), 
-            amount=random.randint(1, 10), 
-            width=random.randint(1, 9),
-            image = self.image,
-            outline=randomifycolor()
-        )
-        
+    if attribute == Attribute.CRAZY_CIRCLES:
+        method = draw_circles
+    elif attribute == Attribute.SQUARES:
+        method = draw_squares
+    elif attribute == Attribute.ROUND_SQUARES:
+        method = draw_round_squares
+    elif attribute == Attribute.STRIPES:
+        method = draw_stripes
+
+    print(attribute)
+
+    image = FractalBuilder().build(
+        BoxSize(
+            image.width, 
+            image.height
+        ),
+        method, 
+        radius=radius,
+        width=width,
+        image=image,
+        outline=randomifycolor(),
+        size=size
+    )
+
+    return image
