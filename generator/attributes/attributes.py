@@ -19,6 +19,9 @@ class Attribute(Enum):
     MOON_P2 = 13
     MOON_P3 = 14
     CRAZY_CIRCLES = 15
+    SQUARES = 16
+    POLYGONS = 17
+    ROUND_SQUARES = 18
 
 
 def convert_attribute_to_string(attribute: Attribute):

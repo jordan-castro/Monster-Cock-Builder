@@ -3,8 +3,6 @@ from generator.colors_data import Color, Colors
 from generator.chicken_type import ChickenType
 from generator.attributes.attributes import Attribute, convert_attribute_to_string
 from PIL import Image, ImageOps
-from generator.fractals.crazy_circles import crazy_circles
-from generator.fractals.box_size import BoxSize
 
 
 class AttributesBuilder:
@@ -35,8 +33,6 @@ class AttributesBuilder:
                 self.add_sun()
             elif attribute == Attribute.MOON_P1 or attribute == Attribute.MOON_P2 or attribute == Attribute.MOON_P3:
                 self.moonify(attribute)
-            # elif attribute == Attribute.CRAZY_CIRCLES:
-            #     self.crazy_circles()
 
         self.finish()
 
