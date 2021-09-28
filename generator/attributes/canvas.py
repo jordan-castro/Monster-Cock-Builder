@@ -2,7 +2,7 @@ from generator.attributes.gradients import Gradients
 from generator.colors_data import Color, Colors
 from generator.attributes.attributes import Attribute
 from PIL import Image, ImageDraw
-from generator.fractals.fractals import Fractals
+from generator.fractals.fractals import draw_fractal
 from generator.utils import center_image
 
 
@@ -52,9 +52,6 @@ def create_image(source, canvas, attributes: list, color_data: Colors):
     # El nuevo imagen
     new_image = Image.new('RGBA', background.size, (255,255,255))
 
-    x = int((background.size[0] / 2) - (chicken.size[0] / 2))
-    y = int((background.size[1] / 2) - (chicken.size[1] / 2))
-
     ### Chequa los attributes
 
     # Gradients
@@ -64,10 +61,13 @@ def create_image(source, canvas, attributes: list, color_data: Colors):
         Gradients(new_image, drawing, color_data, Attribute.GRADIENT_H).draw()
 
     if Attribute.CRAZY_CIRCLES in attributes:
-        Fractals(background, Attribute.CRAZY_CIRCLES).fractilate()
-    elif Attribute.CRAZY_POLYGONS in attributes:
-        Fractals(background, Attribute.CRAZY_POLYGONS).fractilate()
-
+        background = draw_fractal(background, Attribute.CRAZY_CIRCLES)
+    if Attribute.SQUARES in attributes:
+        background = draw_fractal(background, Attribute.SQUARES)
+    if Attribute.ROUND_SQUARES in attributes:
+        background = draw_fractal(background, Attribute.ROUND_SQUARES)
+    if Attribute.STRIPES in attributes:
+        background = draw_fractal(background, Attribute.STRIPES)
 
     # Edita el nuevo imagen
     new_image.paste(background, (0,0))
