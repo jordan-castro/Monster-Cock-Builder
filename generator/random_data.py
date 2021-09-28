@@ -1,3 +1,4 @@
+import typing_extensions
 from generator.attributes.attributes import Attribute
 import random
 
@@ -62,14 +63,10 @@ def randomifyattributes(generation: Attribute)-> list:
         Attribute.GRADIENT_H,
         Attribute.GRADIENT_V,
         # Attribute.NINJA,
-        Attribute.SUN,
-        Attribute.MOON_P1,
         Attribute.CRAZY_CIRCLES,
-        Attribute.CRAZY_POLYGONS
-        # Attribute.MOON_P2,
-        # Attribute.MOON_P3,
-        # Attribute.MOON_P4,  
-        # Attribute.GRADIENT_W
+        Attribute.ROUND_SQUARES,
+        Attribute.SQUARES,
+        Attribute.STRIPES
     ]
 
     gradients = [
@@ -77,24 +74,18 @@ def randomifyattributes(generation: Attribute)-> list:
         Attribute.GRADIENT_V,
     ]
 
-    fractals = [
-        Attribute.CRAZY_POLYGONS,
-        Attribute.CRAZY_CIRCLES,
-    ]
-
     moon_phases = [
         Attribute.MOON_P1,
-        # Attribute.MOON_P2,
-        # Attribute.MOON_P3,
     ]
 
-    # Ahora dos randoms
-    start = random.randint(0, len(possible_attributes))
-    end = random.randint(start, len(possible_attributes))
-    
+    start = 0
+    end = 0
+
     # Chequa si son igual
-    if start == end:
-        return attributes
+    while start == end:
+        # Ahora dos randoms
+        start = random.randint(0, len(possible_attributes))
+        end = random.randint(start, len(possible_attributes))
 
     # Hacemos un random shuffle
     random.shuffle(possible_attributes)
@@ -102,7 +93,6 @@ def randomifyattributes(generation: Attribute)-> list:
 
     attributes = __can_have_attr__(attributes, gradients)
     attributes = __can_have_attr__(attributes, moon_phases + [Attribute.SUN])
-    attributes = __can_have_attr__(attributes, fractals)
 
     # Ponemos su generation
     attributes.append(generation)
