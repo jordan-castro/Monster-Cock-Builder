@@ -42,30 +42,34 @@ def convert_attribute_to_string(attribute: Attribute):
         data = ["body", "Vampire"]
     elif attribute == Attribute.SUN:
         data = ["background", "Sunny"]
-    elif attribute == Attribute.STRIPES:
-        data = ["body", "Stripes"]
     elif attribute == Attribute.GEN_0:
-        data = ["generation", 0]
+        data = ["Generation", 0]
     elif attribute == Attribute.GEN_1:
-        data = ["generation", 1]
+        data = ["Generation", 1]
     elif attribute == Attribute.GEN_2:
-        data = ["generation", 2]
+        data = ["Generation", 2]
     elif attribute == Attribute.MIRRORED:
-        data = ["direction", "Mirrored"]
+        data = ["Mirrored", 'True']
     elif attribute == Attribute.MOON_P1:
         data = ["moon", "Moon"]
     elif attribute == Attribute.GRADIENT_V:
-        data = ["gradient", "Vertical"]
+        data = ["Gradient", "Vertical"]
     elif attribute == Attribute.GRADIENT_H:
-        data = ["gradient", "Horizontal"]
+        data = ["Gradient", "Horizontal"]
     elif attribute == Attribute.GRADIENT_W:
-        data = ["gradient", "Wavy"]
+        data = ["Gradient", "Wavy"]
     elif attribute == Attribute.MOON_P2:
         data = ["moon", "Phase 2"]
     elif attribute == Attribute.MOON_P3:
         data = ["moon", "Phase 3"]
     elif attribute == Attribute.CRAZY_CIRCLES:
-        data = ['fractal', 'circles']
+        data = ['Fractal Circles', 'True']
+    elif attribute == Attribute.ROUND_SQUARES:
+        data = ['Fractal Round Squares', 'True']
+    elif attribute == Attribute.SQUARES:
+        data = ['Fractal Squares', 'True']
+    elif attribute == Attribute.STRIPES:
+        data = ['Fractal Stripes', 'True']
     else:
         print(attribute)
 
