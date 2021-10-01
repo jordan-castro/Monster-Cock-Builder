@@ -9,11 +9,12 @@ from generator.colors_data import Colors
 
 
 class ImageGen:
-    def __init__(self, chicken_type: ChickenType, attributes: list=None):
+    def __init__(self, chicken_type: ChickenType, id: int, attributes: list=None):
         self.chicken_type = chicken_type
         self.name = self.decide_name()
         self.color_data = Colors(chicken_type)
         self.attributes = attributes
+        self.id = id
         self.image = self.open()
 
     def decide_name(self):
@@ -47,23 +48,16 @@ class ImageGen:
         bckg = self.color_data.bckg
 
         # Dibuja!
-        pixels = self.image.getdata()
-        new_pixels = replace_pixels(pixels, after + [bckg], before + [(255,255,255)])
+        new_image = replace_pixels(self.image, after + [bckg], before + [(255,255,255)])
 
-        # Crea la imagen
-        new_image = Image.new("RGB", self.image.size)
-        new_image.putdata(new_pixels)
-
-        number_of = current_amount()
-
-        flip = randomifyflip(len(number_of))
+        flip = randomifyflip(self.id)
 
         if flip:
             self.attributes.append(Attribute.MIRRORED)
             new_image = self.flip(new_image)
 
         # Crea el nombre
-        name = f"{self.name} {len(number_of) + 1}"
+        name = f"{self.name} {self.id}"
 
         # Hacemos los attributos
         builder = AttributesBuilder(new_image, f"{name}.png")
