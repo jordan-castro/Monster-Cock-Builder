@@ -1,3 +1,4 @@
+from generator.checker.check import is_valid_fractal
 from generator.fractals.stripes import draw_stripes
 from generator.fractals.squares import draw_round_squares, draw_squares
 from PIL import Image
@@ -19,33 +20,47 @@ def draw_fractal(image, attribute: Attribute)-> Image:
 
     Returns: <Image>
     """
-    radius = random.randint(1, 15)
-    size = random.randint(10, 100)
-    amount = random.randint(1, 10)
-    width = random.randint(1, 9)
+    start = True
+    while not is_valid_fractal(image) or start:
+        if start == False:
+            print("INVALIDO !!")
+        start = False
 
-    if attribute == Attribute.CRAZY_CIRCLES:
-        method = draw_circles
-    elif attribute == Attribute.SQUARES:
-        method = draw_squares
-    elif attribute == Attribute.ROUND_SQUARES:
-        method = draw_round_squares
-    elif attribute == Attribute.STRIPES:
-        method = draw_stripes
+        radius = random.randint(1, 15)
+        size = random.randint(10, 100)
+        amount = random.randint(1, 10)
+        width = random.randint(1, 9)
 
-    print(attribute)
+        if attribute == Attribute.CRAZY_CIRCLES:
+            method = draw_circles
+        elif attribute == Attribute.SQUARES:
+            method = draw_squares
+        elif attribute == Attribute.ROUND_SQUARES:
+            method = draw_round_squares
+        elif attribute == Attribute.STRIPES:
+            method = draw_stripes
 
-    image = FractalBuilder().build(
-        BoxSize(
-            image.width, 
-            image.height
-        ),
-        method, 
-        radius=radius,
-        width=width,
-        image=image,
-        outline=randomifycolor(),
-        size=size
-    )
+        image = FractalBuilder().build(
+            BoxSize(
+                image.width, 
+                image.height
+            ),
+            method, 
+            radius=radius,
+            width=width,
+            image=image,
+            outline=randomifycolor(),
+            size=size
+        )
 
     return image
+
+
+if __name__ == "__main__":
+    i = draw_fractal(Image.new('RGB', (1200,1200), 'white'), Attribute.CRAZY_CIRCLES)
+    i.show()
+    save = input("Guarda imagen? (y/n) ")
+    if save == "y" or save == "Y" or save == "Yes" or save == "yes":
+        i.save('test.png')
+    else:
+        print("Palabra")
