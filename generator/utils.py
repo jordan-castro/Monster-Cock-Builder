@@ -1,9 +1,9 @@
-import random
-from generator.chicken_type import ChickenType
-from PIL import Image
 import glob
 import os
 import webcolors
+import numpy as np
+from PIL import Image
+from generator.chicken_type import ChickenType
 
 
 def clear(chicken_type: ChickenType):
@@ -38,15 +38,12 @@ def make_transparent(source, color=None, save=True):
     img = Image.open(source) if type(source) is str else source
     img = img.convert('RGBA')
 
-    pixels = img.getdata()
-
     color = color or (255,255,255)
 
-    new_pixels = replace_pixels(pixels, [(0,0,0,0)], [color])
+    img = replace_pixels(img, [(0,0,0,0)], [color])
 
     # new_pixels = list(map(lambda p: is_color(p), pixels))
 
-    img.putdata(new_pixels)
     if save:
         img.save(source, "PNG")
     else:
@@ -110,37 +107,33 @@ def ipfs_url(ipfs_hash):
     return f'https://ipfs.io/ipfs/{ipfs_hash}'
 
 
-def replace_pixels(pixels, color_replace: list, color_find: list):
+def replace_pixels(image, color_replace: list, color_find: list):
     """
     Cambiamos los pixels a un color especificado.
 
     Params:
-        - <pixels: list[tuple[int,int,int]]> Los pixels
+        - <image: Image> El imagen
         - <color_replace: list[tuple[int,int,int]]> los colores en RGB que queremos poner.
         - <color_find: list[tuple[int,int,int]]> los colores en RGB que queremos cambiar.
 
     IMPORTANT:
         - color_replace y color_find debe tener los colores en el mismo index.
 
-    Returns: <list[tuple[int,int,int]]>
+    Returns: <Image>
     """
-    def is_color(pixel):
-        p = conver_to_3(pixel)
-        if p in color_find:
-            return color_replace[color_find.index(p)]
-        else:
-            return pixel
+    # Creamos un array con numpy
+    data = np.array(image)
 
-    npixels = list(map(lambda p: is_color(p), pixels))
+    # Hacemos loop sobre los colores para cambiar los
+    for color in color_find:
+        # El color del color_replace
+        replace = color_replace[color_find.index(color)]
+        red, green, blue = data[:,:,0], data[:,:,1], data[:,:,2]
+        mask = (red == color[0]) & (green == color[1]) & (blue == color[2])
+        data[:,:,:3][mask] = [replace[0], replace[1], replace[2]] 
 
-    # for pixel in pixels:
-    #     # Cambia a (R,G,B)
-    #     p = conver_to_3(pixel)
-    #     if p in color_find:
-    #         p = color_replace[color_find.index(p)]
-    #     # Ponemos pxel
-    #     npixels.append(p)
-    return npixels
+    # Regresa nuevo imagen desde data (numpy)
+    return Image.fromarray(data)
 
 
 def change_size(source, size):
@@ -192,6 +185,7 @@ def center_image(canvas, center)-> Image:
 
 
 if __name__ == "__main__":
+    pass
     # data = Colors(ChickenType.HEN)
     # for d in data.after:
     #     print(d)
@@ -199,4 +193,4 @@ if __name__ == "__main__":
     #     print()
     # print(rgb_to_name(data))
     # make_transparent('base_art/detailed_cock.png')
-    change_size("base_art/FinalCockHR.png", (379, 415))
+    # change_size("base_art/FinalCockHR.png", (379, 415))

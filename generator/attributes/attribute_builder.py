@@ -129,13 +129,10 @@ class AttributesBuilder:
         """
         Hacemos el attribo de ninja.
         """
-        # Buscamos la data.
-        pixels = self.image.getdata()
-
-        new_pixels = replace_pixels(pixels, [(25,25,25)], [self.colors.bckg])
+        new_pixels = replace_pixels(self.image, [(25,25,25)], [self.colors.bckg])
 
         # Cambiamos la data
-        self.__update_image_pixels__(new_pixels)
+        self.__update_image_pixels__(new_pixels.getdata())
 
     def add_sun(self):
         """
