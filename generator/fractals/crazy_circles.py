@@ -46,28 +46,3 @@ def draw_circles(**kwargs):
         outline=outline,
         width=width
     )
-
-
-# if __name__ == "__main__":
-#     size = BoxSize(1200, 1200)
-#     radius=random.randint(10, 100)
-#     # amount=random.randint(1, 20)
-#     width=random.randint(1, 9)
-    
-#     i = fractify(
-#         BoxSize(width=1200, height=1200), 
-#         draw_circles,
-#         radius=radius, 
-#         amount=1, 
-#         width=width
-#     )
-#     # pixels = i.getdata()
-#     # new_pixels = []
-#     # for p in pixels:
-#     #     if p == (255,255,255):
-#     #         new_pixels.append((23,66,100))
-#     #     else:
-#     #         new_pixels.append((255,255,255))
-#     # i.putdata(new_pixels)
-
-#     i.show()
