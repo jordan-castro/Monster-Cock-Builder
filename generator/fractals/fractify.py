@@ -1,4 +1,5 @@
 import random
+from generator.checker.check import is_valid_fractal
 from generator.fractals.box_size import BoxSize
 from PIL import Image
 from generator.random_data import randomifycolor
@@ -34,8 +35,6 @@ class FractalBuilder:
 
         mod = random.randint(1, 6)
         choose_one = random.randint(1, 3)
-
-        print(choose_one)
 
         if choose_one == 1:
             self.usual(mod)
@@ -148,63 +147,3 @@ class FractalBuilder:
                     width=self.width,
                     radius=self.radius
                 )
-
-# def fractify(box_size: BoxSize, method, radius:int=100, amount:int=5, minumum:int=0, width:int=1, image=None, fill=None, outline=None, size:int=100)-> Image:
-#     """
-#     Function para generar los fractals.
-
-#     Params:
-#         - <box_size: BoxSize> El size del box.
-#         - <method: Methos> El method de generar fractals.
-#         - <radius: int = 100> El radius, no siempre se usa.
-#         - <amount: int = 5> Cuantos vecez dibujamos?
-#         - <minimum: int = 0> El mimimum que podemos tener.
-#         - <width: int = 0> El size del negro, no siempro se usa.
-#         - <image: Image = None> Si quieres usar un imagen que ya existe.
-#         - <fill = None> Un color.
-#         - <outline = None> Un color.
-#         - <size: int=100> El size del vaina
-    
-#     Returns: <Image>
-#     """
-#     # Abre or usar imagen
-#     fractal_image = image or Image.new('RGB', (box_size.width, box_size.height))
-    
-#     if amount <= minumum:
-#         amount += 10
-
-#     mod = random.randint(1, 6)
-
-#     # Para tocar todo el photo
-#     for y in range(box_size.height):
-#         if y % mod == 0:
-#             ycon = y % 20 != 0 or y % 15 != 0
-#         else:
-#             ycon = y % 20 != 0 and y % 15 != 0
-
-#         if ycon:
-#             continue
-#         for x in range(box_size.width):
-#             if x % mod == 0:
-#                 xcon = x % 20 != 0 or x % 15 != 0
-#             else:
-#                 xcon = x % 20 != 0 and x % 15 != 0
-
-#             if xcon:
-#                 continue
-#             # Dibuja
-#             method(
-#                 image=fractal_image,
-#                 x1=x,
-#                 y1=y,
-#                 x2=x + size,
-#                 y2=y + size,
-#                 amount=amount,
-#                 minimum=minumum,
-#                 fill=fill,
-#                 outline=outline,
-#                 width=width,
-#                 radius=radius
-#             )
-
-#     return fractal_image
