@@ -82,12 +82,9 @@ class AttributesBuilder:
             # Chequea si no encontramos algo con los attributos.
             if not _attr:
                 continue
-            # Chequea si estamos haciendo como negro con aura.
-            if _attr[0] == "aura":
-                _attr[1] = rgb_to_name(colors.aura)
-            # Chequea si esta attribu ya existe
             for inner in attributes:
-                if inner['trait_type'] == _attr[0]:
+                # Chequea si esta attribu ya existe
+                if inner['trait_type'] == _attr[0] and not inner['trait_type'] == "Schema":
                     del attributes[attributes.index(inner)]
                     break
             attributes.append(attribute_dict(_attr[0], _attr[1]))
