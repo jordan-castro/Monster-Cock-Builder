@@ -78,18 +78,20 @@ def randomifyattributes(generation: Attribute)-> list:
         Attribute.MOON_P1,
     ]
 
-    start = 0
-    end = 0
+    attributes = randomifylist(possible_attributes)
 
-    # Chequa si son igual
-    while start == end:
-        # Ahora dos randoms
-        start = random.randint(0, len(possible_attributes))
-        end = random.randint(start, len(possible_attributes))
+    # start = 0
+    # end = 0
 
-    # Hacemos un random shuffle
-    random.shuffle(possible_attributes)
-    attributes = possible_attributes[start:end]
+    # # Chequa si son igual
+    # while start == end:
+    #     # Ahora dos randoms
+    #     start = random.randint(0, len(possible_attributes))
+    #     end = random.randint(start, len(possible_attributes))
+
+    # # Hacemos un random shuffle
+    # random.shuffle(possible_attributes)
+    # attributes = possible_attributes[start:end]
 
     attributes = __can_have_attr__(attributes, gradients)
     attributes = __can_have_attr__(attributes, moon_phases + [Attribute.SUN])
@@ -98,6 +100,31 @@ def randomifyattributes(generation: Attribute)-> list:
     attributes.append(generation)
 
     return attributes
+
+
+def randomifylist(list: list)-> list:
+    """
+    Regresa una forma de la lista random!
+    
+    Params:
+        - <list: list> La lista para hacer random con!
+
+    Returns: <list>
+    """
+    # Empieza a zero
+    start = 0
+    end = 0
+
+    # Loop para nunca pueden ser mismo
+    while start == end:
+        start = random.randint(0, len(list))
+        end = random.randint(start, len(list))
+
+    # Hacemos shuffle para mas random
+    random.shuffle(list)
+
+    # Regresa con el range
+    return list[start:end]
 
 
 def __can_have_attr__(current_list: list[Attribute], black_list: list[Attribute]):
