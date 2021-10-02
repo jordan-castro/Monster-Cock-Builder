@@ -81,7 +81,7 @@ def get_random_name(chicken_id: int, chicken_type: ChickenType):
     # Pon el nombre en blakclist
     black_list_name(chosen_name)
 
-    return chosen_name
+    return f"{chosen_name}_#{chicken_id}"
 
 
 if __name__ == "__main__":
