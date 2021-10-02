@@ -131,3 +131,4 @@ dmypy.json
 upload.py
 uploader/
 test.py
+*.txt
