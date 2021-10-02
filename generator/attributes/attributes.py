@@ -11,7 +11,7 @@ class Attribute(Enum):
     GEN_0 = 5
     GEN_1 = 6
     GEN_2 = 7
-    MIRRORED = 8
+    SUN_RISE_EAST = 8
     MOON_P1 = 9
     GRADIENT_V = 10
     GRADIENT_H = 11
@@ -22,6 +22,7 @@ class Attribute(Enum):
     SQUARES = 16
     POLYGONS = 17
     ROUND_SQUARES = 18
+    SUN_RISE_WEST = 19
 
 
 def convert_attribute_to_string(attribute: Attribute):
@@ -43,13 +44,11 @@ def convert_attribute_to_string(attribute: Attribute):
     elif attribute == Attribute.SUN:
         data = ["background", "Sunny"]
     elif attribute == Attribute.GEN_0:
-        data = ["Generation", 0]
+        data = ["Generation", '0']
     elif attribute == Attribute.GEN_1:
-        data = ["Generation", 1]
+        data = ["Generation", '1']
     elif attribute == Attribute.GEN_2:
-        data = ["Generation", 2]
-    elif attribute == Attribute.MIRRORED:
-        data = ["Mirrored", 'True']
+        data = ["Generation", '2']
     elif attribute == Attribute.MOON_P1:
         data = ["moon", "Moon"]
     elif attribute == Attribute.GRADIENT_V:
@@ -63,13 +62,17 @@ def convert_attribute_to_string(attribute: Attribute):
     elif attribute == Attribute.MOON_P3:
         data = ["moon", "Phase 3"]
     elif attribute == Attribute.CRAZY_CIRCLES:
-        data = ['Fractal Circles', 'True']
+        data = ['Schema', 'Circles']
     elif attribute == Attribute.ROUND_SQUARES:
-        data = ['Fractal Round Squares', 'True']
+        data = ['Schema', 'Round Squares']
     elif attribute == Attribute.SQUARES:
-        data = ['Fractal Squares', 'True']
+        data = ['Schema', 'Squares']
     elif attribute == Attribute.STRIPES:
-        data = ['Fractal Stripes', 'True']
+        data = ['Schema', 'Stripes']
+    elif attribute == Attribute.SUN_RISE_EAST:
+        data = ['Sunrise', 'East']
+    elif attribute == Attribute.SUN_RISE_WEST:
+        data = ['Sunrise', 'West']
     else:
         print(attribute)
 
