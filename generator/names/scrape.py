@@ -7,63 +7,15 @@ from generator.random_data import randomifylist
 from selenium.webdriver.support.ui import Select
 
 
-class RandomNameScraper:
+class Scraper:
     def __init__(self, debug=False) -> None:
-        self.source = "https://www.behindthename.com/random/"
+        self.source = "https://app.pinata.cloud/signin"
         options = Options()
         if not debug:
             options.headless = True
         
         self.browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
         self.browser.get(self.source)
-
-    def __setup_random_page__(self):
-        """
-        Hacemos que el random tiene esto attributes
-            - Solo primer nombre
-            - Solo hombre
-        """
-        name_select = Select(self.grab_data_from_tags(('class', 'field-data'))[0])
-        name_select.select_by_value('1')
-
-        gender_select = Select(self.grab_data_from_tags(('class', 'field-data'))[2])
-        gender_select.select_by_value('m')
-
-    def __grab_result__(self):
-        """
-        Toma la resulta y regresa lo.
-
-        Returns: <str>
-        """
-        # Click button de nombre
-        res_button = self.grab_data_from_tags(('class', 'largebutton'))
-        res_button[0].click()
-
-        # Ahora lee la resulta
-        result = self.grab_data_from_tags(('class', 'plain'))
-        return result[0].text
-
-    def get_random_name(self):
-        """
-        Busca un random nombre y regresa lo!
-
-        Returns: <str>
-        """
-        self.__setup_random_page__()
-        name_options = self.grab_data_from_tags(("class", "random-cb"))
-        # Chequea que no econtramos nombres
-        if not name_options:
-            print("No encontramos nombres")
-            return
-        # Los optiones con random!
-        chosen_options = randomifylist(name_options)
-
-        # Ahora loop para tocar cada uno
-        for option in chosen_options:
-            option.click()
-
-        # Ahora hacemos click y buscamos el nombre
-        return self.__grab_result__()
 
     def send_search(self, tag=(), query="", results_tag=()):
         """
@@ -102,6 +54,7 @@ class RandomNameScraper:
         """
         # Grab data passed
         (tag_type, tag_value) = tag
+        tag_type = tag_type.lower()
         # If else to grab correct data
         if tag_type == "id":
             tags = self.browser.find_elements(By.ID, tag_value)
@@ -115,9 +68,3 @@ class RandomNameScraper:
             tags = []
 
         return tags
-
-
-if __name__ == "__main__":
-    ran = RandomNameScraper()
-    for x in range(1):
-        print(ran.get_random_name())

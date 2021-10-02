@@ -197,6 +197,22 @@ def save_hash(hash):
         file.write('\n')
 
 
+def remove_hash(hash):
+    """
+    Quita un hash.
+
+    Params:
+        - <hash: str> El hash para quitar.
+    """
+    data = read_hashes()
+
+    data.remove(hash)
+    with codecs.open('hashes.txt', 'w', 'utf8') as file:
+        for d in data:
+            file.write(d)
+            file.write('\n')
+
+
 def read_hashes():
     """
     Lee el archivo de hashes.txt
@@ -205,7 +221,7 @@ def read_hashes():
     """
     with codecs.open('hashes.txt', 'r', 'utf8') as file:
         lines = file.readlines()
-        return lines
+        return list(map(lambda h: h.strip(), lines))
 
 
 if __name__ == "__main__":
