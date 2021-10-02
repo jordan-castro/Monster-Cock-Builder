@@ -1,31 +1,22 @@
 from generator.attributes.attribute_builder import AttributesBuilder
 from generator.attributes.canvas import get_canvas, create_image
-from generator.utils import conver_to_3, current_amount, replace_pixels
+from generator.utils import replace_pixels
 from generator.attributes.attributes import Attribute
 from generator.random_data import randomifyflip
 from generator.chicken_type import ChickenType
-from PIL import Image, ImageOps
+from PIL import ImageOps
 from generator.colors_data import Colors
+from generator.names.read_names import get_random_name
 
 
 class ImageGen:
     def __init__(self, chicken_type: ChickenType, id: int, attributes: list=None):
         self.chicken_type = chicken_type
-        self.name = self.decide_name()
+        self.name = get_random_name(id, chicken_type)
         self.color_data = Colors(chicken_type)
         self.attributes = attributes
         self.id = id
         self.image = self.open()
-
-    def decide_name(self):
-        if self.chicken_type == ChickenType.HEN:
-            return "Sexy Hen"
-        elif self.chicken_type == ChickenType.COCK:
-            return "Monster Cock"
-        elif self.chicken_type == ChickenType.DETAILED_COCK:
-            return "Monster Cock"
-        else:
-            return "Chick"
 
     def decide_image(self):
         base = "base_art/"
@@ -53,17 +44,16 @@ class ImageGen:
         flip = randomifyflip(self.id)
 
         if flip:
-            self.attributes.append(Attribute.MIRRORED)
+            self.attributes.append(Attribute.SUN_RISE_EAST)
             new_image = self.flip(new_image)
-
-        # Crea el nombre
-        name = f"{self.name} {self.id}"
+        else:
+            self.attributes.append(Attribute.SUN_RISE_WEST)
 
         # Hacemos los attributos
-        builder = AttributesBuilder(new_image, f"{name}.png")
+        builder = AttributesBuilder(new_image, f"{self.name}.png")
         builder.build(self.chicken_type, self.attributes, self.color_data)
 
-        return name
+        return self.name
 
     def flip(self, image):
         """
