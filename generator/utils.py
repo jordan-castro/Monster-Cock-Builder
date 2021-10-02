@@ -1,3 +1,4 @@
+import codecs
 import glob
 import os
 import webcolors
@@ -182,6 +183,29 @@ def center_image(canvas, center)-> Image:
     y = int((canvas.size[1] / 2) - (center.size[1] / 2))
     canvas.paste(center, (x,y), center)
     return canvas
+
+
+def save_hash(hash):
+    """
+    Guarda un hash en un hashes.txt
+    
+    Params:
+        - <hash: str> El hash que viene de IPFS
+    """
+    with codecs.open('hashes.txt', 'a', 'utf8') as file:
+        file.write(hash)
+        file.write('\n')
+
+
+def read_hashes():
+    """
+    Lee el archivo de hashes.txt
+
+    Returns: <list>
+    """
+    with codecs.open('hashes.txt', 'r', 'utf8') as file:
+        lines = file.readlines()
+        return lines
 
 
 if __name__ == "__main__":
