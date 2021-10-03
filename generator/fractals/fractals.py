@@ -22,9 +22,8 @@ def draw_fractal(image, attribute: Attribute)-> Image:
     """
     start = True
     while not is_valid_fractal(image) or start:
-        if start == False:
-            print("INVALIDO !!")
-        start = False
+        if start == True:
+            start = False
 
         radius = random.randint(1, 15)
         size = random.randint(10, 100)

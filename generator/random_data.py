@@ -1,4 +1,3 @@
-import typing_extensions
 from generator.attributes.attributes import Attribute
 import random
 
@@ -79,19 +78,6 @@ def randomifyattributes(generation: Attribute)-> list:
     ]
 
     attributes = randomifylist(possible_attributes)
-
-    # start = 0
-    # end = 0
-
-    # # Chequa si son igual
-    # while start == end:
-    #     # Ahora dos randoms
-    #     start = random.randint(0, len(possible_attributes))
-    #     end = random.randint(start, len(possible_attributes))
-
-    # # Hacemos un random shuffle
-    # random.shuffle(possible_attributes)
-    # attributes = possible_attributes[start:end]
 
     attributes = __can_have_attr__(attributes, gradients)
     attributes = __can_have_attr__(attributes, moon_phases + [Attribute.SUN])

@@ -1,5 +1,5 @@
 from generator.attributes.gradients import Gradients
-from generator.colors_data import Color, Colors
+from generator.colors_data import Colors
 from generator.attributes.attributes import Attribute
 from PIL import Image, ImageDraw
 from generator.fractals.fractals import draw_fractal
@@ -20,10 +20,6 @@ def get_canvas(attributes: list):
     
     # Loop
     for attribute in attributes:
-        # if attribute == Attribute.SUN:
-        #     canvas = "sun_canvas"
-        #     break
-        # else:
         pass
 
     return f"{base}{canvas}.png"

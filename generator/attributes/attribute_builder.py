@@ -165,39 +165,6 @@ class AttributesBuilder:
         """
         pass
 
-    # def crazy_circles(self):
-    #     """
-    #     Usamos el Crazy Circles function.
-    #     """
-    #     # Crea un nuevo canvas con los crazy circles!
-    #     image = crazy_circles(
-    #         BoxSize(
-    #             self.image.width, 
-    #             self.image.height
-    #         ),
-    #         circle_radius=random.randint(10, 100), 
-    #         amount=random.randint(1, 10), 
-    #         width=random.randint(1, 9),
-    #         # image=self.image,
-    #     )
-
-    #     # Toma los pixels del imagen
-    #     pixels = image.getdata()
-    #     # Cambia los pixels a colores random
-    #     new_pixels = replace_pixels(pixels, [randomifycolor(), self.colors.bckg], [(0,0,0), (255,255,255)])
-    #     # Actualiza
-    #     image.putdata(new_pixels)
-        
-    #     # Gurda el photo y hacemos transparent
-    #     self.finish()
-    #     make_transparent(self.output, self.colors.bckg)
-
-    #     self.image = Image.open(self.output)
-    #     self.image = center_image(image, self.image)
-
-    #     #Pon el cock en el canvas
-    #     image.paste(self.image, (0,0), self.image)
-    #     self.image = image
 
 def attribute_dict(trait, value):
     return {'trait_type': trait, 'value': value}

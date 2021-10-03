@@ -2,7 +2,6 @@
 from generator.random_data import randomify, randomifycolor
 from generator.attributes.attributes import Attribute
 from generator.colors_data import Colors
-from PIL import ImageDraw
 
 
 class Point(object):

@@ -1,8 +1,6 @@
 import random
-from generator.checker.check import is_valid_fractal
 from generator.fractals.box_size import BoxSize
 from PIL import Image
-from generator.random_data import randomifycolor
 
 
 class FractalBuilder:

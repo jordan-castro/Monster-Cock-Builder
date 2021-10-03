@@ -252,15 +252,3 @@ def bool_from_input(prompt: str= "(y/n) ")-> bool:
         return True
     else:
         return False
-
-
-if __name__ == "__main__":
-    pass
-    # data = Colors(ChickenType.HEN)
-    # for d in data.after:
-    #     print(d)
-    #     print(rgb_to_name(d))
-    #     print()
-    # print(rgb_to_name(data))
-    # make_transparent('base_art/detailed_cock.png')
-    # change_size("base_art/FinalCockHR.png", (379, 415))

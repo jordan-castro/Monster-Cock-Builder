@@ -1,7 +1,5 @@
 ### Script para crear fractals con squares
-import random
-from generator.fractals.box_size import BoxSize
-from PIL import Image, ImageDraw
+from PIL import ImageDraw
 
 
 def draw_squares(**kwargs):
@@ -48,19 +46,3 @@ def draw_round_squares(**kwargs):
     kwargs['amount'] -= 1
 
     draw_round_squares(**kwargs)
-
-
-# if __name__ == "__main__":
-#     i = fractify(
-#         BoxSize(
-#             width=1200,
-#             height=1200
-#         ),
-#         draw_round_squares,
-#         size=random.randint(1, 100),
-#         amount=random.randint(1, 10),
-#         width=random.randint(1, 10),
-#         radius=5
-#     )
-
-#     i.show()
