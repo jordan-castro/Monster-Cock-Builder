@@ -30,8 +30,8 @@ class Colors(object):
         if self.chicken_type == ChickenType.DETAILED_COCK:
             self.colors.append(Color((148, 31, 61), title='Comb')) # El comb
             self.colors.append(Color((180, 63, 61), title='Comb')) # COMB
-            self.colors.append(Color((213, 97, 53), title='Nose')) # NARIZ 
-            self.colors.append(Color((237, 129, 53), title='Nose')) # NARIZ
+            self.colors.append(Color((213, 97, 53), title='Beak')) # NARIZ 
+            self.colors.append(Color((237, 129, 53), title='Beak')) # NARIZ
             self.colors.append(Color((109, 12, 39), title='Comb')) # El comb por el nariz
             self.colors.append(Color((247, 247, 239), title='Eye')) # OJO
             self.colors.append(Color((213, 97, 53), title='Neck')) # EL NECK primero

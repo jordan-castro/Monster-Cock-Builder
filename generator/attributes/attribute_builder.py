@@ -1,4 +1,4 @@
-from generator.utils import replace_pixels, rgb_to_name
+from generator.utils import replace_pixels
 from generator.colors_data import Color, Colors
 from generator.chicken_type import ChickenType
 from generator.attributes.attributes import Attribute, convert_attribute_to_string
@@ -60,8 +60,8 @@ class AttributesBuilder:
             return '-'.join(colors)
 
         comb_colors = grab_colors('Comb')
-        nose_colors = grab_colors('Nose')
-        eye_color = grab_colors('Eye')
+        nose_colors = grab_colors('Beak')
+        eye_color = grab_colors('Beak')
         neck_colors = grab_colors('Neck')
         back_color = grab_colors('Back')
         chest_colors = grab_colors('Chest')
@@ -69,7 +69,7 @@ class AttributesBuilder:
         leg_colors = grab_colors('Leg')
 
         attributes.append(attribute_dict('Comb color', create_attr_from_colors(comb_colors)))
-        attributes.append(attribute_dict('Nose color', create_attr_from_colors(nose_colors)))
+        attributes.append(attribute_dict('Beak color', create_attr_from_colors(nose_colors)))
         attributes.append(attribute_dict('Eye color', create_attr_from_colors(eye_color)))
         attributes.append(attribute_dict('Neck color', create_attr_from_colors(neck_colors)))
         attributes.append(attribute_dict('Back color', create_attr_from_colors(back_color)))
