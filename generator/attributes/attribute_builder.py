@@ -61,7 +61,7 @@ class AttributesBuilder:
 
         comb_colors = grab_colors('Comb')
         nose_colors = grab_colors('Beak')
-        eye_color = grab_colors('Beak')
+        eye_color = grab_colors('Eye')
         neck_colors = grab_colors('Neck')
         back_color = grab_colors('Back')
         chest_colors = grab_colors('Chest')
