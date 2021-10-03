@@ -224,6 +224,36 @@ def read_hashes():
         return list(map(lambda h: h.strip(), lines))
 
 
+def bool_from_input(prompt: str= "(y/n) ")-> bool:
+    """
+    Encuentra un boolean por el command line.
+
+    Params:
+        - <prompt: str= "(y/n) "> El prompt para el usario!
+
+    Returns: <bool>
+    """
+    yes = [
+        'y',
+        'yes',
+        '1'
+    ]
+    no = [
+        'n',
+        'no',
+        '0'
+    ]
+
+    i = input(prompt).lower()
+    while i not in yes and i not in no:
+        i = input(prompt).lower()
+        
+    if i in yes:
+        return True
+    else:
+        return False
+
+
 if __name__ == "__main__":
     pass
     # data = Colors(ChickenType.HEN)
