@@ -19,7 +19,7 @@ def is_valid_fractal(image)-> bool:
     # El nuevo imagen con crop
     checker = image.crop((100,100, width, height))
     # Data para el negro
-    needed = 10
+    needed = 20
     rows = []
 
     pixels = np.array(checker)
