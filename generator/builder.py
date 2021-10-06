@@ -6,6 +6,7 @@ from generator.attributes.attributes import Attribute
 from generator.image_gen import ImageGen
 from generator.chicken_type import ChickenType
 from generator.uploader.upload import Uploader
+import json
 import time
 import optparse
 
@@ -30,10 +31,14 @@ def both():
         print(f"Generating --- {x + 1} de {amount}")
         # Buscamos el id del cock por smart contract
         cock_id = minter.most_recent()
-        
+        times_checked = 0
         while cock_id == pre:
+            if times_checked > 5:
+                print("Algo fue mallo con el smart contract!")
+                exit()
             cock_id = minter.most_recent()
-        
+            times_checked += 1
+
         pre = cock_id
         print(f"ID de cock {cock_id}")
         gen = ImageGen(ChickenType.DETAILED_COCK, cock_id, randomifyattributes(Attribute.GEN_0))
@@ -74,7 +79,8 @@ def both():
 def generator(amount, save):
     if save:
         print("Vamos a guardar!")
-    
+    attributes = []
+
     start = time.time()
     for x in range(amount):
         print(f"Generating --- {x + 1} de {amount}")
@@ -82,6 +88,8 @@ def generator(amount, save):
         gen = ImageGen(ChickenType.DETAILED_COCK, x, randomifyattributes(Attribute.GEN_0))
         mck = gen.draw()
         
+        attributes.append({mck:AttributesBuilder.pretty_attributes(gen.color_data, gen.attributes)})
+
         if save:
             # Uploaderlo
             uploader = Uploader(
@@ -100,6 +108,8 @@ def generator(amount, save):
             save_hash(_hash)
     # Busca cuando se termino
     end = time.time()
+    with open("attributes.json", 'w') as file:
+        json.dump(attributes, file)
     print(f"Tiempo tomado para {amount} fue {int(end - start)} segundos")
 
 
