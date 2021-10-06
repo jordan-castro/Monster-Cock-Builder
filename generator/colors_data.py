@@ -47,10 +47,7 @@ class Colors(object):
             self.colors.append(Color((102, 81, 86), title='Leg')) # Leg siguiente
 
         for color in self.colors:
-            if color.title == "Eye":
-                color.after = darken_color(self.random_bck())
-            else:
-                color.after = self.random_bck()
+            color.after = self.random_bck()
             color.value = rgb_to_name(color.after)
 
     def random_bck(self):
