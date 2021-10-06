@@ -68,14 +68,14 @@ class AttributesBuilder:
         wing_colors = grab_colors('Wing')
         leg_colors = grab_colors('Leg')
 
-        attributes.append(attribute_dict('Comb color', create_attr_from_colors(comb_colors)))
-        attributes.append(attribute_dict('Beak color', create_attr_from_colors(nose_colors)))
-        attributes.append(attribute_dict('Eye color', create_attr_from_colors(eye_color)))
-        attributes.append(attribute_dict('Neck color', create_attr_from_colors(neck_colors)))
-        attributes.append(attribute_dict('Back color', create_attr_from_colors(back_color)))
-        attributes.append(attribute_dict('Chest color', create_attr_from_colors(chest_colors)))
-        attributes.append(attribute_dict('Wing color', create_attr_from_colors(wing_colors)))
-        attributes.append(attribute_dict('Leg color', create_attr_from_colors(leg_colors)))
+        attributes.append(attribute_dict('Comb', create_attr_from_colors(comb_colors)))
+        attributes.append(attribute_dict('Beak', create_attr_from_colors(nose_colors)))
+        attributes.append(attribute_dict('Eye', create_attr_from_colors(eye_color)))
+        attributes.append(attribute_dict('Neck', create_attr_from_colors(neck_colors)))
+        attributes.append(attribute_dict('Back', create_attr_from_colors(back_color)))
+        attributes.append(attribute_dict('Chest', create_attr_from_colors(chest_colors)))
+        attributes.append(attribute_dict('Wing', create_attr_from_colors(wing_colors)))
+        attributes.append(attribute_dict('Leg', create_attr_from_colors(leg_colors)))
         # Ahora hacemos overide para los attributos invicos
         for attribute in attr:
             _attr = convert_attribute_to_string(attribute)
