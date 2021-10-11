@@ -104,6 +104,7 @@ class Colors(object):
         for color in self.colors:
             color.after = self.random_color()
             color.value = rgb_to_name(color.after)
+        print("Ya nos fuimos!")
 
     def random_color(self):
         """
@@ -116,15 +117,31 @@ class Colors(object):
             if not self.category:
                 # Busca los keys
                 keys = list(data.keys())
-                # Un random
-                index = random.randint(0, len(keys) - 1)
-                self.category = keys[index]
+                # Para recordar los tiempos que hacemos loop
+                times_looped = 0
+                while 1:
+                    times_looped += 1
+                    print(times_looped)
+                    # Un random
+                    index = random.randint(0, len(keys) - 1)
+                    self.category = keys[index]
+                    # Chequea si ya hemos usado este categoria completamente ya!
+                    already_used = pallete_black_list(self.category)
+                    if len(already_used) == len(data[self.category]):
+                        print(f"Ya hemos usado todos los colores de categoria {self.category}. Debes poner mas.")
+                        # Chequea si ya hemos tocado a todos los llaves!
+                        if times_looped == len(keys):
+                            self.category = None
+                            return self.random_bck()
+                    else:
+                        break
+                print(f"La categoria es {self.category}")
 
             # Chequea si ya icimos todo de un pallete
             if len(self.colors_used) == 4:
                 self.colors_used = []
                 self.current_pallete = None
-
+            
             # Si no hay un pallete
             if not self.current_pallete:
                 # El index del pallete
@@ -133,6 +150,7 @@ class Colors(object):
                     pallete = data[self.category][str(pallete_index)]
                     # Chequea que es un nuevo pallete
                     already_used = pallete_black_list(self.category)
+                    # Chequea si ya hemos usado el pallete
                     if not pallete in self.palletes and not pallete_index in already_used:
                         self.palletes.append(pallete)
                         self.current_pallete = pallete
