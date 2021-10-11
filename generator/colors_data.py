@@ -1,11 +1,9 @@
 import random
+from generator.uploader.globals import PALLETE_LOCATION
 from generator.utils import darken_color, rgb_to_name
 from generator.chicken_type import ChickenType
 from generator.random_data import randomifycolor
 import json
-
-
-PALLETE_LOCATION = "C:/Users/jorda/Documents/Python_Projects/color-pallete-web/palletes.json"
 
 
 def black_list_pallete(category, pallete_index):
