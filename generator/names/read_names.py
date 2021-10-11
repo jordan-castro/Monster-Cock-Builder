@@ -52,7 +52,7 @@ def black_list_name(name: str):
         file.write('\n')
 
 
-def get_random_name(chicken_id: int, chicken_type: ChickenType):
+def get_random_name(chicken_id: int, chicken_type: ChickenType, save=True):
     """
     Toma el nombre del pollo.
 
@@ -64,7 +64,7 @@ def get_random_name(chicken_id: int, chicken_type: ChickenType):
     """
     names = scrape_names(chicken_type)
     # Busca los nombres que ya han sido usado
-    already_used = used_names()
+    already_used = used_names() if save else []
 
     start = True
     chosen_name = "TOtAlMeNtENomBReRaNddOm"
@@ -78,8 +78,9 @@ def get_random_name(chicken_id: int, chicken_type: ChickenType):
         # Busca el nombre
         chosen_name = names[index]
 
-    # Pon el nombre en blakclist
-    black_list_name(chosen_name)
+    if save:
+        # Pon el nombre en blakclist
+        black_list_name(chosen_name)
 
     return f"{chosen_name}_#{chicken_id}"
 

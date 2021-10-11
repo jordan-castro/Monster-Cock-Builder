@@ -1,6 +1,58 @@
+import random
 from generator.utils import darken_color, rgb_to_name
 from generator.chicken_type import ChickenType
 from generator.random_data import randomifycolor
+import json
+
+
+PALLETE_LOCATION = "C:/Users/jorda/Documents/Python_Projects/color-pallete-web/palletes.json"
+
+
+def black_list_pallete(category, pallete_index):
+    """
+    Black list a pallete based on su categoria y index.
+
+    Params:
+        - <category: str> El nombre de la categoria.
+        - <pallete_index: int> El index del pallete.
+    """
+    # Busca la data
+    data = None
+    with open("black_palletes.json", 'r') as file:
+        data = file.read()
+    # Los palletes en {} format
+    palletes = json.loads(data) if data else {}
+    # Chequea si la llave existe
+    if category in list(palletes.keys()):
+        # Pon lo!!!
+        palletes[category].append(pallete_index)
+    else:
+        # Entonces crealo
+        palletes[category] = [pallete_index]
+    # Escribe lo!
+    with open("black_palletes.json", 'w') as file:
+        json.dump(palletes, file)
+
+
+def pallete_black_list(category):
+    """
+    Regresa el blacklist del pallete. Por su categoria.
+
+    Params: 
+        - <category: str> La categoria.
+
+    Returns: <list> 
+    """
+    with open("black_palletes.json", 'r') as file:
+        data = file.read()
+        palletes = json.loads(data) if data else {}
+        # Ahora buscamos si 'category' existe
+        if category in list(palletes.keys()):
+            # La lista
+            return palletes[category]
+        else:
+            # Nada negro
+            return []
 
 
 class Color(object):
@@ -9,7 +61,6 @@ class Color(object):
         self.after = after
         self.title = title
         self.value = value
-
         super().__init__()
 
 
@@ -17,6 +68,10 @@ class Colors(object):
     def __init__(self, chicken_type: ChickenType) -> None:
         self.chicken_type = chicken_type
         self.colors: list[Color] = []
+        self.category = None
+        self.current_pallete = None
+        self.palletes = []
+        self.colors_used = []
 
         self.decide()
         self.aura = self.random_bck()
@@ -47,14 +102,72 @@ class Colors(object):
             self.colors.append(Color((102, 81, 86), title='Leg')) # Leg siguiente
 
         for color in self.colors:
-            color.after = self.random_bck()
+            color.after = self.random_color()
             color.value = rgb_to_name(color.after)
+
+    def random_color(self):
+        """
+        Buscamos unos palletes random.
+        """
+        # Busca de los palletes.json
+        with open(PALLETE_LOCATION, 'r') as p_file:
+            data = json.load(p_file)
+            # Chequea que no hay una categoria
+            if not self.category:
+                # Busca los keys
+                keys = list(data.keys())
+                # Un random
+                index = random.randint(0, len(keys) - 1)
+                self.category = keys[index]
+
+            # Chequea si ya icimos todo de un pallete
+            if len(self.colors_used) == 4:
+                self.colors_used = []
+                self.current_pallete = None
+
+            # Si no hay un pallete
+            if not self.current_pallete:
+                # El index del pallete
+                while 1:
+                    pallete_index = random.randint(0, len(data[self.category]) - 1)
+                    pallete = data[self.category][str(pallete_index)]
+                    # Chequea que es un nuevo pallete
+                    already_used = pallete_black_list(self.category)
+                    if not pallete in self.palletes and not pallete_index in already_used:
+                        self.palletes.append(pallete)
+                        self.current_pallete = pallete
+                        # Black list
+                        black_list_pallete(self.category, pallete_index)
+                        break
+            else:
+                # El pallete es el current_pallete
+                pallete = self.current_pallete
+
+            index = 0
+            while 1:
+                h_color = pallete[index]
+                # Converte a RGB
+                rgb_color = tuple(int(h_color[i:i+2], 16) for i in (0, 2, 4))
+                index += 1
+                # Chequea si existe ya en los colores
+                if not rgb_color in self.current_colors:
+                    self.colors_used.append(rgb_color)
+                    return rgb_color
+
+    @property
+    def current_colors(self):
+        """
+        Busca los colores currentamente.
+
+        Returns: <list>
+        """
+        return list(map(lambda c: c.after, self.colors))
 
     def random_bck(self):
         bckg = randomifycolor()
         
         # Los colores de self.after
-        colors = list(map(lambda c: c.after, self.colors))
+        colors = self.current_colors
         
         # Chequea si el bckg esta en despues
         while bckg in colors:

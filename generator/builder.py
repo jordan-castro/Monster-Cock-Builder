@@ -78,14 +78,16 @@ def both():
 
 def generator(amount, save):
     if save:
-        print("Vamos a guardar!")
+        print("Si Vamos a guardar!")
+    else:
+        print("No vamos a guardar!")
     attributes = []
 
     start = time.time()
     for x in range(amount):
         print(f"Generating --- {x + 1} de {amount}")
         # Abre el class de generation
-        gen = ImageGen(ChickenType.DETAILED_COCK, x, randomifyattributes(Attribute.GEN_0))
+        gen = ImageGen(ChickenType.DETAILED_COCK, x, randomifyattributes(Attribute.GEN_0), save)
         mck = gen.draw()
         
         attributes.append({mck:AttributesBuilder.pretty_attributes(gen.color_data, gen.attributes)})
@@ -106,6 +108,7 @@ def generator(amount, save):
                 continue
             # Guarda hash
             save_hash(_hash)
+        print(f"Generado {mck}")
     # Busca cuando se termino
     end = time.time()
     with open("attributes.json", 'w') as file:

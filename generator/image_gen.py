@@ -10,9 +10,9 @@ from generator.names.read_names import get_random_name
 
 
 class ImageGen:
-    def __init__(self, chicken_type: ChickenType, id: int, attributes: list=None):
+    def __init__(self, chicken_type: ChickenType, id: int, attributes: list=None, save=True):
         self.chicken_type = chicken_type
-        self.name = get_random_name(id, chicken_type)
+        self.name = get_random_name(id, chicken_type, save)
         self.color_data = Colors(chicken_type)
         self.attributes = attributes
         self.id = id
