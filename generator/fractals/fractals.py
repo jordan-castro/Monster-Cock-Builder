@@ -8,6 +8,7 @@ from generator.fractals.crazy_circles import draw_circles
 from generator.attributes.attributes import Attribute
 from generator.random_data import randomifycolor
 import random
+import generator.tracker.tracker as t
 
 
 def draw_fractal(image, attribute: Attribute)-> Image:
@@ -39,6 +40,8 @@ def draw_fractal(image, attribute: Attribute)-> Image:
         elif attribute == Attribute.STRIPES:
             method = draw_stripes
 
+        outline_color = t.tracker.colors.random_color()
+
         image = FractalBuilder().build(
             BoxSize(
                 image.width, 
@@ -48,7 +51,7 @@ def draw_fractal(image, attribute: Attribute)-> Image:
             radius=radius,
             width=width,
             image=image,
-            outline=randomifycolor(),
+            outline=outline_color,
             size=size
         )
 

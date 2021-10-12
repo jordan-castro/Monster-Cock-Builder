@@ -1,5 +1,6 @@
 ### Script para sacar todos los nombres del .txt
 from generator.chicken_type import ChickenType
+import generator.tracker.tracker as t
 import codecs
 import random
 
@@ -52,7 +53,7 @@ def black_list_name(name: str):
         file.write('\n')
 
 
-def get_random_name(chicken_id: int, chicken_type: ChickenType, save=True):
+def get_random_name(chicken_id: int, chicken_type: ChickenType):
     """
     Toma el nombre del pollo.
 
@@ -64,7 +65,7 @@ def get_random_name(chicken_id: int, chicken_type: ChickenType, save=True):
     """
     names = scrape_names(chicken_type)
     # Busca los nombres que ya han sido usado
-    already_used = used_names() if save else []
+    already_used = used_names()
 
     start = True
     chosen_name = "TOtAlMeNtENomBReRaNddOm"
@@ -78,9 +79,8 @@ def get_random_name(chicken_id: int, chicken_type: ChickenType, save=True):
         # Busca el nombre
         chosen_name = names[index]
 
-    if save:
-        # Pon el nombre en blakclist
-        black_list_name(chosen_name)
+    # ! El nombre para el tracker
+    t.tracker.name = chosen_name
 
     return f"{chosen_name}_#{chicken_id}"
 
