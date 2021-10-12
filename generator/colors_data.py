@@ -1,5 +1,5 @@
 import random
-from generator.uploader.globals import PALLETE_LOCATION
+from generator.uploader.hidden_globals import PALLETE_LOCATION
 from generator.utils import darken_color, rgb_to_name
 from generator.chicken_type import ChickenType
 from generator.random_data import randomifycolor
@@ -63,17 +63,18 @@ class Color(object):
 
 
 class Colors(object):
-    def __init__(self, chicken_type: ChickenType) -> None:
+    def __init__(self, chicken_type: ChickenType, category: str=None) -> None:
         self.chicken_type = chicken_type
         self.colors: list[Color] = []
-        self.category = None
+        self.category = category
         self.current_pallete = None
         self.palletes = []
+        self.times_left = 4
         self.colors_used = []
 
         self.decide()
         self.aura = self.random_bck()
-        self.bckg = self.random_bck()
+        self.bckg = self.random_color()
         super().__init__()
 
     def decide(self):
@@ -102,11 +103,13 @@ class Colors(object):
         for color in self.colors:
             color.after = self.random_color()
             color.value = rgb_to_name(color.after)
-        print("Ya nos fuimos!")
 
-    def random_color(self):
+    def random_color(self, save=True):
         """
         Buscamos unos palletes random.
+
+        Params:
+            - <save: bool = True> Guardar la vaina?
         """
         # Busca de los palletes.json
         with open(PALLETE_LOCATION, 'r') as p_file:
@@ -130,16 +133,17 @@ class Colors(object):
                         # Chequea si ya hemos tocado a todos los llaves!
                         if times_looped == len(keys):
                             self.category = None
-                            return self.random_bck()
+                            return self.random_color()
                     else:
                         break
-                print(f"La categoria es {self.category}")
 
             # Chequea si ya icimos todo de un pallete
-            if len(self.colors_used) == 4:
-                self.colors_used = []
+            if self.times_left == 0:
+                self.times_left = 4
                 self.current_pallete = None
-            
+            else:
+                self.times_left -= 1
+
             # Si no hay un pallete
             if not self.current_pallete:
                 # El index del pallete
@@ -150,25 +154,34 @@ class Colors(object):
                     already_used = pallete_black_list(self.category)
                     # Chequea si ya hemos usado el pallete
                     if not pallete in self.palletes and not pallete_index in already_used:
-                        self.palletes.append(pallete)
+                        if save:
+                            self.palletes.append(pallete)
                         self.current_pallete = pallete
-                        # Black list
-                        black_list_pallete(self.category, pallete_index)
+                        # # Black list
+                        # black_list_pallete(self.category, pallete_index)
                         break
             else:
                 # El pallete es el current_pallete
                 pallete = self.current_pallete
 
-            index = 0
+            times_ran = 0
             while 1:
+                if times_ran > 4:
+                    return self.random_color()
+                index = random.randint(0, len(pallete) - 1)
                 h_color = pallete[index]
                 # Converte a RGB
                 rgb_color = tuple(int(h_color[i:i+2], 16) for i in (0, 2, 4))
-                index += 1
                 # Chequea si existe ya en los colores
-                if not rgb_color in self.current_colors:
+                if not rgb_color in self.current_colors and not rgb_color in self.colors_used:
                     self.colors_used.append(rgb_color)
                     return rgb_color
+                times_ran += 1
+
+    def mix_palletes(self):
+        """
+        Hacemos un "mix" de palletes.
+        """
 
     @property
     def current_colors(self):
