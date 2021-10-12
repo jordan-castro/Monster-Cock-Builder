@@ -252,3 +252,19 @@ def bool_from_input(prompt: str= "(y/n) ")-> bool:
         return True
     else:
         return False
+
+
+def expect_input(prompt, t):
+    """
+    Pregunta para un input que tiene que ser tipo.
+
+    Params:
+        - <prompt: str> El prompt.
+        - <t: T> El tipo.
+    
+    Returns: <res>
+    """
+    while 1:
+        res = input(prompt)
+        if type(res) == type(t):
+            return res
