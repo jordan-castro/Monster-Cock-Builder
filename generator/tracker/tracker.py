@@ -31,7 +31,7 @@ class Tracker:
         """
         # Hacemos black_list
         black_list_name(self.name)
-        base = 'testnet/' if self.is_testnet else 'mainnet'
+        base = 'testnet/' if self.is_testnet else 'mainnet/'
         # Mueve el imagen a su propio lugar
         os.rename(self.path, f'{base}{self.path}')
         # for pallete in self.colors.palletes:
