@@ -20,10 +20,12 @@ def both():
     public = input("Que es tu llave publico: ")
     private = input("Que es tu private key: ")
     is_this_test_net = bool_from_input("Prueba? (y/n): ")
+    print(f"Es prueba: {is_this_test_net}")
     amount = int(input("Cuanto quieres mint? "))
 
     # Abrimos el minter
     minter = Minter(public, private, is_this_test_net)
+    tracker.is_testnet = is_this_test_net
     start = time.time()
 
     # El id del cock previouse
@@ -45,7 +47,7 @@ def both():
 
         pre = cock_id
         print(f"ID de cock {cock_id}")
-        gen = ImageGen(ChickenType.DETAILED_COCK, cock_id, randomifyattributes(Attribute.GEN_0))
+        gen = ImageGen(ChickenType.DETAILED_COCK, cock_id, randomifyattributes(Attribute.GEN_1))
         mck = gen.draw()
 
         uploader = Uploader(
