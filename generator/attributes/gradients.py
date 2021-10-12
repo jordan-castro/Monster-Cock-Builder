@@ -57,7 +57,8 @@ class Gradients:
 
         # Pon los colores
         for x in range(amount):
-            self.color_palette.append(randomifycolor())
+            color = self.colors.random_color()
+            self.color_palette.append(color)
 
     def lerp_color(self, min_val, max_val, val):
         """
