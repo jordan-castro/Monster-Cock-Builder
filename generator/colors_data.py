@@ -69,7 +69,6 @@ class Colors(object):
         self.category = category
         self.current_pallete = None
         self.palletes = []
-        self.times_left = 4
         self.colors_used = []
 
         self.decide()
@@ -114,12 +113,6 @@ class Colors(object):
         # Busca de los palletes.json
         with open(PALLETE_LOCATION, 'r') as p_file:
             data = json.load(p_file)
-            # Chequea si ya icimos todo de un pallete
-            if self.times_left == 0:
-                self.times_left = 4
-                self.current_pallete = None
-            else:
-                self.times_left -= 1
 
             # Chequea que no hay una categoria
             if not self.category:
@@ -143,6 +136,10 @@ class Colors(object):
                     else:
                         break
 
+            # Chequea si ya hemos usado todo (4 colores hex) de un pallete
+            if len(self.colors_used) % 4:
+                self.current_pallete = None
+
             # Si no hay un pallete
             if not self.current_pallete:
                 # El index del pallete
@@ -163,19 +160,17 @@ class Colors(object):
                 # El pallete es el current_pallete
                 pallete = self.current_pallete
 
-            times_ran = 0
-            while 1:
-                if times_ran > 4:
-                    return self.random_color()
+            for i in range(4):
                 index = random.randint(0, len(pallete) - 1)
                 h_color = pallete[index]
                 # Converte a RGB
                 rgb_color = tuple(int(h_color[i:i+2], 16) for i in (0, 2, 4))
-                # Chequea si existe ya en los colores
+                # Chequea que es nuevo colore
                 if not rgb_color in self.current_colors and not rgb_color in self.colors_used:
                     self.colors_used.append(rgb_color)
                     return rgb_color
-                times_ran += 1
+            # Si toquemos aqui queremos repetir todo el processo!
+            return self.random_color()
 
     @property
     def current_colors(self):
