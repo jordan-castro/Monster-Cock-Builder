@@ -3,6 +3,8 @@ from PIL import Image
 from generator.colors_data import Colors, black_list_pallete
 import os
 
+from generator.names.read_names import black_list_name
+
 
 class Tracker:
     def __init__(self) -> None:
@@ -11,6 +13,7 @@ class Tracker:
         self.path: str = None
         self.colors: Colors = None
         self.image: Image = None
+        self.is_testnet = None
 
     def reset(self):
         """
@@ -28,6 +31,9 @@ class Tracker:
         """
         # Hacemos black_list
         black_list_name(self.name)
+        base = 'testnet/' if self.is_testnet else 'mainnet'
+        # Mueve el imagen a su propio lugar
+        os.rename(self.path, f'{base}{self.path}')
         # for pallete in self.colors.palletes:
         #     black_list_pallete(self.colors.category, pallete)
 
