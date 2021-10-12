@@ -147,5 +147,18 @@ def __can_have_attr__(current_list: list[Attribute], black_list: list[Attribute]
     return attributes 
 
 
+def randomchoice(data):
+    """
+    Toma una opcion de data random.
+
+    Params:
+        - <data: [list | tuple | dict]> La data
+
+    Returns: <res>
+    """
+    index = random.randint(0, len(data) - 1)
+    return data[index]
+
+
 if __name__ == "__main__":
     randomifyattributes(Attribute.GEN_0)
