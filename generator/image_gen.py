@@ -2,19 +2,38 @@ from generator.attributes.attribute_builder import AttributesBuilder
 from generator.attributes.canvas import get_canvas, create_image
 from generator.utils import replace_pixels
 from generator.attributes.attributes import Attribute
-from generator.random_data import randomifyflip
+from generator.random_data import randomchoice, randomifyflip, randomifylist
 from generator.chicken_type import ChickenType
 from PIL import ImageOps
 from generator.colors_data import Colors
 from generator.names.read_names import get_random_name
+import generator.tracker.tracker as t
 
 
 class ImageGen:
-    def __init__(self, chicken_type: ChickenType, id: int, attributes: list=None, save=True):
+    def __init__(self, chicken_type: ChickenType, id: int, attributes: list=None, custom_data: dict=None):
         self.chicken_type = chicken_type
-        self.name = get_random_name(id, chicken_type, save)
-        self.color_data = Colors(chicken_type)
+        if custom_data:
+            # Chequea si el nombre es random "Significa que queremos nombre random!"
+            if custom_data['name'] == "random":
+                self.name = get_random_name(id, chicken_type)
+            else:
+                t.tracker.name = custom_data['name']
+                self.name = f"{custom_data['name']}_#{id}"
+            if custom_data['gradient']:
+                if not Attribute.GRADIENT_V in attributes and not Attribute.GRADIENT_H in attributes: 
+                    attributes.append(
+                      randomchoice([Attribute.GRADIENT_H, Attribute.GRADIENT_V])
+                    )
+
+        else:
+            self.name = get_random_name(id, chicken_type)
+
+        self.color_data = Colors(chicken_type, custom_data['category']) if custom_data else Colors(chicken_type)
+        t.tracker.colors = self.color_data
+        
         self.attributes = attributes
+        
         self.id = id
         self.image = self.open()
 
@@ -52,6 +71,11 @@ class ImageGen:
         # Hacemos los attributos
         builder = AttributesBuilder(new_image, f"{self.name}.png")
         builder.build(self.chicken_type, self.attributes, self.color_data)
+
+        # ! El objecto de tracker para la data
+        t.tracker.image = new_image
+        t.tracker.id = self.id
+        t.tracker.path = f"{self.name}.png"
 
         return self.name
 

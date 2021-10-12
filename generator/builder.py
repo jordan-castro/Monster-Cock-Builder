@@ -1,4 +1,5 @@
 import os
+from generator.custom_fields import custom_monster_cock
 from generator.uploader.blockchain_con import Minter
 from generator.attributes.attribute_builder import AttributesBuilder
 from generator.random_data import randomifyattributes
@@ -11,6 +12,7 @@ import time
 import optparse
 
 from generator.utils import bool_from_input, read_hashes, remove_hash, save_hash
+from generator.tracker.tracker import tracker as tracker
 
 
 def both():
@@ -24,6 +26,8 @@ def both():
     minter = Minter(public, private, is_this_test_net)
     start = time.time()
 
+    # El id del cock previouse
+    # Empieza con None    
     pre = None
 
     # Loop con amount
@@ -60,6 +64,7 @@ def both():
         # Verifica el mint del smart contract con el id y nombre!!!
         pos = bool_from_input(f"Hacemos un mint con {mck} quien tiene id de {cock_id} en el smart contract? (y/n) ")
         if pos:
+            tracker.finalize()
             res = minter.mint(h)
             # Chequea si no funciono
             if not res:
@@ -67,11 +72,14 @@ def both():
                 print(f"No podiamos hacer mint con {h} con {x + 1}.\nTerminando...")
                 break
         else:
+            tracker.destroy()
             print("Ok... Terminando...")
             # Quita el hash
             uploader.unpin(h)
             remove_hash(h)
             break
+        # Hacemos reset
+        tracker.reset()
     
     end = time.time()
     print(f"Tiempo tomado {int(end - start)} segundos")
@@ -83,16 +91,27 @@ def generator(amount, save):
         print("No vamos a guardar!")
     attributes = []
 
+    custom = bool_from_input("Uno es custom (y/n) ")
+
     start = time.time()
     for x in range(amount):
         print(f"Generating --- {x + 1} de {amount}")
+        if custom:
+            custom_cock = bool_from_input("Esto es un cock custom? (y/n) ")
+            if custom_cock:
+                custom_data = custom_monster_cock()
+            else:
+                custom_data = None
+        else:
+            custom_data = None
         # Abre el class de generation
-        gen = ImageGen(ChickenType.DETAILED_COCK, x, randomifyattributes(Attribute.GEN_0), save)
+        gen = ImageGen(ChickenType.DETAILED_COCK, x, randomifyattributes(Attribute.GEN_0), custom_data)
         mck = gen.draw()
         
         attributes.append({mck:AttributesBuilder.pretty_attributes(gen.color_data, gen.attributes)})
 
         if save:
+            tracker.finalize()
             # Uploaderlo
             uploader = Uploader(
                 gen.chicken_type,
@@ -108,6 +127,9 @@ def generator(amount, save):
                 continue
             # Guarda hash
             save_hash(_hash)
+        else:
+            tracker.image.show()
+            tracker.destroy()
         print(f"Generado {mck}")
     # Busca cuando se termino
     end = time.time()
