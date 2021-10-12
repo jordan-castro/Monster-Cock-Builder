@@ -114,6 +114,13 @@ class Colors(object):
         # Busca de los palletes.json
         with open(PALLETE_LOCATION, 'r') as p_file:
             data = json.load(p_file)
+            # Chequea si ya icimos todo de un pallete
+            if self.times_left == 0:
+                self.times_left = 4
+                self.current_pallete = None
+            else:
+                self.times_left -= 1
+
             # Chequea que no hay una categoria
             if not self.category:
                 # Busca los keys
@@ -122,7 +129,6 @@ class Colors(object):
                 times_looped = 0
                 while 1:
                     times_looped += 1
-                    print(times_looped)
                     # Un random
                     index = random.randint(0, len(keys) - 1)
                     self.category = keys[index]
@@ -136,13 +142,6 @@ class Colors(object):
                             return self.random_color()
                     else:
                         break
-
-            # Chequea si ya icimos todo de un pallete
-            if self.times_left == 0:
-                self.times_left = 4
-                self.current_pallete = None
-            else:
-                self.times_left -= 1
 
             # Si no hay un pallete
             if not self.current_pallete:
@@ -177,11 +176,6 @@ class Colors(object):
                     self.colors_used.append(rgb_color)
                     return rgb_color
                 times_ran += 1
-
-    def mix_palletes(self):
-        """
-        Hacemos un "mix" de palletes.
-        """
 
     @property
     def current_colors(self):
