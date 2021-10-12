@@ -17,4 +17,4 @@ Join our Reddit
 https://www.reddit.com/r/MonsterCocksArt/
 
 Follow us on Twitter
-https://twitter.com/MonsterCocksArts
+https://twitter.com/MonsterCocksArt
