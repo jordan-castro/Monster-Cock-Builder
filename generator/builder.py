@@ -37,13 +37,16 @@ def both():
         print(f"Generating --- {x + 1} de {amount}")
         # Buscamos el id del cock por smart contract
         cock_id = minter.most_recent()
+        
+        # Chequea que el ID siempre es differente!
         times_checked = 0
-        while cock_id == pre:
-            if times_checked > 5:
-                print("Algo fue mallo con el smart contract!")
-                exit()
+        while cock_id == pre and times_checked <= 5:
             cock_id = minter.most_recent()
             times_checked += 1
+        if times_checked > 5:
+            print("Algo fue mallo con el smart contract!")
+            exit()
+
 
         pre = cock_id
         print(f"ID de cock {cock_id}")
