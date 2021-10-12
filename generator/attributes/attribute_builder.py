@@ -57,6 +57,8 @@ class AttributesBuilder:
             )
 
         def create_attr_from_colors(colors: list[Color]):
+            # Filteramos los valueos que son repetido
+            colors = list(set(colors))
             return '-'.join(colors)
 
         comb_colors = grab_colors('Comb')
