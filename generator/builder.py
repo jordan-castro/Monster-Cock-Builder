@@ -49,11 +49,16 @@ def both():
         print(f"ID de cock {cock_id}")
         gen = ImageGen(ChickenType.DETAILED_COCK, cock_id, randomifyattributes(Attribute.GEN_1))
         mck = gen.draw()
+        # Pretty attributes
+        attributes = AttributesBuilder.pretty_attributes(gen.color_data, gen.attributes)
+        with open("attributes.json", 'w') as file:
+            json.dump(attributes, file, indent=4)
 
+        # Carga a servicio de IPFS
         uploader = Uploader(
             gen.chicken_type,
             mck,
-            AttributesBuilder.pretty_attributes(gen.color_data, gen.attributes)
+            attributes
         )
         h = uploader.upload()
         # Chequeamos el upload no funciono
@@ -61,24 +66,22 @@ def both():
             # Di lo y termina!
             print(f"Una problema con {x + 1}. Terminando...")
             break
-        # Guarda hash para futuro
-        save_hash(h)
         # Verifica el mint del smart contract con el id y nombre!!!
         pos = bool_from_input(f"Hacemos un mint con {mck} quien tiene id de {cock_id} en el smart contract? (y/n) ")
         if pos:
             tracker.finalize()
-            res = minter.mint(h)
+            res = minter.mint(uploader.hashes['json'])
             # Chequea si no funciono
             if not res:
                 # Di al usario y termina!!
-                print(f"No podiamos hacer mint con {h} con {x + 1}.\nTerminando...")
+                print(f"No podiamos hacer mint con {uploader.hashes['json']} con {x + 1}.\nTerminando...")
                 break
         else:
             tracker.destroy()
             print("Ok... Terminando...")
             # Quita el hash
-            uploader.unpin(h)
-            remove_hash(h)
+            for hsh in uploader.hashes.values():
+                uploader.unpin(hsh)
             break
         # Hacemos reset
         tracker.reset()
