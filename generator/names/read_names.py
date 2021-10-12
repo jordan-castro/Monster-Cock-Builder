@@ -37,7 +37,8 @@ def used_names():
 
     Returns: <list>
     """
-    with codecs.open('blacklistnames.txt', 'r', 'utf8') as file:
+    base = "testnet/" if t.tracker.is_testnet else 'mainnet/'
+    with codecs.open(f'{base}blacklistnames.txt', 'r', 'utf8') as file:
         return file.readlines()
 
 
@@ -48,7 +49,8 @@ def black_list_name(name: str):
     Params:
         - <name: str> El nombre de blacklist.
     """
-    with codecs.open('blacklistnames.txt', 'a', 'utf8') as file:
+    base = "testnet/" if t.tracker.is_testnet else 'mainnet/'
+    with codecs.open(f'{base}blacklistnames.txt', 'a', 'utf8') as file:
         file.write(name)
         file.write('\n')
 
