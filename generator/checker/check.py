@@ -26,7 +26,7 @@ def is_valid_fractal(image, needed=100) -> bool:
     height = image.height - 100
     # El nuevo imagen con crop
     checker = image.crop((100, 100, width, height))
-    # Data para el negro
+    # Data para la respuesta
     rows = []
 
     pixels = np.array(checker)
