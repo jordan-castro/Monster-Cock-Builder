@@ -1,12 +1,12 @@
 # Script para chequea que hay un patron en el monster cock
 from PIL import Image, ImageDraw
 import numpy as np
-import random
 from generator.attributes.attributes import Attribute
 from generator.attributes.gradients import Gradients
 from generator.chicken_type import ChickenType
 from generator.colors_data import Colors
 from generator.utils import conver_to_3
+from collections import Counter
 
 from generator.tracker.tracker import tracker
 
@@ -51,28 +51,29 @@ def check_for_gradient(image, gradients: list[tuple[int, int, int]] = None) -> b
     Returns: <bool> 
     """
     # Si gradients son None entonces usamos gradients en tracker.tracker
-    gradients = gradients or list(set(tracker.gradients))
+    gradients = gradients or tracker.gradients
+    # Lo hacemos aqui porque no funciono arriba
+    gradients = list(set(gradients))
 
-    # Los tiempos encontrado
-    times_found = 0
     # Minimo para verificar
-    needed = 20
+    needed = len(gradients) - 10
 
     # Los pixels
     pixels = [conver_to_3(i) for i in image.getdata()]
+    pixels = list(set(pixels))
 
-    print(gradients)
+    # Queremos contar cuantas veces existe el gradient
+    counter = Counter(
+        list(
+            map(
+                lambda p: p in gradients, 
+                pixels
+            )
+        )
+    )
 
-    # Para cada color chequea si esta en pixels
-    for color in gradients:
-        if color in pixels:
-            times_found += 1
-            if times_found >= needed:
-                break
-
-    print(times_found)
-
-    return times_found >= needed
+    # Para ser True tiene que tener mas de el needed
+    return counter[True] >= needed
 
 
 if __name__ == "__main__":
