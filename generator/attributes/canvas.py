@@ -1,4 +1,5 @@
 from generator.attributes.gradients import Gradients
+from generator.checker.check import check_for_gradient
 from generator.colors_data import Colors
 from generator.attributes.attributes import Attribute
 from PIL import Image, ImageDraw
@@ -51,9 +52,12 @@ def create_image(source, canvas, attributes: list, color_data: Colors):
     ### Chequa los attributes
 
     # Gradients
+    check_gradient = False
     if Attribute.GRADIENT_V in attributes:
+        check_gradient = True
         Gradients(new_image, drawing, color_data, Attribute.GRADIENT_V).draw()
     elif Attribute.GRADIENT_H in attributes:
+        check_gradient = True
         Gradients(new_image, drawing, color_data, Attribute.GRADIENT_H).draw()
 
     if Attribute.CRAZY_CIRCLES in attributes:
@@ -64,6 +68,18 @@ def create_image(source, canvas, attributes: list, color_data: Colors):
         background = draw_fractal(background, Attribute.ROUND_SQUARES)
     if Attribute.STRIPES in attributes:
         background = draw_fractal(background, Attribute.STRIPES)
+
+    # Chequea si tenemos que verifica gradient
+    if check_gradient:
+        print("Tiene Gradient")
+        if not check_for_gradient(new_image):
+            print("Ya no")
+            # Quita el gradient
+            for gradient in [Attribute.GRADIENT_H, Attribute.GRADIENT_V]:
+                try:
+                    attributes.remove(gradient)
+                except:
+                    continue
 
     # Edita el nuevo imagen
     new_image.paste(background, (0,0))

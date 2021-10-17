@@ -14,6 +14,7 @@ class Tracker:
         self.colors: Colors = None
         self.image: Image = None
         self.is_testnet = None
+        self.gradients: list = []
 
     def reset(self):
         """
@@ -24,6 +25,7 @@ class Tracker:
         self.path = None
         self.colors = None
         self.image = None
+        self.gradients = []
 
     def finalize(self):
         """
@@ -43,7 +45,10 @@ class Tracker:
         """
         # Borra el imagen
         print(f"Vamos a destruir {self.name} con path {self.path} y id {self.id}")
-        os.unlink(self.path)
+        try:
+            os.unlink(self.path)
+        except:
+            pass
         self.reset()
 
 

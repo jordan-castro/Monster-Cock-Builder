@@ -1,7 +1,8 @@
 ### Script para poner gradients.
-from generator.random_data import randomify, randomifycolor
+from generator.random_data import randomify
 from generator.attributes.attributes import Attribute
 from generator.colors_data import Colors
+from generator.tracker.tracker import tracker
 
 
 class Point(object):
@@ -74,7 +75,10 @@ class Gradients:
         i1, i2 = int(v), min(int(v)+1, max_index)
         (r1, g1, b1), (r2, g2, b2) = self.color_palette[i1], self.color_palette[i2]
         f = v - i1
-        return int(r1 + f*(r2-r1)), int(g1 + f*(g2-g1)), int(b1 + f*(b2-b1))
+
+        color = int(r1 + f*(r2-r1)), int(g1 + f*(g2-g1)), int(b1 + f*(b2-b1))
+        tracker.gradients.append(color)
+        return color
 
     def vertical_gradient(self):
         """
