@@ -41,16 +41,17 @@ def pallete_black_list(category):
 
     Returns: <list> 
     """
-    with open("black_palletes.json", 'r') as file:
-        data = file.read()
-        palletes = json.loads(data) if data else {}
-        # Ahora buscamos si 'category' existe
-        if category in list(palletes.keys()):
-            # La lista
-            return palletes[category]
-        else:
-            # Nada negro
-            return []
+    return []
+    # with open("black_palletes.json", 'r') as file:
+    #     data = file.read()
+    #     palletes = json.loads(data) if data else {}
+    #     # Ahora buscamos si 'category' existe
+    #     if category in list(palletes.keys()):
+    #         # La lista
+    #         return palletes[category]
+    #     else:
+    #         # Nada negro
+    #         return []
 
 
 class Color(object):
