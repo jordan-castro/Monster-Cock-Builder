@@ -14,7 +14,7 @@ class FractalBuilder:
             - <radius: int = 100> El radius, no siempre se usa.
             - <amount: int = 5> Cuantos vecez dibujamos?
             - <minimum: int = 0> El mimimum que podemos tener.
-            - <width: int = 0> El size del negro, no siempro se usa.
+            - <width: int = 0> El size del imagen, no siempro se usa.
             - <image: Image = None> Si quieres usar un imagen que ya existe.
             - <fill = None> Un color.
             - <outline = None> Un color.

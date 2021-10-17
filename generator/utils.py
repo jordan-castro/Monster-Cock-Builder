@@ -90,7 +90,7 @@ def rgb_to_name(rgb: tuple[int, int, int]):
         rd = (r_c - rgb[0]) ** 2
         gd = (g_c - rgb[1]) ** 2
         bd = (b_c - rgb[2]) ** 2
-        # Los negros
+        # Los colores minimos
         min_colors[(rd + gd + bd)] = name
     # Regrese el minumum de los keys!
     return min_colors[min(min_colors.keys())]
