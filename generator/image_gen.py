@@ -67,6 +67,9 @@ class ImageGen:
         else:
             self.attributes.append(Attribute.SUN_RISE_WEST)
 
+        # Guarda la imagen ahora
+        new_image.save(f"{self.name}.png")
+
         # ! El objecto de tracker para la data
         t.tracker.image = new_image
         t.tracker.id = self.id
