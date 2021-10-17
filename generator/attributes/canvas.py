@@ -72,7 +72,7 @@ def create_image(source, canvas, attributes: list, color_data: Colors):
     # Chequea si tenemos que verifica gradient
     if check_gradient:
         print("Tiene Gradient")
-        if not check_for_gradient(new_image):
+        if not check_for_gradient(background):
             print("Ya no")
             # Quita el gradient
             for gradient in [Attribute.GRADIENT_H, Attribute.GRADIENT_V]:
