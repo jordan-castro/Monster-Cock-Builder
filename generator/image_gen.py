@@ -1,4 +1,3 @@
-from generator.attributes.attribute_builder import AttributesBuilder
 from generator.attributes.canvas import get_canvas, create_image
 from generator.utils import replace_pixels
 from generator.attributes.attributes import Attribute
@@ -67,10 +66,6 @@ class ImageGen:
             new_image = self.flip(new_image)
         else:
             self.attributes.append(Attribute.SUN_RISE_WEST)
-
-        # Hacemos los attributos
-        builder = AttributesBuilder(new_image, f"{self.name}.png")
-        builder.build(self.chicken_type, self.attributes, self.color_data)
 
         # ! El objecto de tracker para la data
         t.tracker.image = new_image
