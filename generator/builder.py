@@ -1,7 +1,7 @@
 import os
 from generator.custom_fields import custom_monster_cock
 from generator.uploader.blockchain_con import Minter
-from generator.attributes.attribute_builder import AttributesBuilder
+from generator.attributes.attribute_builder import build_attributes_json
 from generator.random_data import randomifyattributes
 from generator.attributes.attributes import Attribute
 from generator.image_gen import ImageGen
@@ -15,7 +15,7 @@ from generator.utils import bool_from_input, read_hashes, remove_hash, save_hash
 from generator.tracker.tracker import tracker as tracker
 
 
-def both():
+def upload_cocks():
     # Pregunta para su vaina
     public = input("Que es tu llave publico: ")
     private = input("Que es tu private key: ")
@@ -47,13 +47,13 @@ def both():
             print("Algo fue mallo con el smart contract!")
             exit()
 
-
         pre = cock_id
         print(f"ID de cock {cock_id}")
         gen = ImageGen(ChickenType.DETAILED_COCK, cock_id, randomifyattributes(Attribute.GEN_1))
         mck = gen.draw()
         # Pretty attributes
-        attributes = AttributesBuilder.pretty_attributes(gen.color_data, gen.attributes)
+        attributes = build_attributes_json(gen.color_data, gen.attributes)
+        # attributes = AttributesBuilder.pretty_attributes(gen.color_data, gen.attributes)
         with open("attributes.json", 'w') as file:
             json.dump(attributes, file, indent=4)
 
@@ -92,11 +92,7 @@ def both():
     end = time.time()
     print(f"Tiempo tomado {int(end - start)} segundos")
 
-def generator(amount, save):
-    if save:
-        print("Si Vamos a guardar!")
-    else:
-        print("No vamos a guardar!")
+def generator(amount):
     attributes = []
 
     custom = bool_from_input("Uno es custom (y/n) ")
@@ -116,28 +112,10 @@ def generator(amount, save):
         gen = ImageGen(ChickenType.DETAILED_COCK, x, randomifyattributes(Attribute.GEN_0), custom_data)
         mck = gen.draw()
         
-        attributes.append({mck:AttributesBuilder.pretty_attributes(gen.color_data, gen.attributes)})
+        attributes.append({mck:build_attributes_json(gen.color_data, gen.attributes)})
 
-        if save:
-            tracker.finalize()
-            # Uploaderlo
-            uploader = Uploader(
-                gen.chicken_type,
-                mck,
-                AttributesBuilder.pretty_attributes(gen.color_data, gen.attributes)
-            )
-            # Busca hash
-            _hash = uploader.upload()
-            # Chequea que hash es falso
-            if not _hash:
-                print(f"Una problema con {mck} borrando...")
-                os.unlink(mck + ".png")
-                continue
-            # Guarda hash
-            save_hash(_hash)
-        else:
-            tracker.image.show()
-            tracker.destroy()
+        tracker.image.show()
+        tracker.destroy()
         print(f"Generado {mck}")
     # Busca cuando se termino
     end = time.time()
@@ -146,36 +124,9 @@ def generator(amount, save):
     print(f"Tiempo tomado para {amount} fue {int(end - start)} segundos")
 
 
-def minter():
-    # Pregunta para su llave
-    public = input("Que es tu llave publico: ")
-    private = input("Que es tu private key: ")
-    is_this_test_net = input("Prueba? (y/n): ")
-    if is_this_test_net == "y" or is_this_test_net == "Y":
-        is_this_test_net = True
-    else:
-        is_this_test_net = False
-    # Crea el minter 
-    minter = Minter(public, private, is_this_test_net)
-    # Busca los hashes
-    hashes = read_hashes()
-    # Ahora pon lo en el smart contract
-    for _hash in hashes:
-        # Busca el current cada vez
-        print(f"Currentamente {minter.most_recent()}")
-
-        res = minter.mint(_hash)
-        if not res:
-            print(f"Suggestion de compiler!!! {_hash}")
-            break
-        else:
-            print(f"Successo!! para hash {_hash}")
-        print(f"Currentamente ahora es {minter.most_recent()}")
-
-
 def main():
     parser = optparse.OptionParser('usage %prog -m' + 'Method')
-    parser.add_option('-m', dest='method', type='string', help='specify the method to run.\nmint o generate')
+    parser.add_option('-m', dest='method', type='string', help='specify the method to run.\ngenerate o upload')
 
     options, args = parser.parse_args()
     method = options.method
@@ -186,12 +137,9 @@ def main():
     
     if method.lower() == "generate":
         amount = input("Cuantos vamos a generar? ")
-        save = bool_from_input("Vamos a guardar? ")
-        generator(int(amount), save)
-    elif method.lower() == "mint":
-        minter()
+        generator(int(amount))
     elif method.lower() == "upload":
-        both()
+        upload_cocks()
     else:
         print(f"El metodo {method} no existe...")
         exit()
