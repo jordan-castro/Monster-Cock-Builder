@@ -11,7 +11,7 @@ import random
 import generator.tracker.tracker as t
 
 
-def draw_fractal(image, attribute: Attribute)-> Image:
+def draw_fractal(image, attribute: Attribute) -> Image:
     """
     Dibuja un fractal.
 
@@ -22,7 +22,8 @@ def draw_fractal(image, attribute: Attribute)-> Image:
     Returns: <Image>
     """
     start = True
-    while not is_valid_fractal(image) or start:
+    needed = random.randint(35, 100)
+    while not is_valid_fractal(image, needed) or start:
         if start == True:
             start = False
 
@@ -44,10 +45,10 @@ def draw_fractal(image, attribute: Attribute)-> Image:
 
         image = FractalBuilder().build(
             BoxSize(
-                image.width, 
+                image.width,
                 image.height
             ),
-            method, 
+            method,
             radius=radius,
             width=width,
             image=image,
@@ -59,7 +60,8 @@ def draw_fractal(image, attribute: Attribute)-> Image:
 
 
 if __name__ == "__main__":
-    i = draw_fractal(Image.new('RGB', (1200,1200), 'white'), Attribute.CRAZY_CIRCLES)
+    i = draw_fractal(Image.new('RGB', (1200, 1200), 'white'),
+                     Attribute.CRAZY_CIRCLES)
     i.show()
     save = input("Guarda imagen? (y/n) ")
     if save == "y" or save == "Y" or save == "Yes" or save == "yes":
