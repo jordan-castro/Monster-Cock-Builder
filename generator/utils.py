@@ -266,5 +266,7 @@ def expect_input(prompt, t):
     """
     while 1:
         res = input(prompt)
+        if type(t) == type(2):
+            res = int(res)
         if type(res) == type(t):
             return res
