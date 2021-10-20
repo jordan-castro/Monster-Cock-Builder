@@ -1,17 +1,16 @@
-import os
 from generator.custom_fields import custom_monster_cock
 from generator.uploader.blockchain_con import Minter
 from generator.attributes.attribute_builder import build_attributes_json
 from generator.random_data import randomifyattributes
 from generator.attributes.attributes import Attribute
 from generator.image_gen import ImageGen
-from generator.chicken_type import ask_for_type
 from generator.uploader.upload import Uploader
 import json
 import time
 import optparse
 
-from generator.utils import bool_from_input, expect_input, read_hashes, remove_hash, save_hash
+from generator.utils import bool_from_input, expect_input
+from generator.chicken_type import ChickenType
 from generator.tracker.tracker import tracker as tracker
 
 
@@ -160,6 +159,26 @@ def main():
     elif method.lower() == "upload":
         upload_cocks(cock_type)
 
+
+def ask_for_type()->ChickenType: 
+    """
+    Pregunta para el tipo de pollo estamos generando.
+    
+    Returns: <ChickenType>
+    """
+    c_type = expect_input("Chicken Type: \n(0 => Detailed Cock) \n(1 => Hen) \n(2 => Chick) \n(3 => Soloana Cock) \n[x]: ", 2)
+    match c_type:
+        case 0:
+            return ChickenType.DETAILED_COCK
+        case 1:
+            return ChickenType.HEN
+        case 2:
+            return ChickenType.CHICK
+        case 3:
+            return ChickenType.SOLONA_COCK
+        case _:
+            raise("No pasaste una forma correcta!")
+            
 
 if __name__ == "__main__":
     main()
