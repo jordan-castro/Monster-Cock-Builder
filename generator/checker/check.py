@@ -51,16 +51,13 @@ def check_for_gradient(image, gradients: list[tuple[int, int, int]] = None) -> b
     Returns: <bool> 
     """
     # Si gradients son None entonces usamos gradients en tracker.tracker
-    gradients = gradients or tracker.gradients
-    # Lo hacemos aqui porque no funciono arriba
-    gradients = list(set(gradients))
+    gradients = list(set(gradients or tracker.gradients))
 
     # Minimo para verificar
-    needed = len(gradients) - 10
+    needed = len(gradients) - 20
 
     # Los pixels
-    pixels = [conver_to_3(i) for i in image.getdata()]
-    pixels = list(set(pixels))
+    pixels = list(set([conver_to_3(i) for i in image.getdata()]))
 
     # Queremos contar cuantas veces existe el gradient
     counter = Counter(
