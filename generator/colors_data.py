@@ -81,16 +81,16 @@ class Colors(object):
         """
         Decide los colores del MCK.
         """
-        if self.chicken_type == ChickenType.DETAILED_COCK:
+        if self.chicken_type == ChickenType.DETAILED_COCK or self.chicken_type == ChickenType.SOLONA_COCK:
             self.colors.append(Color((148, 31, 61), title='Comb')) # El comb
             self.colors.append(Color((180, 63, 61), title='Comb')) # COMB
             self.colors.append(Color((213, 97, 53), title='Beak')) # NARIZ 
-            self.colors.append(Color((237, 129, 53), title='Back')) # NARIZ
             self.colors.append(Color((109, 12, 39), title='Comb')) # El comb por el nariz
             self.colors.append(Color((247, 247, 239), title='Eye')) # OJO
             self.colors.append(Color((213, 97, 53), title='Neck')) # EL NECK primero
             # self.colors.append(Color((237, 129, 53), title='Neck')) # El neck siguiente
             self.colors.append(Color((239, 159, 88), title='Back')) # Mucho del cuerpo
+            self.colors.append(Color((237, 129, 53), title='Back')) # Cuerpo
             self.colors.append(Color((24, 16, 56), title='Chest')) # El chest negro
             self.colors.append(Color((39, 37, 95), title='Chest')) # El parte del chest
             self.colors.append(Color((56, 64, 116), title='Wing')) # Un parte del wing
@@ -100,13 +100,19 @@ class Colors(object):
             self.colors.append(Color((126, 105, 102), title='Leg')) # Leg primero border
             self.colors.append(Color((102, 81, 86), title='Leg')) # Leg siguiente
 
-        for color in self.colors:
-            # El neck tiene mismo color de Beak
-            if color.title == "Neck":
-                color.after = self.colors[2].after
-            else:
-                color.after = self.random_color()            
+        before_colors = list(map(lambda c: c.before, self.colors))
 
+        for color in self.colors:
+            # Busca before index
+            before = before_colors.index(color.before)
+            # Chequea si el index es igual
+            if before == self.colors.index(color):
+                # Si es igual entonces es nuevo color
+                color.after = self.random_color()
+            else:
+                # Si no entonces este color ya existe y usa lo.
+                color.after = self.colors[before].after
+            # El valueo
             color.value = rgb_to_name(color.after)
 
     def random_color(self, save=True):
