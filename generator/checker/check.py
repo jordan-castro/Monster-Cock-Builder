@@ -54,7 +54,7 @@ def check_for_gradient(image, gradients: list[tuple[int, int, int]] = None) -> b
     gradients = list(set(gradients or tracker.gradients))
 
     # Minimo para verificar
-    needed = len(gradients) - 20
+    needed = len(gradients) / 1.2
 
     # Los pixels
     pixels = list(set([conver_to_3(i) for i in image.getdata()]))
