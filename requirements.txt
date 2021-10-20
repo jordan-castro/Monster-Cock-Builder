@@ -1,5 +1,5 @@
-web3==5.22.0
-Pillow==8.2.0
+web3==5.24.0
+Pillow==8.4.0
 webcolors==1.11.1
 numpy==1.21.2
 matplotlib==3.4.3
