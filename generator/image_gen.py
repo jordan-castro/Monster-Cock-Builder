@@ -40,10 +40,10 @@ class ImageGen:
         base = "base_art/"
         if self.chicken_type == ChickenType.HEN:
             return f"{base}hen_only.png"
-        elif self.chicken_type == ChickenType.COCK:
-            return f"{base}cock_only.png"
         elif self.chicken_type == ChickenType.DETAILED_COCK:
             return f"{base}FinalCockHR.png"
+        elif self.chicken_type == ChickenType.SOLONA_COCK:
+            return f"{base}Rooster2_HighRes.png"
         else:
             return "Chick"
 
