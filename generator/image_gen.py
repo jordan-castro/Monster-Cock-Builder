@@ -1,7 +1,8 @@
 from generator.attributes.canvas import get_canvas, create_image
+from generator.finish import finishing_touches
 from generator.utils import replace_pixels
 from generator.attributes.attributes import Attribute
-from generator.random_data import randomchoice, randomifyflip, randomifylist
+from generator.random_data import randomchoice, randomifyflip
 from generator.chicken_type import ChickenType
 from PIL import ImageOps
 from generator.colors_data import Colors
@@ -67,13 +68,18 @@ class ImageGen:
         else:
             self.attributes.append(Attribute.SUN_RISE_WEST)
 
+        image_path = f"{self.name}.png"
         # Guarda la imagen ahora
-        new_image.save(f"{self.name}.png")
+        new_image.save(image_path)
 
-        # ! El objecto de tracker para la data
+        # ! If you are not james garfield then comment this line out
+        # ! It is a user-specific method to track the progress of the generator outside of the app.
+        new_image = finishing_touches(image_path)
+
+        # El objecto de tracker para la data
         t.tracker.image = new_image
         t.tracker.id = self.id
-        t.tracker.path = f"{self.name}.png"
+        t.tracker.path = image_path
 
         return self.name
 

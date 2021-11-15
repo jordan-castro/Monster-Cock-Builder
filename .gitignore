@@ -132,3 +132,5 @@ upload.py
 uploader/
 test.py
 *.txt
+
+finish.py
