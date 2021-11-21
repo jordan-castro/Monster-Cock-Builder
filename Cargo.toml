@@ -1,0 +1,18 @@
+[package]
+name = "mckbuilder"
+version = "0.1.0"
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rand = "0.8.4"
+image = "0.23.14"
+palette = "0.6.0"
+color-name = "1.1.0"
+serde = { version = "1.0.130", features = ["derive"] }
+serde_json = "1.0.71"
+colorful = "0.2.1"
+imageproc = "0.22.0"
+itertools = "0.10.1"
+docopt = "1.1.1"
