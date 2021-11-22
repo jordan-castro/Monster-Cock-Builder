@@ -127,26 +127,6 @@ class Verifier: # TODO: Clustering with Kmeans
         return df
 
 
-# def train_model(verifier):
-#     verifier.train_model()
-
-
-# def verify(schema_type, modulus, size, skip_values, skip_type):
-#     # Schema Type first letter is uppercase, just in case
-#     schema_type = schema_type[0].upper() + schema_type[1:]
-#     # Check if schema type is valid
-#     if schema_type not in VALID_TYPES:
-#         return 0
-#     data = {
-#         "Modulus": modulus,
-#         "Size": size,
-#         "Skip Values": skip_values,
-#         "Type": schema_type,
-#         "Skip Type": skip_type
-#     }
-#     return verifier.verify(data)
-
-
 if __name__ == "__main__":
     args = sys.argv[1:]
     if len(args) != 5:
@@ -172,24 +152,3 @@ if __name__ == "__main__":
     prediction = verifier.verify(data)
     # Return the prediction to the CMD
     print(prediction)
-
-    # verifier = Verifier()
-    # verifier.train_model()
-    # # This is a valid schema
-    # valid_data = {
-    #     'Type': 'Curves',
-    #     'Modulus': '25',
-    #     'Size': '14',
-    #     'Skip Values': '10,20,30,40,50,60,70',
-    #     'Skip Type': 'original'
-    # }
-    # # This is an invalid schema
-    # non_valid_data = {
-    #     'Type': 'Circles',
-    #     'Modulus': '20',
-    #     'Size': '23',
-    #     'Skip Values': '2,4,6,8,10,12,14',
-    #     'Skip Type': 'original'
-    # }
-    # print(verifier.verify(valid_data))
-    # print(verifier.verify(non_valid_data))
