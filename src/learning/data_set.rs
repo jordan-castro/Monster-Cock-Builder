@@ -8,16 +8,18 @@ use itertools::Itertools;
 
 ///
 /// Function that will create schemas in a loop for a given number of times.
-/// The function will then put the data from the schema created in data/schemas.txt
+/// The function will then put the data from the schema created in data/schemas.txt.
+/// Used Multithreading to speed up the process, so keep that in mind when you decide the number of schemas to create.
+/// Any more than 50 schemas slows down a 16 gb Ram machine.
 ///
 /// # Arguments
 /// - `num_schemas` - The number of schemas to create
 ///
 /// # Example
 /// ```
-/// use data::create_schemas;
+/// use data::training_data;
 ///     
-/// create_schemas(2);
+/// training_data(20);
 /// ```
 ///
 /// # Headers   
@@ -29,7 +31,7 @@ use itertools::Itertools;
 /// Squares; 15; 2; [2, 4, 6, 8]; Original; 0
 /// ```
 ///  
-pub fn schemas_txt(num_schemas: u32) {
+pub fn training_data(num_schemas: u32) {
     let mut threads = Vec::new();
     for _ in 0..num_schemas {
         let th = thread::spawn(|| {
