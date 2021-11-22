@@ -66,9 +66,9 @@ impl MonsterCock {
     /// Decides the name of the MonsterCock if it is not already set.
     fn name_cock(&mut self) {
         if self.name.is_empty() {
-            self.name = randomify::random_name(self.is_test_net);
+            let name = randomify::random_name(self.is_test_net);
             // Add the Id to the name
-            self.name = format!("{} #{}", self.name, self.id);
+            self.name = format!("{} #{}", name, self.id);
         }
     }
 
