@@ -43,6 +43,20 @@ impl Schema {
             skip_type: SchemaSkipType::Original,
         }
     }
+
+    /// Print to the screen the values of the draw.
+    pub fn debug_schema(&self) {
+        println!("===============================");
+        println!("{}", self.title);
+        println!("Modulus: {}", self.modulus);
+        if self.size == 0 {
+            println!("Size: random");
+        } else {
+            println!("Size: {}", self.size);
+        }
+        println!("Skip values: {}", self.stringify_skips());
+        println!("Skip type: {}", self.skip_type.to_string());
+    }
 }
 
 ///
