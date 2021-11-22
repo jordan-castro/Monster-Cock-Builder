@@ -67,9 +67,9 @@ impl MonsterCock {
     fn name_cock(&mut self) {
         if self.name.is_empty() {
             self.name = randomify::random_name(self.is_test_net);
+            // Add the Id to the name
+            self.name = format!("{} #{}", self.name, self.id);
         }
-        // Add the Id to the name
-        self.name = format!("{} #{}", self.name, self.id);
     }
 
     /// Place the cock on the canvas.
@@ -121,14 +121,16 @@ impl MonsterCock {
     }
 
     /// Save the image to show later
-    pub fn show_image(&self) {
+    pub fn show_image(&mut self) {
         self.image.save("monstercock.png").expect("Saving image to monstercock.png");
         // Ask for user imput
         println!("Keep image? (y/n)");
         let mut input = String::new();
         std::io::stdin().read_line(&mut input).expect("Reading user input");
-        if input.trim() != "y" {
+        if input.to_lowercase().trim() != "y" {
             std::fs::remove_file("monstercock.png").expect("Removing file");
+        } else {
+            self.save();
         }
     }
 
