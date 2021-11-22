@@ -9,7 +9,6 @@ use crate::utils::names::black_list_name;
 
 use image::{Rgba, RgbaImage, buffer::ConvertBuffer, imageops};
 use serde_json::{Map, Value, to_writer_pretty};
-use itertools::Itertools;
 
 const DEFAULT_COCK: &str = "data/art/CockSepColors.png";
 const SOLANA_COCK: &str = "data/art/Rooster2_HighRes.png";
@@ -143,8 +142,7 @@ impl MonsterCock {
         self.save_cock_data();
 
         // Black list the name
-        let name_to_black_list = self.name.split("#").collect::<Vec<&str>>();
-        let name = name_to_black_list.get(0).unwrap();
+        let name = self.get_idless_name();
         black_list_name(name.to_string(), self.is_test_net);
     } 
 
@@ -160,11 +158,9 @@ impl MonsterCock {
         }
         // The file name is as follows:
         // <name>_<id>.png
-        let name = self.name.split("#");
-        let name  = name.collect::<Vec<&str>>();
-        let name = name.iter().join("_");
+        let name = self.get_idless_name();
 
-        format!("data/{}/{}.png", file_parent, name)
+        format!("data/{}/{}_#{}.png", file_parent, name, self.id)
     }
 
     /// Save the cock data to a file.
@@ -178,6 +174,20 @@ impl MonsterCock {
         // Write to file
         let json_file = std::fs::File::create("attributes.json").unwrap();
         to_writer_pretty(json_file, &data).expect("C");
+    }
+
+    /// Get the cock name without the id.
+    /// 
+    /// # Returns
+    /// `name: String` The name without the id.
+    fn get_idless_name(&self) -> String {
+        let name = self.name.clone();
+        // Split off the id
+        let name = name.split("#");
+        let name = name.collect::<Vec<&str>>();
+        // Trim the ending to remove any whitespace
+        let name = name.get(0).unwrap().trim_end();
+        name.to_string()
     }
 }
 
