@@ -9,6 +9,7 @@ use crate::utils::names::black_list_name;
 
 use image::{Rgba, RgbaImage, buffer::ConvertBuffer, imageops};
 use serde_json::{Map, Value, to_writer_pretty};
+use itertools::Itertools;
 
 const DEFAULT_COCK: &str = "data/art/CockSepColors.png";
 const SOLANA_COCK: &str = "data/art/Rooster2_HighRes.png";
@@ -139,11 +140,12 @@ impl MonsterCock {
         let cock_path = self.get_image_path();
 
         self.image.save(cock_path.as_str()).expect(format!("Saving MonsterCock image to {}", cock_path).as_str());
+        self.save_cock_data();
+
         // Black list the name
         let name_to_black_list = self.name.split("#").collect::<Vec<&str>>();
         let name = name_to_black_list.get(0).unwrap();
         black_list_name(name.to_string(), self.is_test_net);
-        self.save_cock_data();
     } 
 
     /// Get the image path of the MonsterCock component.
@@ -156,8 +158,13 @@ impl MonsterCock {
         } else {
             file_parent.push_str("mainnet");
         }
+        // The file name is as follows:
+        // <name>_<id>.png
+        let name = self.name.split("#");
+        let name  = name.collect::<Vec<&str>>();
+        let name = name.iter().join("_");
 
-        format!("data/{}/{}.png", file_parent, self.name)
+        format!("data/{}/{}.png", file_parent, name)
     }
 
     /// Save the cock data to a file.
