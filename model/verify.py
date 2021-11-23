@@ -142,7 +142,7 @@ class Verifier: # TODO: Clustering with Kmeans
         """
         Cluster the data.
         """
-        features = self.features
+        features = self.features + ["Skip Type"]
         # Fit
         cluster.fit(df[features])
         # Cluster the data based on prediction
