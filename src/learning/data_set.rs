@@ -38,7 +38,7 @@ pub fn training_data(num_schemas: u32) {
                 true
             );
             // Randomly draw the schemas
-            canvas.draw_circles();
+            canvas.draw_schemas();
         });
         threads.push(th);
     }
