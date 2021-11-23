@@ -80,7 +80,11 @@ pub fn random_skip_values() -> Vec<i32> {
         skip_values.push(place * x);
     }
 
-    skip_values
+    if skip_values.is_empty() {
+        vec![2, 3, 4, 5, 6, 7, 8]
+    } else {
+        skip_values
+    }
 }
 
 /// A random RGB color
