@@ -41,7 +41,6 @@ impl Canvas {
                 }
             }
         }
-        verify_schema(&self.image, color);
         self.training_data(&schema, color);
 
         // Crop the image
