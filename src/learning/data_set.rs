@@ -1,10 +1,6 @@
 use std::{io::Write, thread};
 
-use crate::{
-    gen::{canvas::base::Canvas, colors::CockColors, types::CockType},
-    utils::randomify::randomattributes,
-};
-use itertools::Itertools;
+use crate::{gen::{canvas::{base::Canvas, schema::Schema}, colors::CockColors, types::CockType}, utils::randomify::randomattributes};
 
 ///
 /// Function that will create schemas in a loop for a given number of times.
@@ -41,7 +37,8 @@ pub fn training_data(num_schemas: u32) {
                 true,
                 true
             );
-            canvas.draw_stripes();
+            // Randomly draw the schemas
+            canvas.draw_circles();
         });
         threads.push(th);
     }
@@ -54,19 +51,11 @@ pub fn training_data(num_schemas: u32) {
 /// Add data to the schemas.txt file
 ///
 /// # Arguments
-/// `schema_type: String` The type of schema to add
-/// `modulus: i32` The modulus of the schema
-/// `size: i32` The size of the schema
-/// `skips: Vec<i32>` The skip values of the schema
-/// `skip_type: String` The skip type of the schema
-/// `result: i32` The result of the schema
+/// - `schema: &Schema` The schema to add to the file.
+/// - `result: i32` The result of the schema.
 ///
 pub fn add_to_set(
-    schema_type: String,
-    modulus: i32,
-    size: i32,
-    skips: Vec<i32>,
-    skip_type: String,
+    schema: &Schema,
     result: u32,
 ) {
     let mut file = std::fs::OpenOptions::new()
@@ -74,22 +63,16 @@ pub fn add_to_set(
         .open("data/schemas.txt")
         .expect("Unable to open file");
 
-    let skips = if skips.is_empty() {
-        vec![2, 3, 4, 5, 6, 7, 8]
-    } else {
-        skips
-    };
-
     let mut schema_string = String::new();
-    schema_string.push_str(&schema_type);
+    schema_string.push_str(&schema.title);
     schema_string.push_str(";");
-    schema_string.push_str(&modulus.to_string());
+    schema_string.push_str(&schema.modulus.to_string());
     schema_string.push_str(";");
-    schema_string.push_str(&size.to_string());
+    schema_string.push_str(&schema.size.to_string());
     schema_string.push_str(";");
-    schema_string.push_str(&skips.iter().join(","));
+    schema_string.push_str(&schema.stringify_skips());
     schema_string.push_str(";");
-    schema_string.push_str(&skip_type);
+    schema_string.push_str(&schema.skip_type.to_string());
     schema_string.push_str(";");
     schema_string.push_str(&result.to_string());
     schema_string.push_str("\n");
