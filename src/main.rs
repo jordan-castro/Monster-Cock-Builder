@@ -17,7 +17,7 @@ MonsterCock Builder.
 
 Usage: 
     mckbuilder gen <chain> [--name=<name>] [--start=<start>] [--amount=<amount>] [--type=<type>] [--color=<color>] [--upload]
-    mckbuilder train <amount> [--type=<type>]
+    mckbuilder train <amount>
     mckbuilder (-h | --help)
     mckbuilder --version
 
@@ -61,7 +61,11 @@ fn main() {
         let upload = args.flag_upload;
 
         // Check the test_net based on the chain id passed
-        let is_test_net = chain == 80001;
+        let is_test_net = match chain {
+            80001 => true,
+            137 => false,
+            _ => panic!("Invalid chain id: {}, This chain has not been implemented yet!", chain)
+        };
         let cock_type = match type_.to_lowercase().as_str() {
             "default" => CockType::Default,
             "def" => CockType::Default,
@@ -75,7 +79,6 @@ fn main() {
         training_data(amount);
     }
 }
-
 
 /// Generate a monstercock.
 /// 
