@@ -1,9 +1,6 @@
 use std::process::Command;
-use std::thread::{self, JoinHandle};
 
-use crate::gen::canvas::schema::{self, Schema};
-use crate::gen::types::SchemaSkipType;
-use crate::utils::randomify::random_value;
+use crate::gen::canvas::schema::Schema;
 
 // Use the correct python interpreter
 const PYTHON_INTERPRETER: &str = r"C:\Users\jorda\miniconda3\envs\schema_verifier\python.exe";
@@ -54,50 +51,15 @@ fn predict_schema(schema_values: &Schema) -> bool {
 /// # Returns
 /// - `value: SchemaValues` The valid schema values.
 pub fn valid_schema(schema_type: &str) -> Schema {
-    // // Threads
-    // let mut threads: Vec<JoinHandle<Option<Schema>>> = Vec::new();
-    // The valid schemas
-    // let mut valids: Vec<Schema> = Vec::new();
     let mut schema: Schema;
-
     loop {
         schema = Schema::random_schema(schema_type.to_string());
+        // Verify the schema
         let res = predict_schema(&schema);
-        println!("{}", res);
         if res {
             break;
         }
     }
-    println!("Found schema!");
-    schema
-
-    // // We do 10 threads at a time
-    // for _ in 0..10 {
-    //     let t = loop {
-    //         // Create a random schema
-    //         let schema = Schema::random_schema(schema_type.to_string());
-    //         // Thread it
-    //         let t = thread::spawn(move || {
-    //             // Predict the schema
-    //             let result = predict_schema(&schema);
-    //             if result {
-    //                 Some(schema)
-    //             } else {
-    //                 None
-    //             }
-    //         });
-    //         t
-    //     };
-    // }
-
-    // // Loop through threads and grab results
-    // for t in threads {
-    //     let res = t.join().unwrap();
-    //     if let Some(schema) = res {
-    //         valids.push(schema);
-    //     }
-    // }
-
-    // Choose a random valud of the valid schemas
-    // random_value(&valids).clone()
+    // Return verified schema
+    schema  
 }
