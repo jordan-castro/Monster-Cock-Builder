@@ -1,8 +1,10 @@
+import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import accuracy_score, roc_auc_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
+from sklearn.cluster import KMeans
 import sys
 
 
@@ -21,7 +23,72 @@ def format_skip_values(df):
     # Arguments
         df: The dataframe to format
     """
-    return df["Skip Values"].map(lambda x: int(x.split(",")[0]))
+    def get_mean(data):
+        """
+        Take a string of numbers seperated by commas.
+        Split the string by the commas.
+        Find the mean of the numbers.
+        """
+        numbers = list(map(int, data.split(",")))
+        return np.mean(numbers)
+
+    return df["Skip Values"].map(lambda x: get_mean(x))
+
+
+def format_skip_types(df):
+    """
+    Formats the skip types of the dataframe.
+
+    # Arguments
+        df: The dataframe to format
+
+    # Returns
+        The formatted dataframe
+    """
+    def get_type(data):
+        """
+        Return the skip type as a number.
+        original => 0
+        v2 => 1
+        """
+        if data == "original":
+            return 0
+        elif data == "v2":
+            return 1
+
+    df["Skip Type"] = df["Skip Type"].map(lambda x: get_type(x))
+    return df
+
+
+def format_types(df):
+    """
+    Formats the dataframe types.
+
+    # Arguments
+        df: The dataframe to format
+
+    # Returns
+        The formatted dataframe
+    """
+    def get_type(data):
+        """
+        Return the Schema type as a number.
+        Circles => 0
+        Curves => 1
+        Squares => 2
+        Stripes => 3
+        """
+        if data == "Circles":
+            return 0
+        elif data == "Curves":
+            return 1
+        elif data == "Squares":
+            return 2
+        elif data == "Stripes":
+            return 3
+
+    df["Type"] = df["Type"].map(lambda x: get_type(x))
+    return df
 
 
 def format_data(df):
@@ -34,12 +101,12 @@ def format_data(df):
     # Returns
         The formatted dataframe
     """
-    df = pd.get_dummies(df, columns=["Type"])
     # If result is 0 then it is valid, else 0 (invalid) 
     df.Result = df.Result.map(lambda x: 1 if x == 0 else 0)
-    # Currently not using Skip Type
-    df = df.drop(columns=['Skip Type'], axis=1)
     df['Skip Values'] = format_skip_values(df)
+    df['Type'] = format_types(df)
+    df['Skip Type'] = format_skip_types(df)
+
     return df
 
 
@@ -57,14 +124,26 @@ class Verifier: # TODO: Clustering with Kmeans
     """
     def __init__(self):
         self.scaler = MinMaxScaler()
-        self.knn = KNeighborsClassifier()
+        self.knn = KNeighborsClassifier(n_neighbors=8)
         self.data = pd.read_csv(SCHEMAS_PATH, sep=';')
+        self.cluster = KMeans(n_clusters=8)
+        self.features = ["Modulus", "Size", "Skip Values", "Type"]
 
     def scale_data(self, df):
         # Scale the data frame
-        features = [["Modulus", "Size", "Skip Values"]]
-        for feature in features:
+        for feature in [self.features + ["Cluster"]]:
             df[feature] = self.scaler.fit_transform(df[feature])
+        return df
+
+    def cluster_data(self, df):
+        """
+        Cluster the data.
+        """
+        # Fit
+        self.cluster.fit(df[self.features])
+        # Cluster the data based on prediction
+        df["Cluster"] = self.cluster.predict(df[self.features])
+        
         return df
 
     def verify(self, data):
@@ -76,6 +155,7 @@ class Verifier: # TODO: Clustering with Kmeans
     def train_model(self):
         # Format and scale data
         self.data = format_data(self.data)
+        self.data = self.cluster_data(self.data)
         self.data = self.scale_data(self.data)
         # Split data into training and testing data
         X = self.data.drop(columns=['Result'], axis=1)
