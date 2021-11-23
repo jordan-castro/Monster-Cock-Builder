@@ -9,6 +9,11 @@ set python_script="model/verify.py"
 echo Activating conda
 call conda activate %enviroment%
 
+@REM KMeans is known to have a memory leak on Windows with MKL, 
+@REM when there are less chunks than available threads. 
+@REM You can avoid it by setting the environment variable OMP_NUM_THREADS=1.
+set OMP_NUM_THREADS=1
+
 echo Running Python Script
 python %python_script% %*
 
