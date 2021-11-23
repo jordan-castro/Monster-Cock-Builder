@@ -33,6 +33,6 @@ pub fn crop_image(image: RgbImage) -> RgbImage {
     let (width, height) = image.dimensions();
     let crop_width = width - 100;
     let crop_height = height - 100;
-    img = imageops::crop(&mut img, 100, 100, crop_width, crop_height).to_image();
+    img = imageops::crop(&mut img, 50, 50, crop_width - 50, crop_height - 50).to_image();
     img
 }
