@@ -135,7 +135,7 @@ impl MonsterCock {
     }
 
     /// Save the MonsterCock image.
-    pub fn save(&mut self) {
+    fn save(&mut self) {
         let cock_path = self.get_image_path();
 
         self.image.save(cock_path.as_str()).expect(format!("Saving MonsterCock image to {}", cock_path).as_str());
