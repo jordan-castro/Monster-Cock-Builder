@@ -10,7 +10,7 @@ set loops=%1
 
 cd ../
 for /l %%x in (1, 1, %loops%) do (
-   %device% train 10
-    echo "Trained (%x% + 10) of %loops%"
+   %device% train 15
+    echo "Trained 15"
 )
 cd scripts
