@@ -97,7 +97,6 @@ impl Canvas {
                 squares,
                 stripes,
                 round_squares, // Todo the round squares
-                curves,
             } => {
                 // Draw the schemas
                 if circles {
@@ -108,9 +107,6 @@ impl Canvas {
                 }
                 if stripes {
                     self.draw_stripes();
-                }
-                if curves {
-                    self.draw_curves();
                 }
             }
             _ => {}

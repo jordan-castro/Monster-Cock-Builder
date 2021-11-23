@@ -20,24 +20,13 @@ pub fn randomattributes(generation: i32) -> Vec<CockTribute> {
     for _ in 0..3 {
         // Create a random number between 0 and 4
         let rng = thread_rng().gen_range(0..6);
-        if rng == 1 {
-            schemas.push(1);
-        } else if rng == 2 {
-            schemas.push(2);
-        } else if rng == 3 {
-            schemas.push(3);
-        } else if rng == 4 {
-            schemas.push(4);
-        } else if rng == 5 {
-            schemas.push(5);
-        }    
+        schemas.push(rng);
     }
     let cock_schema = CockTribute::Schema {
         circles: schemas.contains(&1),
         squares: schemas.contains(&2),
         stripes: schemas.contains(&3),
         round_squares: schemas.contains(&4),
-        curves: schemas.contains(&5),
     };
     // Choose a gradient
     let gradient_choice = thread_rng().gen_range(0..3);

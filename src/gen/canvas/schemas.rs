@@ -116,9 +116,13 @@ impl Canvas {
     pub fn draw_curves(&mut self) {
         fn draw(image: &mut RgbImage, coordiantes: (u32, u32), size: i32, color: (i32, i32, i32)) {
             let (x, y) = (coordiantes.0 as i32, coordiantes.1 as i32);
-
             // Choose 4 points based on the size
-            let points = vec![(x, y), (x + size, y), (x, y + size), (x + size, y + size)];
+            let points = vec![
+                (x, y), 
+                (x + (size * 2), y), 
+                (x, y + (size * 2)), 
+                (x + size, y + size)
+                ];
             // Convert to f32
             let points = points
                 .iter()
@@ -135,6 +139,15 @@ impl Canvas {
             );
         }
         self.draw_schema("Curves", draw);
+    }
+
+    /// Draw crosses
+    pub fn draw_crosses(&mut self) {
+        fn draw(image: &mut RgbImage, coordiantes: (u32, u32), size: i32, color: (i32, i32, i32)) {
+            let (x, y) = (coordiantes.0 as i32, coordiantes.1 as i32);
+            drawing::draw_cross_mut(image, rgb_to_u8(color), x, y)
+        }
+        self.draw_schema("Crosses", draw);
     }
 }
 

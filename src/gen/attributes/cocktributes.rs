@@ -21,7 +21,6 @@ pub enum CockTribute {
         squares: bool,
         stripes: bool,
         round_squares: bool,
-        curves: bool,
     }
 }
 
@@ -57,7 +56,7 @@ fn readable_cocktribute(cocktribute: CockTribute) -> Vec<Vec<String>> {
             }                
             vec![base]
         },
-        CockTribute::Schema { circles, squares, stripes, round_squares, curves } => {
+        CockTribute::Schema { circles, squares, stripes, round_squares } => {
             let mut result = Vec::new();
             if circles {
                 result.push(
@@ -91,14 +90,6 @@ fn readable_cocktribute(cocktribute: CockTribute) -> Vec<Vec<String>> {
                     ]
                 );
             } 
-            if curves {
-                result.push(
-                    vec![
-                        String::from("Schema"),
-                        String::from("Curves")
-                    ]
-                );
-            }
             result
         },
     }
