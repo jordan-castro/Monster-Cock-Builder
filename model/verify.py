@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from pandas.core.frame import DataFrame
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import accuracy_score, roc_auc_score
 from sklearn.neighbors import KNeighborsClassifier
@@ -51,13 +52,13 @@ def format_skip_types(df):
         original => 0
         v2 => 1
         """
-        if data == "original":
+        # Lower case string
+        if data.lower() == "original":
             return 0
-        elif data == "v2":
+        elif data.lower() == "v2":
             return 1
 
-    df["Skip Type"] = df["Skip Type"].map(lambda x: get_type(x))
-    return df
+    return df["Skip Type"].map(lambda x: get_type(x))
 
 
 def format_types(df):
@@ -87,11 +88,10 @@ def format_types(df):
         elif data == "Stripes":
             return 3
 
-    df["Type"] = df["Type"].map(lambda x: get_type(x))
-    return df
+    return df["Type"].map(lambda x: get_type(x))
 
 
-def format_data(df):
+def format_data(df: DataFrame):
     """
     Formats the dataframe data.
 
@@ -101,8 +101,9 @@ def format_data(df):
     # Returns
         The formatted dataframe
     """
-    # If result is 0 then it is valid, else 0 (invalid) 
-    df.Result = df.Result.map(lambda x: 1 if x == 0 else 0)
+    if "Result" in df.columns:
+        # If result is 0 then it is valid, else 0 (invalid) 
+        df.Result = df.Result.map(lambda x: 1 if x == 0 else 0)
     df['Skip Values'] = format_skip_values(df)
     df['Type'] = format_types(df)
     df['Skip Type'] = format_skip_types(df)
@@ -126,7 +127,9 @@ class Verifier: # TODO: Clustering with Kmeans
         self.scaler = MinMaxScaler()
         self.knn = KNeighborsClassifier(n_neighbors=8)
         self.data = pd.read_csv(SCHEMAS_PATH, sep=';')
-        self.cluster = KMeans(n_clusters=8)
+        # There are two clusters, one for training and one for verifying
+        self.train_cluster = KMeans(n_clusters=8)
+        self.verify_cluster = KMeans(n_clusters=1)
         self.features = ["Modulus", "Size", "Skip Values", "Type"]
 
     def scale_data(self, df):
@@ -135,14 +138,15 @@ class Verifier: # TODO: Clustering with Kmeans
             df[feature] = self.scaler.fit_transform(df[feature])
         return df
 
-    def cluster_data(self, df):
+    def cluster_data(self, df, cluster):
         """
         Cluster the data.
         """
+        features = self.features
         # Fit
-        self.cluster.fit(df[self.features])
+        cluster.fit(df[features])
         # Cluster the data based on prediction
-        df["Cluster"] = self.cluster.predict(df[self.features])
+        df["Cluster"] = cluster.predict(df[features])
         
         return df
 
@@ -155,7 +159,7 @@ class Verifier: # TODO: Clustering with Kmeans
     def train_model(self):
         # Format and scale data
         self.data = format_data(self.data)
-        self.data = self.cluster_data(self.data)
+        self.data = self.cluster_data(self.data, self.train_cluster)
         self.data = self.scale_data(self.data)
         # Split data into training and testing data
         X = self.data.drop(columns=['Result'], axis=1)
@@ -168,19 +172,6 @@ class Verifier: # TODO: Clustering with Kmeans
         y_pred = self.knn.predict(X_test)
         print("Accuracy:", accuracy_score(y_test, y_pred))
 
-    def accuracy(self, prediction):
-        """
-        Get the accuracy of a prediction.
-
-        # Arguments
-            prediction: The prediction to check.
-
-        # Returns
-            The accuracy of the prediction.
-        """
-        pass
-        # return accuracy_score(self.data['Result'], prediction)
-
     def convert_to_dataframe(self, data):
         """
         Converts a dictionary to a dataframe.
@@ -191,18 +182,11 @@ class Verifier: # TODO: Clustering with Kmeans
         # Returns
             The dataframe.
         """
-        data_dict = {
-            "Modulus": data['Modulus'],
-            "Size": data['Size'],
-            "Skip Values": data['Skip Values'],
-            "Type_Circles": 1 if data['Type'] == 'Cirles' else 0,
-            "Type_Curves": 1 if data['Type'] == 'Curves' else 0,
-            "Type_Squares": 1 if data['Type'] == 'Squares' else 0,
-            "Type_Stripes": 1 if data['Type'] == 'Stripes' else 0,
-        }
         # Convert to dataframe and format data
-        df = pd.DataFrame(data_dict, index=[0])
-        df['Skip Values'] = format_skip_values(df)
+        df = pd.DataFrame(data, index=[0])
+        df = format_data(df)
+        df = self.cluster_data(df, self.verify_cluster)
+        
         # df = self.scale_data(df)
         return df
 
