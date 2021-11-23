@@ -24,6 +24,7 @@ pub struct MonsterCock {
     pub name: String,
     pub id: u32,
     is_test_net: bool,
+    pub hash: String,
 }
 
 impl MonsterCock {
@@ -34,7 +35,7 @@ impl MonsterCock {
         };
         let cock_colors = CockColors::new(cock_type, category);
         // Create the canvas
-        let canvas = Canvas::new(cock_tributes, cock_colors, true, false);
+        let canvas = Canvas::new(cock_tributes, cock_colors, false, false);
 
         MonsterCock {
             canvas: canvas,
@@ -42,6 +43,7 @@ impl MonsterCock {
             name: String::new(),
             id: id,
             is_test_net: is_test_net,
+            hash: String::new(),
         }
     }
 
@@ -60,6 +62,42 @@ impl MonsterCock {
                 }
             },
             _ => {},
+        }
+    }
+
+    /// Save the image to show later
+    pub fn show_image(&mut self) {
+        self.image.save("monstercock.png").expect("Saving image to monstercock.png");
+        // Ask for user imput
+        println!("Keep image? (y/n)");
+        let mut input = String::new();
+        std::io::stdin().read_line(&mut input).expect("Reading user input");
+        if input.to_lowercase().trim() != "y" {
+            std::fs::remove_file("monstercock.png").expect("Removing file");
+        } else {
+            self.save();
+        }
+    }
+
+
+    /// Color the MonsterCock. Which means to change the colors of the image cock.
+    fn color_cock(&mut self) {
+        let convert_pixel = |pixel: Rgba<u8>| {
+            rgb_u8_to_i32(rgba_to_rgb_u8(pixel.0))
+        };
+        let before_colors = self.canvas.cock_colors.before_colors();
+        let after_colors = self.canvas.cock_colors.after_colors();
+        // Loop through the pixels of the image
+        for pixel in self.image.pixels_mut() {
+            let color = convert_pixel(*pixel);
+            // Check for color
+            if before_colors.contains(&color) {
+                let index = before_colors.iter().position(|&x| x == color).unwrap();
+                // Change the color
+                let color = after_colors.get(index).unwrap();
+                let color = rgb_to_rgba_u8(*color);
+                *pixel = Rgba([color[0], color[1], color[2], color[3]]);
+            }
         }
     }
 
@@ -97,43 +135,6 @@ impl MonsterCock {
         }
     }
 
-    ///
-    /// Color the MonsterCock. Which means to change the colors of the image cock.
-    /// 
-    fn color_cock(&mut self) {
-        let convert_pixel = |pixel: Rgba<u8>| {
-            rgb_u8_to_i32(rgba_to_rgb_u8(pixel.0))
-        };
-        let before_colors = self.canvas.cock_colors.before_colors();
-        let after_colors = self.canvas.cock_colors.after_colors();
-        // Loop through the pixels of the image
-        for pixel in self.image.pixels_mut() {
-            let color = convert_pixel(*pixel);
-            // Check for color
-            if before_colors.contains(&color) {
-                let index = before_colors.iter().position(|&x| x == color).unwrap();
-                // Change the color
-                let color = after_colors.get(index).unwrap();
-                let color = rgb_to_rgba_u8(*color);
-                *pixel = Rgba([color[0], color[1], color[2], color[3]]);
-            }
-        }
-    }
-
-    /// Save the image to show later
-    pub fn show_image(&mut self) {
-        self.image.save("monstercock.png").expect("Saving image to monstercock.png");
-        // Ask for user imput
-        println!("Keep image? (y/n)");
-        let mut input = String::new();
-        std::io::stdin().read_line(&mut input).expect("Reading user input");
-        if input.to_lowercase().trim() != "y" {
-            std::fs::remove_file("monstercock.png").expect("Removing file");
-        } else {
-            self.save();
-        }
-    }
-
     /// Save the MonsterCock image.
     fn save(&mut self) {
         let cock_path = self.get_image_path();
@@ -146,8 +147,29 @@ impl MonsterCock {
         black_list_name(name.to_string(), self.is_test_net);
     } 
 
+    /// Save the cock data to a file LOCALLY.
+    fn save_cock_data(&mut self) {
+        let data = self.get_data();
+        
+        // Write to file
+        let json_file = std::fs::File::create("attributes.json").unwrap();
+        to_writer_pretty(json_file, &data).expect("C");
+    }
+
+    pub fn get_data(&mut self) -> Map<String, Value> {
+        // Get attributes json format
+        let attributes_json = attributes_json(self.canvas.cock_colors.colors.clone(), self.canvas.cocktributes.clone());        
+        // A new map
+        let mut data = Map::new();
+        // Insert the JSON
+        data.insert("image".to_string(), Value::String(self.get_image_path()));
+        data.insert("name".to_string(), Value::String(self.name.clone()));
+        data.insert("attributes".to_string(), attributes_json);
+        data
+    }
+
     /// Get the image path of the MonsterCock component.
-    fn get_image_path(&mut self) -> String {
+    pub fn get_image_path(&mut self) -> String {
         self.name_cock();
         let mut file_parent = String::new();
 
@@ -163,19 +185,6 @@ impl MonsterCock {
         format!("data/{}/{}_#{}.png", file_parent, name, self.id)
     }
 
-    /// Save the cock data to a file.
-    fn save_cock_data(&mut self) {
-        let attributes_json = attributes_json(self.canvas.cock_colors.colors.clone(), self.canvas.cocktributes.clone());        
-        let mut data = Map::new();
-        data.insert("image".to_string(), Value::String(self.get_image_path()));
-        data.insert("name".to_string(), Value::String(self.name.clone()));
-        data.insert("attributes".to_string(), attributes_json);
-        
-        // Write to file
-        let json_file = std::fs::File::create("attributes.json").unwrap();
-        to_writer_pretty(json_file, &data).expect("C");
-    }
-
     /// Get the cock name without the id.
     /// 
     /// # Returns
@@ -189,6 +198,7 @@ impl MonsterCock {
         let name = name.get(0).unwrap().trim_end();
         name.to_string()
     }
+    
 }
 
 /// Paste a image on top of another image.
