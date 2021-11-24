@@ -4,7 +4,7 @@ use crate::gen::types::SchemaSkipType;
 use crate::learning::data_set::add_to_set;
 use crate::learning::interface::valid_schema;
 use crate::utils::image_utils::crop_image;
-use crate::utils::randomify::randomify_color;
+// use crate::utils::randomify::randomify_color;
 use crate::utils::rgb_conversions::rgb_to_u8;
 
 use super::base::Canvas;
