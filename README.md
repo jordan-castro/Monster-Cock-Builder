@@ -18,3 +18,20 @@ https://www.reddit.com/r/MonsterCocksArt/
 
 Follow us on Twitter
 https://twitter.com/MonsterCocksArt
+
+
+# Monster-Cock-Builder Outline
+
+Monster Cock Builder was originally written in Python, but was ported to Rust for performance reasons.
+Although MCKB is stable, it is still in development. Original Python code can be found within previous commits.
+MCKB contains 4 main components:
+- src/: This is the main program that generates MCKs.
+- model/: This is the model that is used to validate MCKs schemas.
+- notebooks/: A playground for testing machine learning models.
+- data/: A collection of data that is used to generate MCKs. Also contains the monstercocks once generated.
+- scripts/: Batch scripts. Find out more within each script.
+
+## TODO:
+- Generate MCKs from JSON.
+- Convert schema methods to nannou.
+- Better CLI output.
