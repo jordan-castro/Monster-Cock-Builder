@@ -7,7 +7,7 @@ use serde_json::{json, Value};
 #[derive(Clone, PartialEq, Debug)]
 pub enum CockTribute {
     Generation {
-        generation: i32,
+        generation: u32,
     },
     Sun {
         rising: bool,

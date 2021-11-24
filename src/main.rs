@@ -106,23 +106,21 @@ async fn generate_monster_cock(
     is_test_net: bool,
     upload: bool,
 ) {
-    // TODO decide the generation based on the ID
     let mut cock: MonsterCock;
     if !name.is_empty() && !color_category.is_empty() {
         cock = MonsterCock::with_name_and_category(
             id,
-            2,
             cock_type,
             name,
             color_category,
             is_test_net,
         );
     } else if !name.is_empty() {
-        cock = MonsterCock::with_name(id, 2, cock_type, name, is_test_net);
+        cock = MonsterCock::with_name(id, cock_type, name, is_test_net);
     } else if !color_category.is_empty() {
-        cock = MonsterCock::with_category(id, 2, cock_type, color_category, is_test_net);
+        cock = MonsterCock::with_category(id, cock_type, color_category, is_test_net);
     } else {
-        cock = MonsterCock::new(id, 2, cock_type, is_test_net);
+        cock = MonsterCock::new(id, cock_type, is_test_net);
     }
 
     // Generate and save cock
@@ -136,13 +134,13 @@ async fn generate_monster_cock(
 }
 
 async fn upload_cock(cock: &mut MonsterCock) {
-    // If the upload flag is set, upload the generated MonsterCock to the web
+    // If the upload flag is set, upload the generated MonsterCock to the IPFS node.
     let hashes = upload_to_ipfs(cock).await;
     match hashes {
         Ok(hashes) => {
             println!("Upload to IPFS successfull");
             println!("Hashes are: ");
-            println!("Json Hash: {}, Image Hash: {}", hashes.1, hashes.0);
+            println!("Json Hash: {}, \nImage Hash: {}", hashes.1, hashes.0);
         }
         Err(e) => {
             println!("Error uploading to IPFS: {:?}", e);

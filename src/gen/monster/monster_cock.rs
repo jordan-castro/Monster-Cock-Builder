@@ -28,7 +28,7 @@ pub struct MonsterCock {
 }
 
 impl MonsterCock {
-    pub (super) fn base(id: u32, generation: i32, cock_type: CockType, category: String, attributes: Option<Vec<CockTribute>>, is_test_net: bool) -> MonsterCock {
+    pub (super) fn base(id: u32, generation: u32, cock_type: CockType, category: String, attributes: Option<Vec<CockTribute>>, is_test_net: bool) -> MonsterCock {
         let cock_tributes = match attributes {
             Some(attributes) => attributes,
             None => randomify::randomattributes(generation),

@@ -12,7 +12,7 @@ use super::names;
 ///
 /// **Returns**
 /// - `Vec<CockTribute>` The random attributes.
-pub fn randomattributes(generation: i32) -> Vec<CockTribute> {
+pub fn randomattributes(generation: u32) -> Vec<CockTribute> {
     // El generation
     let cock_gen = CockTribute::Generation { generation };
     // Create the schemas
