@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 
 use docopt::Docopt;
-use gen::monster::monster_cock::{self, MonsterCock};
+use gen::monster::monster_cock::MonsterCock;
 use learning::data_set::training_data;
 use serde::Deserialize;
 
@@ -29,7 +29,7 @@ Options:
     --amount=<amount>   The amount of cocks to generate.
     --type=<type>       The type of cock to draw.
     --color=<color>     The color category for the MonsterCock. 
-    --upload            Upload the generated MonsterCock to the web.
+    --upload            Upload the generated MonsterCock to the IPFS node.
 ";
 
 #[derive(Debug, Deserialize)]
