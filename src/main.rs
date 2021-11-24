@@ -1,11 +1,11 @@
 #![allow(dead_code)]
 
 use docopt::Docopt;
+use gen::monster::monster_cock::{self, MonsterCock};
 use learning::data_set::training_data;
 use serde::Deserialize;
-use gen::monster::monster_cock::MonsterCock;
 
-use crate::gen::types::CockType;
+use crate::{gen::types::CockType, hidden::upload::upload_to_ipfs};
 
 mod gen;
 mod hidden;
@@ -46,7 +46,8 @@ struct Args {
     arg_amount: Option<u32>,
 }
 
-fn main() {
+#[tokio::main]
+async fn main() {
     let args: Args = Docopt::new(USAGE)
         .and_then(|d| d.deserialize())
         .unwrap_or_else(|e| e.exit());
@@ -60,11 +61,19 @@ fn main() {
         let color = args.flag_color;
         let upload = args.flag_upload;
 
+        // Check amount is set
+        if amount != 0 {
+            panic!("Amount not implemented yet!");
+        }
+
         // Check the test_net based on the chain id passed
         let is_test_net = match chain {
             80001 => true,
             137 => false,
-            _ => panic!("Invalid chain id: {}, This chain has not been implemented yet!", chain)
+            _ => panic!(
+                "Invalid chain id: {}, This chain has not been implemented yet!",
+                chain
+            ),
         };
         let cock_type = match type_.to_lowercase().as_str() {
             "default" => CockType::Default,
@@ -73,7 +82,7 @@ fn main() {
             "sol" => CockType::Solana,
             _ => CockType::Default, // Default cock es the default
         };
-        generate_monster_cock(name, start, cock_type, color, is_test_net);
+        generate_monster_cock(name, start, cock_type, color, is_test_net, upload).await;
     } else if args.cmd_train {
         let amount = args.arg_amount.unwrap();
         training_data(amount);
@@ -81,18 +90,33 @@ fn main() {
 }
 
 /// Generate a monstercock.
-/// 
+///
 /// # Params
 /// - `name: String` The name of the cock.
 /// - `id: u32` The id of the cock
 /// - `cock_type: CockType` The type of cock.
 /// - `color_category: String` The color category of the cock.
 /// - `is_test_net: bool` Is the cock on the test net?
-fn generate_monster_cock(name: String, id: u32, cock_type: CockType, color_category: String, is_test_net: bool) {
+/// - `upload: bool` Should we upload this MCK to the IPFS?
+async fn generate_monster_cock(
+    name: String,
+    id: u32,
+    cock_type: CockType,
+    color_category: String,
+    is_test_net: bool,
+    upload: bool,
+) {
     // TODO decide the generation based on the ID
     let mut cock: MonsterCock;
     if !name.is_empty() && !color_category.is_empty() {
-        cock = MonsterCock::with_name_and_category(id, 2, cock_type, name, color_category, is_test_net);
+        cock = MonsterCock::with_name_and_category(
+            id,
+            2,
+            cock_type,
+            name,
+            color_category,
+            is_test_net,
+        );
     } else if !name.is_empty() {
         cock = MonsterCock::with_name(id, 2, cock_type, name, is_test_net);
     } else if !color_category.is_empty() {
@@ -104,5 +128,26 @@ fn generate_monster_cock(name: String, id: u32, cock_type: CockType, color_categ
     // Generate and save cock
     cock.generate();
     // Show handles the saving and user input shit
-    cock.show_image(); 
+    let saved = cock.show_image();
+    if saved && upload {
+        // Poll future
+        upload_cock(cock).await;
+    }
+}
+
+async fn upload_cock(cock: MonsterCock) {
+    // Make it mutable
+    let mut cock = cock.clone();
+    // If the upload flag is set, upload the generated MonsterCock to the web
+    let hashes = upload_to_ipfs(&mut cock).await;
+    match hashes {
+        Ok(hashes) => {
+            println!("Upload to IPFS successfull");
+            println!("Hashes are: ");
+            println!("Json Hash: {}, Image Hash: {}", hashes.1, hashes.0);
+        }
+        Err(e) => {
+            println!("Error uploading to IPFS: {:?}", e);
+        }
+    }
 }
