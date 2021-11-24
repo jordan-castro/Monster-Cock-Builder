@@ -131,15 +131,13 @@ async fn generate_monster_cock(
     let saved = cock.show_image();
     if saved && upload {
         // Poll future
-        upload_cock(cock).await;
+        upload_cock(&mut cock).await;
     }
 }
 
-async fn upload_cock(cock: MonsterCock) {
-    // Make it mutable
-    let mut cock = cock.clone();
+async fn upload_cock(cock: &mut MonsterCock) {
     // If the upload flag is set, upload the generated MonsterCock to the web
-    let hashes = upload_to_ipfs(&mut cock).await;
+    let hashes = upload_to_ipfs(cock).await;
     match hashes {
         Ok(hashes) => {
             println!("Upload to IPFS successfull");
