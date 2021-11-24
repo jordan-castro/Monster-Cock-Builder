@@ -30,7 +30,7 @@ impl Canvas {
         };
         schema.debug();
 
-        let color = randomify_color();
+        let color = self.cock_colors.random_color_from_pallete();
 
         for x in 0..width {
             for y in 0..height {
@@ -143,6 +143,7 @@ impl Canvas {
 
     /// Draw crosses
     pub fn draw_crosses(&mut self) {
+        #[allow(unused_variables)]
         fn draw(image: &mut RgbImage, coordiantes: (u32, u32), size: i32, color: (i32, i32, i32)) {
             let (x, y) = (coordiantes.0 as i32, coordiantes.1 as i32);
             drawing::draw_cross_mut(image, rgb_to_u8(color), x, y)
