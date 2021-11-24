@@ -16,3 +16,5 @@ colorful = "0.2.1"
 imageproc = "0.22.0"
 itertools = "0.10.1"
 docopt = "1.1.1"
+tokio = { version = "0.2", features = ["full"] }
+pinata-sdk = "1.0.0"
