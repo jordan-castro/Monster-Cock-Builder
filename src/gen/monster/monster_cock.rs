@@ -66,7 +66,7 @@ impl MonsterCock {
     }
 
     /// Save the image to show later
-    pub fn show_image(&mut self) {
+    pub fn show_image(&mut self) -> bool {
         self.image.save("monstercock.png").expect("Saving image to monstercock.png");
         // Ask for user imput
         println!("Keep image? (y/n)");
@@ -74,8 +74,10 @@ impl MonsterCock {
         std::io::stdin().read_line(&mut input).expect("Reading user input");
         if input.to_lowercase().trim() != "y" {
             std::fs::remove_file("monstercock.png").expect("Removing file");
+            false
         } else {
             self.save();
+            true
         }
     }
 
