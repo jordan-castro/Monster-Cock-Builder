@@ -33,7 +33,7 @@ impl CockTribute {
     ///
     /// # Returns
     /// A Vector of CockTributes
-    pub fn from_json(attributes: Map<String, Value>) -> Vec<Self> {
+    pub fn from_json(attributes: &Map<String, Value>) -> Vec<Self> {
         let mut cocktributes = Vec::new();
         let mut schemas: Vec<i32> = Vec::new();
 

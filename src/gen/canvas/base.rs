@@ -42,9 +42,7 @@ impl Canvas {
         }
     }
 
-    ///
     /// Draw the canvas.
-    /// 
     pub fn draw_canvas(&mut self) {
         // Whether or not the canvas will have a gradient
         let has_gradient = match self.cocktributes[2] {

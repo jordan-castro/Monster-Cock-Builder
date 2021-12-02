@@ -1,9 +1,10 @@
 #![allow(dead_code)]
 
 use docopt::Docopt;
-use gen::monster::monster_cock::MonsterCock;
+use gen::{attributes::cocktributes::CockTribute, monster::monster_cock::MonsterCock};
 use learning::data_set::training_data;
 use serde::Deserialize;
+use serde_json::{Map, Value};
 
 use crate::{gen::types::CockType, hidden::upload::upload_to_ipfs};
 
@@ -17,6 +18,7 @@ MonsterCock Builder.
 
 Usage: 
     mckbuilder gen <chain> [--name=<name>] [--start=<start>] [--amount=<amount>] [--type=<type>] [--color=<color>] [--upload]
+    mckbuilder genJsonn <file>
     mckbuilder train <amount>
     mckbuilder (-h | --help)
     mckbuilder --version
@@ -42,8 +44,10 @@ struct Args {
     flag_upload: bool,
     cmd_gen: bool,
     cmd_train: bool,
+    cmd_gen_json: bool,
     arg_chain: Option<u32>,
     arg_amount: Option<u32>,
+    arg_file: Option<String>,
 }
 
 #[tokio::main]
@@ -78,17 +82,40 @@ async fn main() {
                 chain
             ),
         };
-        let cock_type = match type_.to_lowercase().as_str() {
-            "default" => CockType::Default,
-            "def" => CockType::Default,
-            "solana" => CockType::Solana,
-            "sol" => CockType::Solana,
-            _ => CockType::Default, // Default cock es the default
-        };
-        generate_monster_cock(name, start, cock_type, color, is_test_net, upload).await;
+        let cock_type = CockType::from_string(type_);
+        generate_monster_cock(name, start, cock_type, color, is_test_net, upload, None).await;
     } else if args.cmd_train {
         let amount = args.arg_amount.unwrap();
         training_data(amount);
+    } else if args.cmd_gen_json {
+        let file = args.arg_file.unwrap();
+        // Read file into existence with serde_json
+        let file_contents = std::fs::read_to_string(file).unwrap();
+        let cock_json: Value = serde_json::from_str(&file_contents).unwrap();
+        let cock_json = cock_json.as_object().unwrap();
+
+        // Get the cock data from the json
+        // Some of the keys may not be present, so we need to check for that
+        let name = cock_json.get("name").unwrap().to_string();
+        let id = cock_json.get("id").unwrap().as_u64().unwrap() as u32;
+        let type_ = CockType::from_string(cock_json.get("type").unwrap().to_string());
+        let color = cock_json.get("color").unwrap().to_string();
+        let is_test_net = cock_json.get("testnet").unwrap().as_bool().unwrap();
+        let upload = cock_json.get("upload").unwrap().as_bool().unwrap();
+
+        let attributes = cock_json.get("attributes").unwrap().as_object().unwrap();
+        let attributes = CockTribute::from_json(attributes);
+
+        generate_monster_cock(
+            name,
+            id,
+            type_,
+            color,
+            is_test_net,
+            upload,
+            Some(attributes),
+        )
+        .await;
     }
 }
 
@@ -108,16 +135,21 @@ async fn generate_monster_cock(
     color_category: String,
     is_test_net: bool,
     upload: bool,
+    attributes: Option<Vec<CockTribute>>,
 ) {
     let mut cock: MonsterCock;
-    if !name.is_empty() && !color_category.is_empty() {
-        cock = MonsterCock::with_name_and_category(
+    if attributes.is_some() {
+        cock = MonsterCock::with_attributes(
             id,
             cock_type,
+            attributes.unwrap(),
+            is_test_net,
             name,
             color_category,
-            is_test_net,
         );
+    } else if !name.is_empty() && !color_category.is_empty() {
+        cock =
+            MonsterCock::with_name_and_category(id, cock_type, name, color_category, is_test_net);
     } else if !name.is_empty() {
         cock = MonsterCock::with_name(id, cock_type, name, is_test_net);
     } else if !color_category.is_empty() {

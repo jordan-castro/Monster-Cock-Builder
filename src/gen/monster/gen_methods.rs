@@ -67,23 +67,21 @@ impl MonsterCock {
         cock_type: CockType,
         attributes: Vec<CockTribute>,
         is_test_net: bool,
-        name: Option<String>,
-        category: Option<String>,
+        name: String,
+        category: String,
     ) -> MonsterCock {
         let mut monster = Self::base(
             id,
             generation_from_id(id),
             cock_type,
-            category.unwrap_or_default(),
+            category,
             Some(attributes),
             is_test_net,
         );
 
         // Check if the name is set and is not equal to "random"
-        if let Some(name) = name {
-            if name != "random" {
-                monster.name = Self::format_name(name, id);
-            }
+        if name != "random" {
+            monster.name = Self::format_name(name, id);
         }
 
         monster

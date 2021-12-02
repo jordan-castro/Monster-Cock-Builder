@@ -1,11 +1,17 @@
 use std::{io::Write, thread};
 
-use crate::{gen::{canvas::{base::Canvas, schema::Schema}, colors::CockColors, types::CockType}, utils::randomify::randomattributes};
+use crate::{
+    gen::{
+        canvas::{base::Canvas, schema::Schema},
+        colors::CockColors,
+        types::CockType,
+    },
+    utils::randomify::randomattributes,
+};
 
-///
 /// Function that will create schemas in a loop for a given number of times.
 /// The function will then put the data from the schema created in data/schemas.txt.
-/// Used Multithreading to speed up the process, so keep that in mind when you decide the number of schemas to create.
+/// Uses Multithreading to speed up the process, so keep that in mind when you decide the number of schemas to create.
 /// Any more than 50 schemas slows down a 16 gb Ram machine.
 ///
 /// # Arguments
@@ -23,10 +29,9 @@ use crate::{gen::{canvas::{base::Canvas, schema::Schema}, colors::CockColors, ty
 ///
 /// # Output
 /// ```
-/// Circles; 10; 5; [30,40,50]; Original; 1
-/// Squares; 15; 2; [2, 4, 6, 8]; Original; 0
+/// Circles; 10; 5; [30,40,50]; original; 1
+/// Squares; 15; 2; [2, 4, 6, 8]; v2; 0
 /// ```
-///  
 pub fn training_data(num_schemas: u32) {
     let mut threads = Vec::new();
     for _ in 0..num_schemas {
@@ -35,7 +40,7 @@ pub fn training_data(num_schemas: u32) {
                 randomattributes(0),
                 CockColors::new(CockType::Default, String::new()),
                 true,
-                true
+                true,
             );
             // Randomly draw the schemas
             canvas.draw_schemas();
@@ -54,10 +59,7 @@ pub fn training_data(num_schemas: u32) {
 /// - `schema: &Schema` The schema to add to the file.
 /// - `result: i32` The result of the schema.
 ///
-pub fn add_to_set(
-    schema: &Schema,
-    result: u32,
-) {
+pub fn add_to_set(schema: &Schema, result: u32) {
     let mut file = std::fs::OpenOptions::new()
         .append(true)
         .open("data/schemas.txt")
