@@ -1,11 +1,12 @@
 #![allow(dead_code)]
 
+use std::path::Path;
+
 use docopt::Docopt;
 use gen::{attributes::cocktributes::CockTribute, monster::monster_cock::MonsterCock, canvas::base::Canvas};
 use learning::data_set::training_data;
 use serde::Deserialize;
 use serde_json::Value;
-use utils::randomify::randomattributes;
 
 use crate::{gen::types::CockType, hidden::upload::upload_to_ipfs};
 
@@ -19,8 +20,8 @@ MonsterCock Builder.
 
 Usage: 
     mckbuilder gen <chain> [--name=<name>] [--start=<start>] [--amount=<amount>] [--type=<type>] [--color=<color>] [--upload]
-    mckbuilder genJsonn <file>
-    mckbuilder train <amount>
+    mckbuilder json <file>
+    mckbuilder train <amount> [--save]
     mckbuilder schema <amount>
     mckbuilder (-h | --help)
     mckbuilder --version
@@ -34,6 +35,7 @@ Options:
     --type=<type>       The type of cock to draw.
     --color=<color>     The color category for the MonsterCock. 
     --upload            Upload the generated MonsterCock to the IPFS node.
+    --save              Save the image used for training to a file.
 ";
 
 #[derive(Debug, Deserialize)]
@@ -44,9 +46,10 @@ struct Args {
     flag_type: String,
     flag_color: String,
     flag_upload: bool,
+    flag_save: bool,
     cmd_gen: bool,
     cmd_train: bool,
-    cmd_gen_json: bool,
+    cmd_json: bool,
     cmd_schema: bool,
     arg_chain: Option<u32>,
     arg_amount: Option<u32>,
@@ -89,8 +92,8 @@ async fn main() {
         generate_monster_cock(name, start, cock_type, color, is_test_net, upload, None).await;
     } else if args.cmd_train {
         let amount = args.arg_amount.unwrap();
-        training_data(amount);
-    } else if args.cmd_gen_json {
+        training_data(amount, args.flag_save);
+    } else if args.cmd_json {
         let file = args.arg_file.unwrap();
         // Read file into existence with serde_json
         let file_contents = std::fs::read_to_string(file).unwrap();
@@ -119,6 +122,8 @@ async fn main() {
             Some(attributes),
         )
         .await;
+    } else if args.cmd_schema {
+        schema_s(args.arg_amount.unwrap());
     }
 }
 
@@ -191,7 +196,17 @@ async fn upload_cock(cock: &mut MonsterCock) {
 /// 
 /// # Arguments
 /// - `amount: u32` The amount of monster cock to generate.
-fn schema_s(amount: i32) { 
-    let random_attributes = randomattributes(0);
-    let canvas = Canvas::new(true, false);
+fn schema_s(amount: u32) { 
+    // Check if there is a folder called canvases
+    let path = Path::new("data/canvases");
+    if !path.exists() {
+        // If there is no folder, create one
+        std::fs::create_dir("data/canvases").unwrap();
+    }
+
+    let mut canvas = Canvas::new(true, false);
+    for _x in 0..amount {
+        canvas.draw_space();
+        canvas.image.save(path.join("canvas.png")).expect("Saving schema image to data/canvases");
+    }
 }
