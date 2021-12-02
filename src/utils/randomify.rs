@@ -26,7 +26,8 @@ pub fn randomattributes(generation: u32) -> Vec<CockTribute> {
         circles: schemas.contains(&1),
         squares: schemas.contains(&2),
         stripes: schemas.contains(&3),
-        round_squares: schemas.contains(&4),
+        round_squares: false // TODO change to schemas.contains(&4) when (if) implemented.
+        // round_squares: schemas.contains(&4),
     };
     // Choose a gradient
     let gradient_choice = thread_rng().gen_range(0..3);
