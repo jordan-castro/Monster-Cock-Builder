@@ -1,7 +1,6 @@
 use std::vec;
 
-use crate::gen::types::SchemaSkipType;
-use crate::learning::data_set::add_to_set;
+use crate::{gen::types::SchemaSkipType, utils::randomify::randomify_color};
 use crate::learning::interface::valid_schema;
 use crate::utils::image_utils::crop_image;
 // use crate::utils::randomify::randomify_color;
@@ -19,7 +18,7 @@ impl Canvas {
         &mut self,
         schema_title: &str,
         f: fn(&mut RgbImage, (u32, u32), i32, (i32, i32, i32)),
-    ) {
+    ) -> (Schema, (i32, i32, i32)) {
         // Grab dimensions of the canvas
         let (width, height) = self.image.dimensions();
         // let schema = Schema::random_schema(schema_title.to_string());
@@ -28,9 +27,8 @@ impl Canvas {
         } else {
             Schema::random_schema(schema_title.to_string())
         };
-        schema.debug();
 
-        let color = self.cock_colors.random_color_from_pallete();
+        let color = randomify_color(); // Todo? maybe use a palette color from CockColors?
 
         for x in 0..width {
             for y in 0..height {
@@ -41,26 +39,14 @@ impl Canvas {
                 }
             }
         }
-        self.training_data(&schema, color);
+        // self.training_data(&schema, color);
 
         // Crop the image
         self.image = crop_image(self.image.clone());
+        (schema, color)
     }
 
-    /// Decides to keep creating the schema or not.
-    /// And add to the Training set if self.train is true.
-    fn training_data(&self, schema: &Schema, color: (i32, i32, i32)) {
-        // Check if training
-        if self.train {
-            // Verify the schema
-            let valid = verify_schema(&self.image, color);
-            println!("Valid: {}", valid);
-            // Add to the training set
-            add_to_set(schema, valid);
-        }
-    }
-
-    pub fn draw_circles(&mut self) {
+    pub fn draw_circles(&mut self) -> (Schema, (i32, i32, i32)) {
         fn draw(image: &mut RgbImage, coordiantes: (u32, u32), size: i32, color: (i32, i32, i32)) {
             drawing::draw_hollow_circle_mut(
                 image,
@@ -69,10 +55,10 @@ impl Canvas {
                 rgb_to_u8(color),
             );
         }
-        self.draw_schema("Circles", draw);
+        self.draw_schema("Circles", draw)
     }
 
-    pub fn draw_squares(&mut self) {
+    pub fn draw_squares(&mut self) -> (Schema, (i32, i32, i32)) {
         fn draw(image: &mut RgbImage, coordiantes: (u32, u32), size: i32, color: (i32, i32, i32)) {
             /* Squares need a Rect. Made as follows:
             (x, y) is the top left corner of the rectangle
@@ -89,10 +75,10 @@ impl Canvas {
                 rgb_to_u8(color),
             );
         }
-        self.draw_schema("Squares", draw);
+        self.draw_schema("Squares", draw)
     }
 
-    pub fn draw_space(&mut self) {
+    pub fn draw_space(&mut self) -> (Schema, (i32, i32, i32)) {
         #[allow(unused_variables)]
         fn draw(image: &mut RgbImage, coordiantes: (u32, u32), size: i32, color: (i32, i32, i32)) {
             // Random values because space is completely random
@@ -100,20 +86,20 @@ impl Canvas {
             let y = rand::thread_rng().gen_range(0..coordiantes.1 + 1);
             drawing::draw_hollow_circle_mut(image, (x as i32, y as i32), size, rgb_to_u8(color));
         }
-        self.draw_schema("Space", draw);
+        self.draw_schema("Space", draw)
     }
 
-    pub fn draw_stripes(&mut self) {
+    pub fn draw_stripes(&mut self) -> (Schema, (i32, i32, i32)) {
         fn draw(image: &mut RgbImage, coordiantes: (u32, u32), size: i32, color: (i32, i32, i32)) {
             // Start and end of line
             let start = (coordiantes.0 as f32, coordiantes.1 as f32);
             let end = (start.0 + size as f32, start.1 + size as f32);
             drawing::draw_line_segment_mut(image, start, end, rgb_to_u8(color));
         }
-        self.draw_schema("Stripes", draw);
+        self.draw_schema("Stripes", draw)
     }
 
-    pub fn draw_curves(&mut self) {
+    pub fn draw_curves(&mut self) -> (Schema, (i32, i32, i32)) {
         fn draw(image: &mut RgbImage, coordiantes: (u32, u32), size: i32, color: (i32, i32, i32)) {
             let (x, y) = (coordiantes.0 as i32, coordiantes.1 as i32);
             // Choose 4 points based on the size
@@ -138,17 +124,17 @@ impl Canvas {
                 rgb_to_u8(color.clone()),
             );
         }
-        self.draw_schema("Curves", draw);
+        self.draw_schema("Curves", draw)
     }
 
     /// Draw crosses
-    pub fn draw_crosses(&mut self) {
+    pub fn draw_crosses(&mut self) -> (Schema, (i32, i32, i32)) {
         #[allow(unused_variables)]
         fn draw(image: &mut RgbImage, coordiantes: (u32, u32), size: i32, color: (i32, i32, i32)) {
             let (x, y) = (coordiantes.0 as i32, coordiantes.1 as i32);
             drawing::draw_cross_mut(image, rgb_to_u8(color), x, y)
         }
-        self.draw_schema("Crosses", draw);
+        self.draw_schema("Crosses", draw)
     }
 }
 
@@ -183,42 +169,4 @@ fn should_draw(pos1: i32, pos2: i32, schema: &Schema) -> bool {
         }
     }
     true // Default to true
-}
-
-///
-/// Verify the schema
-///
-/// # Params
-/// - `image: RgbImage` The image to verify.
-/// - `color: (i32, i32, i32)` The color of the schema.
-///    - By default if there is more than one color in the schema, then it is already verified.
-///
-/// # Returns
-/// `u32 number` Whether the schema is valid or not.
-///
-fn verify_schema(image: &RgbImage, color: (i32, i32, i32)) -> u32 {
-    let mut valid = 0;
-    let mut empty_count = 0;
-    let mut full_count = 0;
-
-    // Loop through the image and check the pixel
-    for (_, __, pixel) in image.enumerate_pixels() {
-        if pixel == &rgb_to_u8((0, 0, 0)) || pixel == &rgb_to_u8((255, 255, 255)) {
-            empty_count += 1;
-        } else if pixel == &rgb_to_u8(color) {
-            full_count += 1;
-        }
-    }
-    let empty_max = image.width() * image.height() / 2;
-    let full_max = image.width() * image.height() - 5000;
-
-    if empty_count > empty_max {
-        valid = 1;
-        println!("Empty");
-    } else if full_count > full_max {
-        valid = 2;
-        println!("Full");
-    }
-
-    valid
 }

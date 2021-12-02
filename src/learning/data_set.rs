@@ -1,12 +1,14 @@
 use std::{io::Write, thread};
 
+use image::RgbImage;
+
 use crate::{
     gen::{
         canvas::{base::Canvas, schema::Schema},
         colors::CockColors,
         types::CockType,
     },
-    utils::randomify::randomattributes,
+    utils::{randomify::randomattributes, rgb_conversions::rgb_to_u8},
 };
 
 /// Function that will create schemas in a loop for a given number of times.
@@ -37,13 +39,13 @@ pub fn training_data(num_schemas: u32) {
     for _ in 0..num_schemas {
         let th = thread::spawn(|| {
             let mut canvas = Canvas::new(
-                randomattributes(0),
-                CockColors::new(CockType::Default, String::new()),
-                true,
+                false,
                 true,
             );
             // Randomly draw the schemas
-            canvas.draw_schemas();
+            let res = canvas.draw_circles();
+            // Verify and place accordingly
+            verify_schema(res.0, &canvas.image, res.1);
         });
         threads.push(th);
     }
@@ -52,14 +54,12 @@ pub fn training_data(num_schemas: u32) {
     }
 }
 
-///
 /// Add data to the schemas.txt file
 ///
 /// # Arguments
 /// - `schema: &Schema` The schema to add to the file.
 /// - `result: i32` The result of the schema.
-///
-pub fn add_to_set(schema: &Schema, result: u32) {
+fn add_to_set(schema: &Schema, result: u32) {
     let mut file = std::fs::OpenOptions::new()
         .append(true)
         .open("data/schemas.txt")
@@ -80,4 +80,41 @@ pub fn add_to_set(schema: &Schema, result: u32) {
     schema_string.push_str("\n");
     file.write(schema_string.as_bytes())
         .expect("Unable to write to file");
+}
+
+///
+/// Verify the schema
+///
+/// # Params
+/// - `image: RgbImage` The image to verify.
+/// - `color: (i32, i32, i32)` The color of the schema.
+///    - By default if there is more than one color in the schema, then it is already verified.
+fn verify_schema(schema: Schema, image: &RgbImage, color: (i32, i32, i32)) {
+    let mut empty_count = 0;
+    let mut full_count = 0;
+
+    // Loop through the image and check the pixel
+    for (_, __, pixel) in image.enumerate_pixels() {
+        if pixel == &rgb_to_u8((0, 0, 0)) || pixel == &rgb_to_u8((255, 255, 255)) {
+            empty_count += 1;
+        } else if pixel == &rgb_to_u8(color) {
+            full_count += 1;
+        }
+    }
+    let empty_max = image.width() * image.height() / 2;
+    let full_max = image.width() * image.height() - 5000;
+
+    if empty_count > empty_max {
+        add_to_set(&schema, 1);
+        // valid = 1;
+        println!("Empty");
+    } else if full_count > full_max {
+        // valid = 2;
+        add_to_set(&schema, 2);
+        println!("Full");
+    } else {
+        // valid = 0;
+        add_to_set(&schema, 0);
+        println!("Actually valid");
+    }
 }

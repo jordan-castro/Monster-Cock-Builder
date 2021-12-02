@@ -25,36 +25,40 @@ pub struct MonsterCock {
     pub id: u32,
     is_test_net: bool,
     pub hash: String,
+    cock_colors: CockColors,
+    cocktributes: Vec<CockTribute>
 }
 
 impl MonsterCock {
     pub (super) fn base(id: u32, generation: u32, cock_type: CockType, category: String, attributes: Option<Vec<CockTribute>>, is_test_net: bool) -> MonsterCock {
-        let cock_tributes = match attributes {
+        let cocktributes = match attributes {
             Some(attributes) => attributes,
             None => randomify::randomattributes(generation),
         };
         let cock_colors = CockColors::new(cock_type, category);
         // Create the canvas
-        let canvas = Canvas::new(cock_tributes, cock_colors, false, false);
+        let canvas = Canvas::new(false, false);
 
         MonsterCock {
-            canvas: canvas,
+            canvas,
             image: RgbaImage::new(0, 0),
             name: String::new(),
-            id: id,
-            is_test_net: is_test_net,
+            id,
+            is_test_net,
             hash: String::new(),
+            cock_colors,
+            cocktributes
         }
     }
 
     /// Generates the MonsterCock.
     pub fn generate(&mut self) {
-        self.canvas.draw_canvas();
+        self.canvas.draw_from_attributes(self.cocktributes.clone(), &mut self.cock_colors);
         // Create the image
         self.paste_cock_on_canvas();
         self.color_cock();
         // Mirror image?
-        match self.canvas.cocktributes.last().unwrap() {
+        match self.cocktributes.last().unwrap() {
             CockTribute::Sun { rising } => {
                 if rising == &true {
                     // Mirror the image
@@ -87,8 +91,8 @@ impl MonsterCock {
         let convert_pixel = |pixel: Rgba<u8>| {
             rgb_u8_to_i32(rgba_to_rgb_u8(pixel.0))
         };
-        let before_colors = self.canvas.cock_colors.before_colors();
-        let after_colors = self.canvas.cock_colors.after_colors();
+        let before_colors = self.cock_colors.before_colors();
+        let after_colors = self.cock_colors.after_colors();
         // Loop through the pixels of the image
         for pixel in self.image.pixels_mut() {
             let color = convert_pixel(*pixel);
@@ -117,24 +121,12 @@ impl MonsterCock {
         // Convert the canvas image to a Rgba
         let canvas_rgba = self.canvas.image.convert();
 
-        if self.canvas.cock_colors.cock == CockType::Default {
-            // Default cock
-            let cock_image = image::open(DEFAULT_COCK).unwrap();
-            // Paste the cock_image on a Red image
-            self.image =
-                paste_image_on_top(canvas_rgba, cock_image.into_rgba8());
-        } else if self.canvas.cock_colors.cock == CockType::Solana {
-            // Solana cock
-            let cock_image = image::open(SOLANA_COCK).unwrap();
-            // Paste the cock_image on a Red image
-            self.image =
-                paste_image_on_top(canvas_rgba, cock_image.into_rgba8());
-        } else {
-            panic!(
-                "CockType : {:?} not implemented!",
-                self.canvas.cock_colors.cock
-            );
-        }
+        let cock_image = match self.cock_colors.cock {
+            CockType::Default => DEFAULT_COCK,
+            CockType::Solana => SOLANA_COCK,
+        };
+        let cock_image = image::open(cock_image).expect("Opening cock image");
+        self.image = paste_image_on_top(canvas_rgba, cock_image.into_rgba8());
     }
 
     /// Save the MonsterCock image.
@@ -146,7 +138,7 @@ impl MonsterCock {
 
         // Black list the name
         let name = self.get_idless_name();
-        black_list_name(name.to_string(), self.is_test_net);
+        black_list_name(name, self.is_test_net);
     } 
 
     /// Save the cock data to a file LOCALLY.
@@ -160,7 +152,7 @@ impl MonsterCock {
 
     pub fn get_data(&mut self) -> Map<String, Value> {
         // Get attributes json format
-        let attributes_json = attributes_json(self.canvas.cock_colors.colors.clone(), self.canvas.cocktributes.clone());        
+        let attributes_json = attributes_json(self.cock_colors.colors.clone(), self.cocktributes.clone());        
         // A new map
         let mut data = Map::new();
         // Insert the JSON

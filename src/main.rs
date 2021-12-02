@@ -1,10 +1,11 @@
 #![allow(dead_code)]
 
 use docopt::Docopt;
-use gen::{attributes::cocktributes::CockTribute, monster::monster_cock::MonsterCock};
+use gen::{attributes::cocktributes::CockTribute, monster::monster_cock::MonsterCock, canvas::base::Canvas};
 use learning::data_set::training_data;
 use serde::Deserialize;
-use serde_json::{Map, Value};
+use serde_json::Value;
+use utils::randomify::randomattributes;
 
 use crate::{gen::types::CockType, hidden::upload::upload_to_ipfs};
 
@@ -20,6 +21,7 @@ Usage:
     mckbuilder gen <chain> [--name=<name>] [--start=<start>] [--amount=<amount>] [--type=<type>] [--color=<color>] [--upload]
     mckbuilder genJsonn <file>
     mckbuilder train <amount>
+    mckbuilder schema <amount>
     mckbuilder (-h | --help)
     mckbuilder --version
 
@@ -45,6 +47,7 @@ struct Args {
     cmd_gen: bool,
     cmd_train: bool,
     cmd_gen_json: bool,
+    cmd_schema: bool,
     arg_chain: Option<u32>,
     arg_amount: Option<u32>,
     arg_file: Option<String>,
@@ -181,4 +184,14 @@ async fn upload_cock(cock: &mut MonsterCock) {
             println!("Error uploading to IPFS: {:?}", e);
         }
     }
+}
+
+/// Basically trying out new schemas and what not.
+/// !Important the schema type is hard coded.
+/// 
+/// # Arguments
+/// - `amount: u32` The amount of monster cock to generate.
+fn schema_s(amount: i32) { 
+    let random_attributes = randomattributes(0);
+    let canvas = Canvas::new(true, false);
 }
