@@ -81,9 +81,11 @@ impl Canvas {
     pub fn draw_space(&mut self) -> (Schema, (i32, i32, i32)) {
         #[allow(unused_variables)]
         fn draw(image: &mut RgbImage, coordiantes: (u32, u32), size: i32, color: (i32, i32, i32)) {
+            // Get the width and height of the image
+            let (width, height) = image.dimensions();
             // Random values because space is completely random
-            let x = rand::thread_rng().gen_range(0..coordiantes.0 + 1);
-            let y = rand::thread_rng().gen_range(0..coordiantes.1 + 1);
+            let x = rand::thread_rng().gen_range(0..width + 1);
+            let y = rand::thread_rng().gen_range(0..height+ 1);
             drawing::draw_hollow_circle_mut(image, (x as i32, y as i32), size, rgb_to_u8(color));
         }
         self.draw_schema("Space", draw)
@@ -127,15 +129,15 @@ impl Canvas {
         self.draw_schema("Curves", draw)
     }
 
-    /// Draw crosses
-    pub fn draw_crosses(&mut self) -> (Schema, (i32, i32, i32)) {
-        #[allow(unused_variables)]
-        fn draw(image: &mut RgbImage, coordiantes: (u32, u32), size: i32, color: (i32, i32, i32)) {
-            let (x, y) = (coordiantes.0 as i32, coordiantes.1 as i32);
-            drawing::draw_cross_mut(image, rgb_to_u8(color), x, y)
-        }
-        self.draw_schema("Crosses", draw)
-    }
+    // /// Draw crosses
+    // pub fn draw_crosses(&mut self) -> (Schema, (i32, i32, i32)) {
+    //     #[allow(unused_variables)]
+    //     fn draw(image: &mut RgbImage, coordiantes: (u32, u32), size: i32, color: (i32, i32, i32)) {
+    //         let (x, y) = (coordiantes.0 as i32 + size, coordiantes.1 as i32);
+    //         drawing::draw_cross_mut(image, rgb_to_u8(color), x, y)
+    //     }
+    //     self.draw_schema("Crosses", draw)
+    // }
 }
 
 ///
