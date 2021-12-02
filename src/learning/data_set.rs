@@ -5,10 +5,8 @@ use image::RgbImage;
 use crate::{
     gen::{
         canvas::{base::Canvas, schema::Schema},
-        colors::CockColors,
-        types::CockType,
     },
-    utils::{randomify::randomattributes, rgb_conversions::rgb_to_u8},
+    utils::rgb_conversions::rgb_to_u8,
 };
 
 /// Function that will create schemas in a loop for a given number of times.
