@@ -11,7 +11,7 @@ import sys
 
 # The path to the schemas data file
 SCHEMAS_PATH = 'data/schemas.txt'
-VALID_TYPES = ['Circles', 'Curves', 'Squares', 'Stripes']
+VALID_TYPES = ['Circles', 'Curves', 'Squares', 'Stripes', 'Crosses']
 
 
 def format_skip_values(df):
@@ -79,14 +79,10 @@ def format_types(df):
         Squares => 2
         Stripes => 3
         """
-        if data == "Circles":
-            return 0
-        elif data == "Curves":
-            return 1
-        elif data == "Squares":
-            return 2
-        elif data == "Stripes":
-            return 3
+        # So that we only have to update the VALID_TYPES list and Wazam!
+        for t in VALID_TYPES:
+            if data.lower() == t.lower():
+                return VALID_TYPES.index(t)
 
     return df["Type"].map(lambda x: get_type(x))
 
