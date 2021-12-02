@@ -65,6 +65,9 @@ async fn main() {
         if amount != 0 {
             panic!("Amount not implemented yet!");
         }
+        if start == 0 {
+            panic!("If creating the first monster cock for this chain, Please run the command with the --new flag.")
+        }
 
         // Check the test_net based on the chain id passed
         let is_test_net = match chain {
