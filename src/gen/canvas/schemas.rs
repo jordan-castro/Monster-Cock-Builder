@@ -159,7 +159,12 @@ impl Canvas {
     }
 
     pub fn draw_squares_with_gradients(&mut self) -> (Schema, (i32, i32, i32)) {
-        fn draw(image: &mut RgbImage, coordinates: (u32, u32), size: i32, colors: Vec<(i32, i32, i32)>) {
+        fn draw(
+            image: &mut RgbImage,
+            coordinates: (u32, u32),
+            size: i32,
+            colors: Vec<(i32, i32, i32)>,
+        ) {
             let (x, y) = (coordinates.0 as i32, coordinates.1 as i32);
             // Draw the square
             drawing::draw_hollow_rect_mut(
@@ -171,39 +176,28 @@ impl Canvas {
             // Get a sub image where the square is
             let mut sub_image = crop_image(
                 image.clone(),
-                Some((x as u32, y as u32, size as u32, size as u32))
+                Some((x as u32, y as u32, size as u32, size as u32)),
             );
-            // Choose the gradient type
-            let is_random = size % 2 == 0;
-            let vertical = if is_random {
-                // Use Bernoulli distribution to get a boolean value
+            // Choose a boolean value using Bernoulli distribution
+            let vertical = {
                 let mut rng = rand::thread_rng();
                 let bernoulli = Bernoulli::new(0.5).unwrap();
                 bernoulli.sample(&mut rng)
-            } else {
-                false // Defaults false
-            };
-            // Choose gradient colors
-            let gradient_colors = if is_random {
-                vec![
-                    random_value(&colors).clone(),
-                    random_value(&colors).clone(),
-                ]
-            } else {
-                vec![
-                    colors[1].clone(),
-                    colors[2].clone(),
-                ]
             };
 
             // Now draw the gradient
-            sub_image = draw_gradient(sub_image, gradient_colors[0], gradient_colors[1], vertical);
+            sub_image = draw_gradient(
+                sub_image,
+                random_value(&colors).clone(),
+                random_value(&colors).clone(),
+                vertical,
+            );
             // Now place back onto the image
             let mut bottom_image = image.clone();
             imageops::overlay(&mut bottom_image, &sub_image, x as u32, y as u32);
             *image = bottom_image;
         }
-        
+
         self.draw_schema("GSquares", draw)
     }
 }
