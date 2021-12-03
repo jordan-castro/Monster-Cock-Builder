@@ -1,0 +1,13 @@
+{
+    "name": "Celestial",
+    "id": 0,
+    "type": "default",
+    "color": "cold",
+    "testnet": true,
+    "upload": false,
+    "attributes": {
+        "generation": 3,
+        "sunrise": true,
+        "schema": "gsquares"        
+    }
+}
