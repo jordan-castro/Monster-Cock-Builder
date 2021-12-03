@@ -32,6 +32,4 @@ MCKB contains 4 main components:
 - scripts/: Batch scripts. Find out more within each script.
 
 ## TODO:
-- Generate MCKs from JSON.
-- Convert schema methods to nannou.
 - Better CLI output.
