@@ -70,6 +70,7 @@ impl Canvas {
                 squares,
                 stripes,
                 round_squares,
+                space
             } => {
                 if circles {
                     self.draw_circles();
@@ -79,6 +80,9 @@ impl Canvas {
                 }
                 if stripes {
                     self.draw_stripes();
+                }
+                if space {
+                    self.draw_space();
                 }
                 // if round_squares {
                 // self.draw_round_squares();

@@ -21,6 +21,7 @@ pub enum CockTribute {
         squares: bool,
         stripes: bool,
         round_squares: bool,
+        space: bool,
     },
 }
 
@@ -69,8 +70,10 @@ impl CockTribute {
                         schemas.push(1);
                     } else if schema == "stripes" {
                         schemas.push(2);
-                    } else if schema == "round_squares" {
+                    } else if schema == "round squares" {
                         schemas.push(3);
+                    } else if schema == "space" {
+                        schemas.push(4);
                     }
                 }
                 _ => {} // Do nothing by default
@@ -83,6 +86,7 @@ impl CockTribute {
                 squares: schemas.contains(&1),
                 stripes: schemas.contains(&2),
                 round_squares: schemas.contains(&3),
+                space: schemas.contains(&4),
             };
             cocktributes.push(schema_attribute);
         }
@@ -134,6 +138,7 @@ fn readable_cocktribute(cocktribute: CockTribute) -> Vec<Vec<String>> {
             squares,
             stripes,
             round_squares,
+            space,
         } => {
             let mut result = Vec::new();
             if circles {
@@ -147,6 +152,9 @@ fn readable_cocktribute(cocktribute: CockTribute) -> Vec<Vec<String>> {
             }
             if round_squares {
                 result.push(vec![String::from("Schema"), String::from("Round Squares")]);
+            }
+            if space {
+                result.push(vec![String::from("Schema"), String::from("Space")]);
             }
             result
         }

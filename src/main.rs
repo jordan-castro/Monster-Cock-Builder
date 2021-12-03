@@ -75,9 +75,9 @@ async fn main() {
         if amount != 0 {
             panic!("Amount not implemented yet!");
         }
-        if start == 0 {
-            panic!("If creating the first monster cock for this chain, Please run the command with the --new flag.")
-        }
+        // if start == 0 {
+            // panic!("If creating the first monster cock for this chain, Please run the command with the --new flag.")
+        // }
 
         // Check the test_net based on the chain id passed
         let is_test_net = match chain {
@@ -204,9 +204,9 @@ fn schema_s(amount: u32) {
         std::fs::create_dir("data/canvases").unwrap();
     }
 
-    let mut canvas = Canvas::new(true, false);
-    for _x in 0..amount {
+    for x in 0..amount {
+        let mut canvas = Canvas::new(true, false);
         canvas.draw_space();
-        canvas.image.save(path.join("canvas.png")).expect("Saving schema image to data/canvases");
+        canvas.image.save(path.join(format!("canvas_schema{}.png", x))).expect("Saving schema image to data/canvases");
     }
 }

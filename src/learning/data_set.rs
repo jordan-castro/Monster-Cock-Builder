@@ -3,9 +3,7 @@ use std::{io::Write, thread};
 use image::RgbImage;
 
 use crate::{
-    gen::{
-        canvas::{base::Canvas, schema::Schema},
-    },
+    gen::canvas::{base::Canvas, schema::Schema},
     utils::rgb_conversions::rgb_to_u8,
 };
 
@@ -32,16 +30,19 @@ use crate::{
 /// Circles; 10; 5; [30,40,50]; original; 1
 /// Squares; 15; 2; [2, 4, 6, 8]; v2; 0
 /// ```
-pub fn training_data(num_schemas: u32) {
+pub fn training_data(num_schemas: u32, save: bool) {
     let mut threads = Vec::new();
-    for _ in 0..num_schemas {
-        let th = thread::spawn(|| {
-            let mut canvas = Canvas::new(
-                false,
-                true,
-            );
+    for x in 0..num_schemas {
+        let th = thread::spawn(move || {
+            let mut canvas = Canvas::new(false, true);
             // Randomly draw the schemas
-            let res = canvas.draw_circles();
+            let res = canvas.draw_space();
+            if save {
+                canvas
+                    .image
+                    .save(format!("data/canvases/canvas{}.png", x))
+                    .unwrap();
+            }
             // Verify and place accordingly
             verify_schema(res.0, &canvas.image, res.1);
         });
@@ -99,8 +100,20 @@ fn verify_schema(schema: Schema, image: &RgbImage, color: (i32, i32, i32)) {
             full_count += 1;
         }
     }
-    let empty_max = image.width() * image.height() / 2;
-    let full_max = image.width() * image.height() - 5000;
+    let full_max = match schema.title.to_lowercase().as_str() {
+        "circles" => image.width() * image.height() - 5000,
+        "squares" => image.width() * image.height() - 5000,
+        "stripes" => image.width() * image.height() - 5000,
+        "space" => image.width() * image.height() - 7000,
+        _ => 0,
+    };
+    let empty_max = match schema.title.as_str().to_lowercase().as_str() {
+        "circles" => image.width() * image.height() / 2,
+        "squares" => image.width() * image.height() / 2,
+        "stripes" => image.width() * image.height() / 2, // The default
+        "space" => full_max - 3000,
+        _ => 0,
+    };
 
     if empty_count > empty_max {
         add_to_set(&schema, 1);
@@ -113,6 +126,6 @@ fn verify_schema(schema: Schema, image: &RgbImage, color: (i32, i32, i32)) {
     } else {
         // valid = 0;
         add_to_set(&schema, 0);
-        println!("Actually valid");
+        println!("Valid");
     }
 }

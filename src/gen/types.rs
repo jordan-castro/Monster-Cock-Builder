@@ -20,7 +20,7 @@ impl CockType {
             "sol" => CockType::Solana,
             "d" => CockType::Default,
             "s" => CockType::Solana,
-            _ => panic!("Invalid CockType: {}", string),
+            _ => CockType::Default,
         }
     }
 }
