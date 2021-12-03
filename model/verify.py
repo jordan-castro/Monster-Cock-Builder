@@ -11,7 +11,7 @@ import sys
 
 # The path to the schemas data file
 SCHEMAS_PATH = 'data/schemas.txt'
-VALID_TYPES = ['Circles', 'Curves', 'Squares', 'Stripes', 'Crosses', 'Space']
+VALID_TYPES = ['Circles', 'Curves', 'Squares', 'Stripes', 'Crosses', 'Space', 'GSquares']
 
 
 def format_skip_values(df):
