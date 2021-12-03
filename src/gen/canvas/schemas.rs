@@ -9,11 +9,11 @@ use crate::utils::rgb_conversions::rgb_to_u8;
 
 use super::base::Canvas;
 use super::schema::Schema;
-use image::{RgbImage, imageops};
+use image::{imageops, RgbImage};
 use imageproc::{drawing, rect};
-use rand::Rng;
 use rand::distributions::Bernoulli;
 use rand::prelude::Distribution;
+use rand::Rng;
 
 impl Canvas {
     /// Draw a schema on the canvas.
@@ -159,39 +159,55 @@ impl Canvas {
     }
 
     pub fn draw_squares_with_gradients(&mut self) -> (Schema, (i32, i32, i32)) {
-        fn draw(
-            imag: &mut RgbImage,
-            coordiantes: (u32, u32),
-            size: i32,
-            colors: Vec<(i32, i32, i32)>,
-        ) {
-            let (x, y) = (coordiantes.0 as i32, coordiantes.1 as i32);
+        fn draw(image: &mut RgbImage, coordinates: (u32, u32), size: i32, colors: Vec<(i32, i32, i32)>) {
+            let (x, y) = (coordinates.0 as i32, coordinates.1 as i32);
             // Draw the square
             drawing::draw_hollow_rect_mut(
-                imag,
+                image,
                 rect::Rect::at(x, y).of_size(size as u32, size as u32),
                 rgb_to_u8(colors[0]),
             );
-            // Get a sub image where the square is
-            let mut sub_image = crop_image(imag.clone(), Some((x as u32, y as u32, size as u32, size as u32)));
-            // Choose a random boolean value using Bernoulli distribution
-            let mut rng = rand::thread_rng();
-            let bernoulli = Bernoulli::new(0.5).unwrap();
-            let vertical = bernoulli.sample(&mut rng);
 
-            // Draw the gradient on the sub image
-            sub_image = draw_gradient(sub_image, random_value(&colors).clone(), random_value(&colors).clone(), vertical);
-            
-            let mut bottom_image = imag.clone();
-            // Now place the image back onto the canvas
+            // Get a sub image where the square is
+            let mut sub_image = crop_image(
+                image.clone(),
+                Some((x as u32, y as u32, size as u32, size as u32))
+            );
+            // Choose the gradient type
+            let is_random = size % 2 == 0;
+            let vertical = if is_random {
+                // Use Bernoulli distribution to get a boolean value
+                let mut rng = rand::thread_rng();
+                let bernoulli = Bernoulli::new(0.5).unwrap();
+                bernoulli.sample(&mut rng)
+            } else {
+                false // Defaults false
+            };
+            // Choose gradient colors
+            let gradient_colors = if is_random {
+                vec![
+                    random_value(&colors).clone(),
+                    random_value(&colors).clone(),
+                ]
+            } else {
+                vec![
+                    colors[1].clone(),
+                    colors[2].clone(),
+                ]
+            };
+
+            // Now draw the gradient
+            sub_image = draw_gradient(sub_image, gradient_colors[0], gradient_colors[1], vertical);
+            // Now place back onto the image
+            let mut bottom_image = image.clone();
             imageops::overlay(&mut bottom_image, &sub_image, x as u32, y as u32);
-            *imag = bottom_image;
+            *image = bottom_image;
         }
+        
         self.draw_schema("GSquares", draw)
     }
 }
 
-///
 /// The function that decides to skip a draw or not.
 /// Decides based on the positions passed vs modulus.
 ///
@@ -202,7 +218,6 @@ impl Canvas {
 ///
 /// # Returns
 /// `bool` Whether to skip or not.
-///
 fn should_draw(pos1: i32, pos2: i32, schema: &Schema) -> bool {
     if schema.skip_type == SchemaSkipType::Original {
         if pos1 % schema.modulus == 0 || pos2 % schema.modulus == 0 {
