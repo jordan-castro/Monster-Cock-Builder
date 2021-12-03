@@ -203,10 +203,13 @@ fn schema_s(amount: u32) {
         // If there is no folder, create one
         std::fs::create_dir("data/canvases").unwrap();
     }
+    let mut canvas = Canvas::new(false, true);
 
     for x in 0..amount {
-        let mut canvas = Canvas::new(true, false);
-        canvas.draw_space();
+        println!("Generating {}", x);
+        canvas.draw_squares_with_gradients();
+        canvas.resize(true);
         canvas.image.save(path.join(format!("canvas_schema{}.png", x))).expect("Saving schema image to data/canvases");
+        canvas.clear();
     }
 }

@@ -32,19 +32,30 @@ use crate::{
 /// ```
 pub fn training_data(num_schemas: u32, save: bool) {
     let mut threads = Vec::new();
+    // Lambda function that takes in a (Schema, (i32,i32,i32)) and a u32 and a string
+    let drawer = |res: (Schema, (i32, i32, i32)), i: u32, filename: &str, canvas: &mut Canvas, save: bool| {
+        if save {
+            canvas.image.save(format!("data/canvases/{}{}.png", filename, i)).unwrap();
+        }
+        verify_schema(res.0, &canvas.image , res.1);
+        canvas.clear();
+    };
+
     for x in 0..num_schemas {
         let th = thread::spawn(move || {
             let mut canvas = Canvas::new(false, true);
-            // Randomly draw the schemas
-            let res = canvas.draw_space();
-            if save {
-                canvas
-                    .image
-                    .save(format!("data/canvases/canvas{}.png", x))
-                    .unwrap();
-            }
-            // Verify and place accordingly
-            verify_schema(res.0, &canvas.image, res.1);
+
+            let result = canvas.draw_circles();
+            drawer(result, x, "circles", &mut canvas, save);
+
+            let result = canvas.draw_squares();
+            drawer(result, x, "squares", &mut canvas, save);
+
+            let result = canvas.draw_stripes();
+            drawer(result, x, "stripes", &mut canvas, save);
+
+            let result = canvas.draw_space();
+            drawer(result, x, "space", &mut canvas, save);
         });
         threads.push(th);
     }

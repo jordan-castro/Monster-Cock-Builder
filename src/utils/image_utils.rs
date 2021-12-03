@@ -1,5 +1,7 @@
 use image::{RgbImage, Rgba, imageops};
 
+use super::rgb_conversions::rgb_to_u8;
+
 const DEFAULT_COCK: &str = "data/art/CockSepColors.png";
 
 /// 
@@ -28,11 +30,37 @@ pub fn make_transparent() {
 /// # Returns
 /// `RgbImage` The cropped image.
 /// 
-pub fn crop_image(image: RgbImage) -> RgbImage {
+pub fn crop_image(image: RgbImage, coordinates: Option<(u32, u32, u32, u32)>) -> RgbImage {
     let mut img = image.to_owned();
     let (width, height) = image.dimensions();
     let crop_width = width - 100;
     let crop_height = height - 100;
-    img = imageops::crop(&mut img, 50, 50, crop_width - 50, crop_height - 50).to_image();
+    let (x, y, w, h) = match coordinates {
+        Some(coordinates) => coordinates,
+        None => (50, 50, crop_width, crop_height),
+    };
+
+    img = imageops::crop(&mut img, x, y, w, h).to_image();
     img
+}
+
+/// Draw a gradient on a image.
+/// 
+/// # Params
+/// - `image: RgbImage` The image to draw the gradient on.
+/// - `start: (i32, i32, i32)` The start color of the gradient.
+/// - `end: (i32, i32, i32)` The end color of the gradient.
+/// - `vertical: bool` If the gradient should be vertical or horizontal.
+pub fn draw_gradient(image: RgbImage, start: (i32, i32, i32), end: (i32, i32, i32), vertical: bool) -> RgbImage {
+    let start = &rgb_to_u8(start);
+    let end = &rgb_to_u8(end);
+    let mut image = image;
+
+    if vertical {
+        imageops::vertical_gradient(&mut image, start, end);
+    } else {
+        imageops::horizontal_gradient(&mut image, start, end);
+    }
+
+    image
 }

@@ -1,17 +1,20 @@
-use crate::gen::attributes::cocktributes::CockTribute;
 use crate::gen::colors::CockColors;
-use crate::utils::rgb_conversions;
-use image::{Rgb, RgbImage};
+use crate::{gen::attributes::cocktributes::CockTribute, utils::image_utils};
+use image::{imageops, Rgb, RgbImage};
 
 const CANVAS_PATH: &str = "data/art/canvas_large.png";
 const CANVAS_WIDTH: u32 = 2000;
 const CANVAS_HEIGHT: u32 = 2000;
+
+const CANVAS_START_WIDTH: u32 = 500;
+const CANVAS_START_HEIGHT: u32 = 500;
 
 /// The canvas "object" for the MonsterCock.
 #[derive(Debug, Clone)]
 pub struct Canvas {
     pub image: RgbImage,
     pub(super) train: bool,
+    light_base: bool,
 }
 
 impl Canvas {
@@ -32,9 +35,10 @@ impl Canvas {
                     Rgb([0, 0, 0])
                 };
 
-                RgbImage::from_pixel(CANVAS_WIDTH, CANVAS_HEIGHT, pixel)
+                RgbImage::from_pixel(CANVAS_START_WIDTH, CANVAS_START_HEIGHT, pixel)
             },
             train,
+            light_base,
         }
     }
 
@@ -70,7 +74,7 @@ impl Canvas {
                 squares,
                 stripes,
                 round_squares,
-                space
+                space,
             } => {
                 if circles {
                     self.draw_circles();
@@ -91,6 +95,7 @@ impl Canvas {
             _ => {}
         };
         // Todo check if gradient still exists
+        self.resize(true);
     }
 
     /// Draw a gradient on a canvas.
@@ -101,14 +106,52 @@ impl Canvas {
     /// **Returns:**
     /// - `RgbImage` La imagen del canvas con el gradiente.
     pub fn draw_gradient(&mut self, vertical: bool, cock_colors: &mut CockColors) {
-        // The colors used in the gradient
-        let start = rgb_conversions::rgb_to_u8(cock_colors.random_color_from_pallete());
-        let stop = rgb_conversions::rgb_to_u8(cock_colors.random_color_from_pallete());
+        self.image = image_utils::draw_gradient(
+            self.image.clone(),
+            cock_colors.random_color_from_pallete(),
+            cock_colors.random_color_from_pallete(),
+            vertical,
+        )
+    }
 
-        if vertical {
-            image::imageops::vertical_gradient(&mut self.image, &start, &stop);
+    /// Clear the canvas.
+    /// This is used when training the schemas verifier model.
+    pub(crate) fn clear(&mut self) {
+        // Reset the image to blank.
+        // Decide the color of the base. White or black
+        self.image = {
+            let pixel = if self.light_base {
+                Rgb([255, 255, 255])
+            } else {
+                Rgb([0, 0, 0])
+            };
+
+            RgbImage::from_pixel(CANVAS_START_WIDTH, CANVAS_START_HEIGHT, pixel)
+        };
+    }
+
+    /// Resize the canvas to the correct size.
+    /// 
+    /// # Params
+    /// - `bigger: bool` are we resizing the canvas bigger or smaller.
+    pub fn resize(&mut self, bigger: bool) {
+        let width = if bigger {
+            CANVAS_WIDTH
         } else {
-            image::imageops::horizontal_gradient(&mut self.image, &start, &stop);
-        }
+            CANVAS_START_WIDTH
+        };
+        let height = if bigger {
+            CANVAS_HEIGHT
+        } else {
+            CANVAS_START_HEIGHT
+        };
+
+        // Resize it boy
+        self.image = imageops::resize(
+            &self.image,
+            width,
+            height,
+            imageops::FilterType::Nearest,
+        );
     }
 }

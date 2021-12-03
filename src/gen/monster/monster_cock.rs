@@ -1,4 +1,5 @@
 use crate::gen::attributes::cocktributes::{CockTribute, attributes_json};
+use crate::utils::image_utils::crop_image;
 use crate::utils::randomify;
 
 use crate::gen::canvas::base::Canvas;
@@ -118,6 +119,8 @@ impl MonsterCock {
 
     /// Place the cock on the canvas.
     fn paste_cock_on_canvas(&mut self) {
+        // Crop the image
+        self.canvas.image = crop_image(self.canvas.image.clone(), None);
         // Convert the canvas image to a Rgba
         let canvas_rgba = self.canvas.image.convert();
 
