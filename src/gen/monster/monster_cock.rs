@@ -33,7 +33,8 @@ pub struct MonsterCock {
 impl MonsterCock {
     pub (super) fn base(id: u32, generation: u32, cock_type: CockType, category: String, attributes: Option<Vec<CockTribute>>, is_test_net: bool) -> MonsterCock {
         let cocktributes = match attributes {
-            Some(attributes) => attributes,
+            Some(attributes) => 
+                attributes,
             None => randomify::randomattributes(generation),
         };
         let cock_colors = CockColors::new(cock_type, category);
@@ -59,14 +60,8 @@ impl MonsterCock {
         self.paste_cock_on_canvas();
         self.color_cock();
         // Mirror image?
-        match self.cocktributes.last().unwrap() {
-            CockTribute::Sun { rising } => {
-                if rising == &true {
-                    // Mirror the image
-                    self.image = imageops::flip_horizontal(&self.image);
-                }
-            },
-            _ => {},
+        if self.cocktributes.contains(&CockTribute::SunRiseEast) {
+            self.image = imageops::flip_horizontal(&self.image);
         }
     }
 

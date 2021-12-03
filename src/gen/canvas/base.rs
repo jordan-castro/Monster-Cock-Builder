@@ -51,49 +51,36 @@ impl Canvas {
         cocktributes: Vec<CockTribute>,
         cock_colors: &mut CockColors,
     ) {
-        // Check if there is a gradient
-        let has_gradient = match cocktributes[2] {
-            CockTribute::Gradient {
-                vertical,
-                horizontal,
-            } => {
-                if vertical || horizontal {
-                    self.draw_gradient(vertical, cock_colors);
-                    true
-                } else {
-                    false
+        let mut has_gradient = false;
+        for attribute in cocktributes {
+            match attribute {
+                CockTribute::GradientVertical => {
+                    has_gradient = true;
+                    self.draw_gradient(true, cock_colors);
                 }
-            }
-            _ => false,
-        };
-
-        // Now draw the schemas
-        match cocktributes[1] {
-            CockTribute::Schema {
-                circles,
-                squares,
-                stripes,
-                round_squares,
-                space,
-            } => {
-                if circles {
+                CockTribute::GradientHorizontal => {
+                    has_gradient = true;
+                    self.draw_gradient(false, cock_colors);
+                }
+                CockTribute::SchemaCircles => {
                     self.draw_circles();
                 }
-                if squares {
-                    self.draw_squares();
-                }
-                if stripes {
+                CockTribute::SchemaStripes => {
                     self.draw_stripes();
                 }
-                if space {
+                CockTribute::SchemaSquares => {
+                    self.draw_squares();
+                }
+                CockTribute::SchemaRoundSquares => todo!(),
+                CockTribute::SchemaSpace => {
                     self.draw_space();
                 }
-                // if round_squares {
-                // self.draw_round_squares();
-                // }
-            }
-            _ => {}
-        };
+                CockTribute::SchemaGSquares => {
+                    self.draw_squares_with_gradients();
+                }
+                _ => {}
+            };
+        }
         // Todo check if gradient still exists
         self.resize(true);
     }
@@ -131,7 +118,7 @@ impl Canvas {
     }
 
     /// Resize the canvas to the correct size.
-    /// 
+    ///
     /// # Params
     /// - `bigger: bool` are we resizing the canvas bigger or smaller.
     pub fn resize(&mut self, bigger: bool) {
@@ -147,11 +134,6 @@ impl Canvas {
         };
 
         // Resize it boy
-        self.image = imageops::resize(
-            &self.image,
-            width,
-            height,
-            imageops::FilterType::Nearest,
-        );
+        self.image = imageops::resize(&self.image, width, height, imageops::FilterType::Nearest);
     }
 }

@@ -7,22 +7,18 @@ use serde_json::{json, Map, Value};
 #[derive(Clone, PartialEq, Debug)]
 pub enum CockTribute {
     Generation {
-        generation: u32,
+        generation: u32
     },
-    Sun {
-        rising: bool,
-    },
-    Gradient {
-        vertical: bool,
-        horizontal: bool,
-    },
-    Schema {
-        circles: bool,
-        squares: bool,
-        stripes: bool,
-        round_squares: bool,
-        space: bool,
-    },
+    SunRiseEast,
+    SunRiseWest,
+    GradientVertical,
+    GradientHorizontal,
+    SchemaCircles,
+    SchemaStripes,
+    SchemaSquares,
+    SchemaRoundSquares,
+    SchemaSpace,
+    SchemaGSquares,
 }
 
 impl CockTribute {
@@ -36,7 +32,6 @@ impl CockTribute {
     /// A Vector of CockTributes
     pub fn from_json(attributes: &Map<String, Value>) -> Vec<Self> {
         let mut cocktributes = Vec::new();
-        let mut schemas: Vec<i32> = Vec::new();
 
         for attribute in attributes {
             // Convert the String to lower case
@@ -49,46 +44,39 @@ impl CockTribute {
                 }
                 "sunrise" => {
                     let sunrise = attribute.1.as_bool().unwrap();
-                    cocktributes.push(CockTribute::Sun { rising: sunrise });
+                    if sunrise {
+                        cocktributes.push(CockTribute::SunRiseEast);
+                    } else {
+                        cocktributes.push(CockTribute::SunRiseWest);
+                    }
                 }
                 "gradient" => {
-                    let vertical = if attribute.1.as_str().unwrap().to_lowercase() == "vertical" {
-                        true
-                    } else {
-                        false
-                    };
-                    cocktributes.push(CockTribute::Gradient {
-                        vertical,
-                        horizontal: !vertical,
-                    });
+                    // Get the value
+                    let gradient = attribute.1.as_str().unwrap();
+                    if gradient == "vertical" {
+                        cocktributes.push(CockTribute::GradientVertical);
+                    } else if gradient == "horizontal" {
+                        cocktributes.push(CockTribute::GradientHorizontal);
+                    }
                 }
                 "schema" => {
                     let schema = attribute.1.as_str().unwrap().to_lowercase();
                     if schema == "circles" {
-                        schemas.push(0);
+                        cocktributes.push(CockTribute::SchemaCircles);
                     } else if schema == "squares" {
-                        schemas.push(1);
+                        cocktributes.push(CockTribute::SchemaSquares);
+                    } else if schema == "roundsquares" {
+                        cocktributes.push(CockTribute::SchemaRoundSquares);
                     } else if schema == "stripes" {
-                        schemas.push(2);
-                    } else if schema == "round squares" {
-                        schemas.push(3);
+                        cocktributes.push(CockTribute::SchemaStripes);
                     } else if schema == "space" {
-                        schemas.push(4);
+                        cocktributes.push(CockTribute::SchemaSpace);
+                    } else if schema == "gsquares" {
+                        cocktributes.push(CockTribute::SchemaGSquares);
                     }
                 }
                 _ => {} // Do nothing by default
             };
-        }
-        // Check if we have any schemas
-        if schemas.len() > 0 {
-            let schema_attribute = CockTribute::Schema {
-                circles: schemas.contains(&0),
-                squares: schemas.contains(&1),
-                stripes: schemas.contains(&2),
-                round_squares: schemas.contains(&3),
-                space: schemas.contains(&4),
-            };
-            cocktributes.push(schema_attribute);
         }
         cocktributes
     }
@@ -106,59 +94,40 @@ fn readable_cocktribute(cocktribute: CockTribute) -> Vec<Vec<String>> {
 
     match cocktribute {
         CockTribute::Generation { generation } => {
-            base.push(String::from("Generation"));
-            base.push(generation.to_string());
-            vec![base]
+            base.push(vec!["Generation".to_string(), generation.to_string()]);
         }
-        CockTribute::Sun { rising } => {
-            base.push(String::from("Sunrise")); // Todo Change the name??
-            base.push(if rising {
-                String::from("East")
-            } else {
-                String::from("West")
-            });
-            vec![base]
-        }
-        CockTribute::Gradient {
-            vertical,
-            horizontal,
-        } => {
-            base.push(String::from("Gradient"));
-            if vertical {
-                base.push(String::from("Vertical"));
-            } else if horizontal {
-                base.push(String::from("Horizontal"));
-            } else {
-                base.push(String::from("None"));
-            }
-            vec![base]
-        }
-        CockTribute::Schema {
-            circles,
-            squares,
-            stripes,
-            round_squares,
-            space,
-        } => {
-            let mut result = Vec::new();
-            if circles {
-                result.push(vec![String::from("Schema"), String::from("Circles")]);
-            }
-            if squares {
-                result.push(vec![String::from("Schema"), String::from("Squares")]);
-            }
-            if stripes {
-                result.push(vec![String::from("Schema"), String::from("Stripes")]);
-            }
-            if round_squares {
-                result.push(vec![String::from("Schema"), String::from("Round Squares")]);
-            }
-            if space {
-                result.push(vec![String::from("Schema"), String::from("Space")]);
-            }
-            result
-        }
+        CockTribute::SunRiseEast => {
+            base.push(vec!["Sunrise".to_string(), "East".to_string()]);
+        },
+        CockTribute::SunRiseWest => {
+            base.push(vec!["Sunrise".to_string(), "West".to_string()]);
+        },
+        CockTribute::GradientVertical => {
+            base.push(vec!["Gradient".to_string(), "Vertical".to_string()]);
+        },
+        CockTribute::GradientHorizontal => {
+            base.push(vec!["Gradient".to_string(), "Horizontal".to_string()]);
+        },
+        CockTribute::SchemaCircles => {
+            base.push(vec!["Schema".to_string(), "Circles".to_string()]);
+        },
+        CockTribute::SchemaStripes => {
+            base.push(vec!["Schema".to_string(), "Stripes".to_string()]);
+        },
+        CockTribute::SchemaSquares => {
+            base.push(vec!["Schema".to_string(), "Squares".to_string()]);
+        },
+        CockTribute::SchemaRoundSquares => {
+            base.push(vec!["Schema".to_string(), "Round Squares".to_string()]);
+        },
+        CockTribute::SchemaSpace => {
+            base.push(vec!["Schema".to_string(), "Space".to_string()]);
+        },
+        CockTribute::SchemaGSquares => {
+            base.push(vec!["Schema".to_string(), "G Squares".to_string()]);
+        },
     }
+    base
 }
 
 /// Create a JSON string object for the CockTributes for the monstercock.

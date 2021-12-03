@@ -1,7 +1,7 @@
 use crate::gen::attributes::cocktributes::CockTribute;
 use crate::gen::types::SchemaSkipType;
 
-use rand::{Rng, prelude::SliceRandom, thread_rng};
+use rand::{prelude::SliceRandom, thread_rng, Rng};
 
 use super::names;
 
@@ -13,47 +13,55 @@ use super::names;
 /// **Returns**
 /// - `Vec<CockTribute>` The random attributes.
 pub fn randomattributes(generation: u32) -> Vec<CockTribute> {
+    let mut attributes: Vec<CockTribute> = Vec::new();
+
     // El generation
     let cock_gen = CockTribute::Generation { generation };
-    // Create the schemas
-    let mut schemas = Vec::new();
-    for _ in 0..3 {
-        // Create a random number between 0 and 4
-        let rng = thread_rng().gen_range(0..6);
-        schemas.push(rng);
+    attributes.push(cock_gen);
+    // Schema
+    {
+        let schema = rand::thread_rng().gen_range(0..7);
+        let cock_schema = match schema {
+            0 => Some(CockTribute::SchemaCircles),
+            1 => Some(CockTribute::SchemaSquares),
+            2 => Some(CockTribute::SchemaStripes),
+            // 3 => CockTribute::SchemaRoundSquares,
+            4 => Some(CockTribute::SchemaSpace),
+            5 => Some(CockTribute::SchemaGSquares),
+            _ => None,
+        };
+        if cock_schema.is_some() {
+            attributes.push(cock_schema.unwrap());
+        }
     }
-    let cock_schema = CockTribute::Schema {
-        circles: schemas.contains(&1),
-        squares: schemas.contains(&2),
-        stripes: schemas.contains(&3),
-        round_squares: false, // TODO change to schemas.contains(&4) when (if) implemented.
-        space: schemas.contains(&5),
-        // round_squares: schemas.contains(&4),
-    };
-    // Choose a gradient
-    let gradient_choice = thread_rng().gen_range(0..3);
-    let cock_gradient = CockTribute::Gradient {
-        vertical: gradient_choice == 0,
-        horizontal: gradient_choice == 1,
-    };
-
-    // Choose a Sunrise
-    let num = thread_rng().gen_range(0..10);
-    let cock_sunrise = if num > 7 {
-        CockTribute::Sun {
-            rising: true,
+    // Gradient
+    {
+        let has_gradient = rand::thread_rng().gen_bool(0.5);
+        if has_gradient {
+            let vertical = rand::thread_rng().gen_bool(0.5);
+            let gradient = if vertical {
+                CockTribute::GradientVertical
+            } else {
+                CockTribute::GradientHorizontal
+            };
+            attributes.push(gradient);
         }
-    } else {
-        CockTribute::Sun {
-            rising: false,
+    }
+    // Sunrise direction
+    {
+        let mirrored = rand::thread_rng().gen_bool(0.5);
+        if mirrored {
+            attributes.push(CockTribute::SunRiseEast);
+        } else {
+            attributes.push(CockTribute::SunRiseWest);
         }
-    };
-
-    vec![cock_gen, cock_schema, cock_gradient, cock_sunrise]
+    }
+    // Return the attributes
+    attributes
 }
 
 /// Create a random Vector of values to use in the skip_draw method.
-/// 
+///
 /// # Returns
 /// - `Vec<i32>` The random values.
 pub fn random_skip_values() -> Vec<i32> {
@@ -62,9 +70,7 @@ pub fn random_skip_values() -> Vec<i32> {
     // The amount of values to skip
     let amount = rand::thread_rng().gen_range(1..10);
     // The place
-    let places = vec![
-      1, 2, 3, 5, 10
-    ];
+    let places = vec![1, 2, 3, 5, 10];
     let place = places.choose(&mut rand::thread_rng()).unwrap();
 
     for x in 1..amount {
@@ -79,22 +85,22 @@ pub fn random_skip_values() -> Vec<i32> {
 }
 
 /// A random RGB color
-/// 
+///
 /// # Returns
 /// - `(i32, i32, i32)` The random RGB color.
 pub fn randomify_color() -> (i32, i32, i32) {
     (
         thread_rng().gen_range(0..255),
         thread_rng().gen_range(0..255),
-        thread_rng().gen_range(0..255)
+        thread_rng().gen_range(0..255),
     )
 }
 
 /// Return a random value from a Vector of any type.
-/// 
+///
 /// # Params
 /// - `values: Vec<T>` The Vector of values to choose from.
-/// 
+///
 /// # Returns
 /// - `T` The random value.
 pub fn random_value<T>(values: &Vec<T>) -> &T {
@@ -105,15 +111,12 @@ pub fn random_value<T>(values: &Vec<T>) -> &T {
 
 /// Get a random skip type.
 pub fn random_skip_type() -> SchemaSkipType {
-    let types = vec![
-        SchemaSkipType::Original,
-        SchemaSkipType::V2
-    ];
+    let types = vec![SchemaSkipType::Original, SchemaSkipType::V2];
     random_value(&types).to_owned()
 }
 
 /// Find a random name
-/// 
+///
 /// # Returns
 /// - `String` The random name.
 pub fn random_name(is_test_net: bool) -> String {

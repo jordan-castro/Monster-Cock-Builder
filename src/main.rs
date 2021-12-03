@@ -100,12 +100,16 @@ async fn main() {
         let cock_json: Value = serde_json::from_str(&file_contents).unwrap();
         let cock_json = cock_json.as_object().unwrap();
 
+        let valid_string = |string: String| {
+            string.replace("\"", "").trim().to_string()
+        };
+
         // Get the cock data from the json
         // Some of the keys may not be present, so we need to check for that
-        let name = cock_json.get("name").unwrap().to_string();
+        let name = valid_string(cock_json.get("name").unwrap().to_string());
         let id = cock_json.get("id").unwrap().as_u64().unwrap() as u32;
         let type_ = CockType::from_string(cock_json.get("type").unwrap().to_string());
-        let color = cock_json.get("color").unwrap().to_string();
+        let color = valid_string(cock_json.get("color").unwrap().to_string());
         let is_test_net = cock_json.get("testnet").unwrap().as_bool().unwrap();
         let upload = cock_json.get("upload").unwrap().as_bool().unwrap();
 

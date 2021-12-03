@@ -56,11 +56,14 @@ pub fn training_data(num_schemas: u32, save: bool) {
 
             let result = canvas.draw_space();
             drawer(result, x, "space", &mut canvas, save);
+
+            let result = canvas.draw_squares_with_gradients();
+            drawer(result, x, "gsquares", &mut canvas, save);
         });
         threads.push(th);
     }
     for th in threads {
-        th.join().unwrap();
+        th.join().expect("Joining thread");
     }
 }
 
@@ -111,20 +114,10 @@ fn verify_schema(schema: Schema, image: &RgbImage, color: (i32, i32, i32)) {
             full_count += 1;
         }
     }
-    let full_max = match schema.title.to_lowercase().as_str() {
-        "circles" => image.width() * image.height() - 5000,
-        "squares" => image.width() * image.height() - 5000,
-        "stripes" => image.width() * image.height() - 5000,
-        "space" => image.width() * image.height() - 7000,
-        _ => 0,
-    };
-    let empty_max = match schema.title.as_str().to_lowercase().as_str() {
-        "circles" => image.width() * image.height() / 2,
-        "squares" => image.width() * image.height() / 2,
-        "stripes" => image.width() * image.height() / 2, // The default
-        "space" => full_max - 3000,
-        _ => 0,
-    };
+    let (width, height) = image.dimensions();
+
+    let full_max = width * height - 500;
+    let empty_max = width * height - 500;
 
     if empty_count > empty_max {
         add_to_set(&schema, 1);
