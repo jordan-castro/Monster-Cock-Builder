@@ -124,7 +124,7 @@ fn readable_cocktribute(cocktribute: CockTribute) -> Vec<Vec<String>> {
             base.push(vec!["Schema".to_string(), "Space".to_string()]);
         },
         CockTribute::SchemaGSquares => {
-            base.push(vec!["Schema".to_string(), "G Squares".to_string()]);
+            base.push(vec!["Schema".to_string(), "Glowing Squares".to_string()]);
         },
     }
     base
