@@ -2,12 +2,12 @@
     "name": "Celestial",
     "id": 0,
     "type": "default",
-    "color": "cold",
-    "testnet": true,
+    "color": "neon",
+    "testnet": false,
     "upload": false,
     "attributes": {
-        "generation": 3,
-        "sunrise": true,
+        "generation": 2,
+        "sunrise": false,
         "schema": "gsquares"        
     }
 }
