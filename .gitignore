@@ -10,3 +10,5 @@ attributes.json
 /schemas.txt
 /monstercock.png
 /data/canvases
+*.exe
+/schemas.txt
