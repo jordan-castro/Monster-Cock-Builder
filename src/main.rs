@@ -75,9 +75,6 @@ async fn main() {
         if amount != 0 {
             panic!("Amount not implemented yet!");
         }
-        // if start == 0 {
-            // panic!("If creating the first monster cock for this chain, Please run the command with the --new flag.")
-        // }
 
         // Check the test_net based on the chain id passed
         let is_test_net = match chain {
@@ -211,6 +208,7 @@ fn schema_s(amount: u32) {
 
     for x in 0..amount {
         println!("Generating {}", x);
+        // This is where the schema is hard coded.
         canvas.draw_squares_with_gradients();
         canvas.resize(true);
         canvas.image.save(path.join(format!("canvas_schema{}.png", x))).expect("Saving schema image to data/canvases");
