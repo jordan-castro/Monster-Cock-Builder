@@ -105,6 +105,6 @@ fn generation_from_id(id: u32) -> u32 {
     // 51 - 100: 1
     // 101 - 150: 2
     // And so on...
-    let generation = (id / 50) + 1;
+    let generation = id / 50;
     generation
 }
