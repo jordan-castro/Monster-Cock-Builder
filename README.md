@@ -33,3 +33,4 @@ MCKB contains 4 main components:
 
 ## TODO:
 - Better CLI output.
+- Add to Machine Learning model, specifically the decision making of if it's a cool MCK or not.
