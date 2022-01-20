@@ -9,6 +9,7 @@ use crate::utils::rgb_conversions::{rgba_to_rgb_u8, rgb_u8_to_i32, rgb_to_rgba_u
 use crate::utils::names::black_list_name;
 
 use image::{Rgba, RgbaImage, buffer::ConvertBuffer, imageops};
+use rand::Rng;
 use serde_json::{Map, Value, to_writer_pretty};
 
 const DEFAULT_COCK: &str = "data/art/CockSepColors.png";
@@ -39,7 +40,9 @@ impl MonsterCock {
         };
         let cock_colors = CockColors::new(cock_type, category);
         // Create the canvas
-        let canvas = Canvas::new(false, false);
+        // Choose a random light_base value
+        let light_base = rand::thread_rng().gen_range(0..2) == 1;
+        let canvas = Canvas::new(light_base, false);
 
         MonsterCock {
             canvas,
