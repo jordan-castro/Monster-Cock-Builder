@@ -1,5 +1,8 @@
+import json
 import numpy as np
 import pandas as pd
+import random
+
 from pandas.core.frame import DataFrame
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import accuracy_score, roc_auc_score
@@ -11,7 +14,48 @@ import sys
 
 # The path to the schemas data file
 SCHEMAS_PATH = 'data/schemas.txt'
-VALID_TYPES = ['Circles', 'Curves', 'Squares', 'Stripes', 'Crosses', 'Space', 'GSquares']
+VALID_TYPES = ['Circles', 'Curves', 'Squares',
+               'Stripes', 'Crosses', 'Space', 'GSquares']
+
+
+def random_schema(schema: str):
+    """
+    Generate a random schema.
+    """
+    modulus = np.random.randint(2, 30)
+    size = np.random.randint(1, 100)
+
+    def get_skip_values():
+        # The number of skips
+        amount = np.random.randint(1, 10)
+        # The possible places
+        places = [1, 2, 3, 5, 10]
+        # The specific place
+        place = random.choice(places)
+        values = [i * place for i in range(amount)]
+
+        if len(values) == 0:
+            return [2, 3, 4, 5, 6, 7, 8]
+        else:
+            return values
+    skip_values = get_skip_values()
+    skip_type = random.choice(["original", "v2"])
+
+    return {
+        "Type": schema,
+        "Modulus": modulus,
+        "Size": size,
+        "Skip Values": ','.join(map(str, skip_values)),
+        "Skip Type": skip_type
+    }
+
+
+def write_to_schema(schema):
+    """
+    Write the created schema to a JSON file.
+    """
+    with open("schema.json", "w") as f:
+        json.dump(schema, f)
 
 
 def format_skip_values(df):
@@ -97,9 +141,6 @@ def format_data(df: DataFrame):
     # Returns
         The formatted dataframe
     """
-    if "Result" in df.columns:
-        # If result is 0 then it is valid, else 0 (invalid) 
-        df.Result = df.Result.map(lambda x: 1 if x == 0 else 0)
     df['Skip Values'] = format_skip_values(df)
     df['Type'] = format_types(df)
     df['Skip Type'] = format_skip_types(df)
@@ -107,10 +148,10 @@ def format_data(df: DataFrame):
     return df
 
 
-class Verifier: # TODO: Clustering with Kmeans
+class Verifier:  # TODO: Clustering with Kmeans
     """
     Class to verify a schema on the MonsterCock-Builder.
-    
+
     Attributes:
         scaler (MinMaxScaler): The scaler used to normalize the data.
         knn (KNeighborsClassifier): The KNN classifier used to verify the schema.
@@ -119,6 +160,7 @@ class Verifier: # TODO: Clustering with Kmeans
         train_model(self): Train the model.
 
     """
+
     def __init__(self):
         self.scaler = MinMaxScaler()
         self.knn = KNeighborsClassifier(n_neighbors=8)
@@ -143,7 +185,7 @@ class Verifier: # TODO: Clustering with Kmeans
         cluster.fit(df[features])
         # Cluster the data based on prediction
         df["Cluster"] = cluster.predict(df[features])
-        
+
         return df
 
     def verify(self, data):
@@ -160,7 +202,8 @@ class Verifier: # TODO: Clustering with Kmeans
         # Split data into training and testing data
         X = self.data.drop(columns=['Result'], axis=1)
         y = self.data['Result']
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=4)
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=4)
 
         # Train the model
         self.knn.fit(X_train, y_train)
@@ -174,7 +217,7 @@ class Verifier: # TODO: Clustering with Kmeans
 
         # Arguments
             data: The dictionary to convert.
-        
+
         # Returns
             The dataframe.
         """
@@ -182,33 +225,28 @@ class Verifier: # TODO: Clustering with Kmeans
         df = pd.DataFrame(data, index=[0])
         df = format_data(df)
         df = self.cluster_data(df, self.verify_cluster)
-        
+
         # df = self.scale_data(df)
         return df
 
 
 if __name__ == "__main__":
     args = sys.argv[1:]
-    if len(args) != 5:
-        print("Invalid number of arguments")
-        exit(1)
 
     # Grab the data from the args
-    schema_type = args[0]
-    modulus = int(args[1])
-    size = int(args[2])
-    skip_values = args[3]
-    skip_type = args[4]
+    schema = args[0]
 
-    data = {
-        "Type": schema_type,
-        "Modulus": modulus,
-        "Size": size,
-        "Skip Values": skip_values,
-        "Skip Type": skip_type
-    }
     verifier = Verifier()
     verifier.train_model()
-    prediction = verifier.verify(data)
-    # Return the prediction to the CMD
-    print(prediction)
+
+    while 1:
+        data = random_schema(schema)
+
+        prediction = verifier.verify(data)
+
+        # Check prediction
+        if prediction == 1:
+            # Convert the values to integers
+            data["Skip Values"] = [int(value) for value in data["Skip Values"].split(",")]
+            write_to_schema(data)
+            break
