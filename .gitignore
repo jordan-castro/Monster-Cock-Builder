@@ -12,3 +12,6 @@ attributes.json
 /data/canvases
 *.exe
 /schemas.txt
+/data/cool
+/*.png
+/schema.json
