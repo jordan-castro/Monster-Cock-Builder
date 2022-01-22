@@ -1,6 +1,6 @@
 use crate::{
     gen::types::SchemaSkipType,
-    utils::randomify::{random_skip_type, random_skip_values},
+    learning::interface::make_schema, utils::randomify::{random_skip_values, random_skip_type},
 };
 use itertools::Itertools;
 use rand::Rng;
@@ -39,6 +39,12 @@ impl Schema {
         schema
     }
 
+    /// Generates a random (valid) schema based on the title.
+    pub fn get_valid_schema(title: String) -> Self {
+        // Interact with the Model
+        make_schema(title)
+    }
+
     pub fn stringify_skips(&self) -> String {
         self.skips.iter().join(",")
     }
@@ -70,17 +76,10 @@ impl Schema {
     }
 }
 
-///
-/// Get a random Modulus from certain possible values.
-///
-/// # Returns
-/// `i32` The random modulus.
-///
 fn get_modulus() -> i32 {
     rand::thread_rng().gen_range(2..30)
 }
 
-/// Get a size for the draw object.
 fn get_draw_size() -> i32 {
     rand::thread_rng().gen_range(1..100)
 }

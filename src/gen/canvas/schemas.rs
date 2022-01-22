@@ -1,6 +1,5 @@
 use std::vec;
 
-use crate::learning::interface::valid_schema;
 use crate::utils::image_utils::{crop_image, draw_gradient};
 use crate::utils::randomify::random_value;
 use crate::{gen::types::SchemaSkipType, utils::randomify::randomify_color};
@@ -24,11 +23,12 @@ impl Canvas {
     ) -> (Schema, (i32, i32, i32)) {
         // Grab dimensions of the canvas
         let (width, height) = self.image.dimensions();
-        // let schema = Schema::random_schema(schema_title.to_string());
-        let schema = if !self.train {
-            valid_schema(schema_title)
-        } else {
-            Schema::random_schema(schema_title.to_string())
+        let schema = {
+            if self.train {
+                Schema::random_schema(schema_title.to_string())
+            } else {
+                Schema::get_valid_schema(schema_title.to_string())
+            }
         };
 
         let colors = vec![randomify_color(), randomify_color(), randomify_color()]; // Todo? maybe use a palette color from CockColors?
@@ -198,6 +198,8 @@ impl Canvas {
             *image = bottom_image;
         }
 
+        // Shrink the image to make it easier to work with
+        self.shrink(5);
         self.draw_schema("GSquares", draw)
     }
 }

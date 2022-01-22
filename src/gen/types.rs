@@ -39,4 +39,12 @@ impl SchemaSkipType {
         };
         as_str.to_string()
     }
+
+    pub fn from_string(string: String) -> SchemaSkipType {
+        match string.to_lowercase().as_str() {
+            "original" => SchemaSkipType::Original,
+            "v2" => SchemaSkipType::V2,
+            _ => SchemaSkipType::Original,
+        }
+    }
 }

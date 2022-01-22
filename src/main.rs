@@ -21,8 +21,9 @@ MonsterCock Builder.
 Usage: 
     mckbuilder gen <chain> [--name=<name>] [--start=<start>] [--amount=<amount>] [--type=<type>] [--color=<color>] [--upload]
     mckbuilder json <file>
-    mckbuilder train <amount> [--save]
+    mckbuilder train-s <amount> [--save]
     mckbuilder schema <amount>
+    mckbuilder make <amount> [--save]
     mckbuilder (-h | --help)
     mckbuilder --version
 
@@ -48,7 +49,8 @@ struct Args {
     flag_upload: bool,
     flag_save: bool,
     cmd_gen: bool,
-    cmd_train: bool,
+    cmd_train_s: bool,
+    cmd_make: bool,
     cmd_json: bool,
     cmd_schema: bool,
     arg_chain: Option<u32>,
@@ -87,7 +89,7 @@ async fn main() {
         };
         let cock_type = CockType::from_string(type_);
         generate_monster_cock(name, start, cock_type, color, is_test_net, upload, None).await;
-    } else if args.cmd_train {
+    } else if args.cmd_train_s {
         let amount = args.arg_amount.unwrap();
         training_data(amount, args.flag_save);
     } else if args.cmd_json {
@@ -125,6 +127,12 @@ async fn main() {
         .await;
     } else if args.cmd_schema {
         schema_s(args.arg_amount.unwrap());
+    } else if args.cmd_make {
+        let amount = args.arg_amount.unwrap();
+        for x in 0..amount {
+            let mut canvas = Canvas::new(true, false);
+            canvas.draw_circles();
+        }
     }
 }
 
@@ -210,7 +218,7 @@ fn schema_s(amount: u32) {
         println!("Generating {}", x);
         // This is where the schema is hard coded.
         canvas.draw_squares_with_gradients();
-        canvas.resize(true);
+        canvas.resize();
         canvas.image.save(path.join(format!("canvas_schema{}.png", x))).expect("Saving schema image to data/canvases");
         canvas.clear();
     }

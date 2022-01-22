@@ -1,10 +1,9 @@
 use std::{io::Write, thread};
 
-use image::RgbImage;
+use image::{RgbImage, Rgb, imageops};
 
 use crate::{
     gen::canvas::{base::Canvas, schema::Schema},
-    utils::rgb_conversions::rgb_to_u8,
 };
 
 /// Function that will create schemas in a loop for a given number of times.
@@ -37,28 +36,48 @@ pub fn training_data(num_schemas: u32, save: bool) {
         if save {
             canvas.image.save(format!("data/canvases/{}{}.png", filename, i)).unwrap();
         }
-        verify_schema(res.0, &canvas.image , res.1);
+        verify_schema(res.0, &mut canvas.image);
         canvas.clear();
     };
+
+    let mut current_number = 1;
+    // Find the number of canvases we are on.
+    // Get the files in the data/canvases folder
+    let files = glob::glob("data/canvases/*.png").unwrap();
+    // Loop through the files and find the number of canvases
+    for f in files {
+        let file = f.unwrap();
+        let filename = file.file_name().unwrap().to_str().unwrap();
+        println!("{}", filename);
+        // Strip from .png
+        let filename = filename.split(".").collect::<Vec<&str>>()[0];
+        // Get the number which is the last char
+        let number = filename.chars().last().unwrap().to_string().parse::<u32>().unwrap();
+        if number > current_number {
+            current_number = number;
+        }
+    }
 
     for x in 0..num_schemas {
         let th = thread::spawn(move || {
             let mut canvas = Canvas::new(false, true);
 
+            let i = x + current_number;
             let result = canvas.draw_circles();
-            drawer(result, x, "circles", &mut canvas, save);
+            drawer(result, i, "circles", &mut canvas, save);
 
             let result = canvas.draw_squares();
-            drawer(result, x, "squares", &mut canvas, save);
+            drawer(result, i, "squares", &mut canvas, save);
 
             let result = canvas.draw_stripes();
-            drawer(result, x, "stripes", &mut canvas, save);
+            drawer(result, i, "stripes", &mut canvas, save);
 
             let result = canvas.draw_space();
-            drawer(result, x, "space", &mut canvas, save);
+            drawer(result, i, "space", &mut canvas, save);
 
             let result = canvas.draw_squares_with_gradients();
-            drawer(result, x, "gsquares", &mut canvas, save);
+            canvas.resize();
+            drawer(result, i, "gsquares", &mut canvas, save);
         });
         threads.push(th);
     }
@@ -100,36 +119,48 @@ fn add_to_set(schema: &Schema, result: u32) {
 ///
 /// # Params
 /// - `image: RgbImage` The image to verify.
-/// - `color: (i32, i32, i32)` The color of the schema.
-///    - By default if there is more than one color in the schema, then it is already verified.
-fn verify_schema(schema: Schema, image: &RgbImage, color: (i32, i32, i32)) {
-    let mut empty_count = 0;
-    let mut full_count = 0;
+fn verify_schema(schema: Schema, image: &mut RgbImage) {
+    // Crop the image
+    let image = imageops::crop(image, 100, 100, image.width() - 100, image.height() - 100);
+    let sub_image = image.to_image();
 
-    // Loop through the image and check the pixel
-    for (_, __, pixel) in image.enumerate_pixels() {
-        if pixel == &rgb_to_u8((0, 0, 0)) || pixel == &rgb_to_u8((255, 255, 255)) {
-            empty_count += 1;
-        } else if pixel == &rgb_to_u8(color) {
-            full_count += 1;
+    sub_image.save(format!("{}_canvas.png", schema.title)).unwrap();
+
+    // Get the width and height of the image
+    let image_width = sub_image.width();
+    let image_height = sub_image.height();
+
+    let mut rows: Vec<Vec<Rgb<u8>>> = Vec::new();
+    let mut amount: u32 = 0; // Todo change name
+
+    // Loop through the rows of pixels in the image
+    for y in 0..image_height {
+        let mut row: Vec<Rgb<u8>> = Vec::new();
+        // Loop through the pixels in the row
+        for x in 0..image_width {
+            // Get the pixel at the x,y position
+            let pixel = sub_image.get_pixel(x, y);
+            // Push the pixel
+            row.push(*pixel);
+        }
+        // Add the row to the rows vector
+        rows.push(row);
+    }
+
+    // Now loop through the rows and remove any repeated pixels
+    for row in rows.iter_mut() {
+        row.dedup();
+        // Check the lenght of row
+        if row.len() > 1 {
+            amount += 1;
         }
     }
-    let (width, height) = image.dimensions();
 
-    let full_max = width * height - 500;
-    let empty_max = width * height - 500;
-
-    if empty_count > empty_max {
+    if amount > 50 {
+        println!("Valid schema for {}", schema.title);
         add_to_set(&schema, 1);
-        // valid = 1;
-        println!("Empty");
-    } else if full_count > full_max {
-        // valid = 2;
-        add_to_set(&schema, 2);
-        println!("Full");
     } else {
-        // valid = 0;
+        println!("Invalid schema for {}", schema.title);
         add_to_set(&schema, 0);
-        println!("Valid");
     }
 }

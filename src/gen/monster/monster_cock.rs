@@ -22,7 +22,7 @@ const SOLANA_COCK: &str = "data/art/Rooster2_HighRes.png";
 #[derive(Debug, Clone)]
 pub struct MonsterCock {
     canvas: Canvas,
-    image: RgbaImage,
+    pub image: RgbaImage,
     pub name: String,
     pub id: u32,
     is_test_net: bool,
@@ -52,7 +52,7 @@ impl MonsterCock {
             is_test_net,
             hash: String::new(),
             cock_colors,
-            cocktributes
+            cocktributes,
         }
     }
 
@@ -83,7 +83,6 @@ impl MonsterCock {
             true
         }
     }
-
 
     /// Color the MonsterCock. Which means to change the colors of the image cock.
     fn color_cock(&mut self) {

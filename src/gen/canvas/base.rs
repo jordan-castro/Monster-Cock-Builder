@@ -6,9 +6,6 @@ const CANVAS_PATH: &str = "data/art/canvas_large.png";
 const CANVAS_WIDTH: u32 = 2000;
 const CANVAS_HEIGHT: u32 = 2000;
 
-const CANVAS_START_WIDTH: u32 = 500;
-const CANVAS_START_HEIGHT: u32 = 500;
-
 /// The canvas "object" for the MonsterCock.
 #[derive(Debug, Clone)]
 pub struct Canvas {
@@ -35,7 +32,7 @@ impl Canvas {
                     Rgb([0, 0, 0])
                 };
 
-                RgbImage::from_pixel(CANVAS_START_WIDTH, CANVAS_START_HEIGHT, pixel)
+                RgbImage::from_pixel(CANVAS_WIDTH, CANVAS_HEIGHT, pixel)
             },
             train,
             light_base,
@@ -82,7 +79,7 @@ impl Canvas {
             };
         }
         // Todo check if gradient still exists
-        self.resize(true);
+        self.resize();
     }
 
     /// Draw a gradient on a canvas.
@@ -113,7 +110,7 @@ impl Canvas {
                 Rgb([0, 0, 0])
             };
 
-            RgbImage::from_pixel(CANVAS_START_WIDTH, CANVAS_START_HEIGHT, pixel)
+            RgbImage::from_pixel(CANVAS_WIDTH, CANVAS_HEIGHT, pixel)
         };
     }
 
@@ -121,19 +118,16 @@ impl Canvas {
     ///
     /// # Params
     /// - `bigger: bool` are we resizing the canvas bigger or smaller.
-    pub fn resize(&mut self, bigger: bool) {
-        let width = if bigger {
-            CANVAS_WIDTH
-        } else {
-            CANVAS_START_WIDTH
-        };
-        let height = if bigger {
-            CANVAS_HEIGHT
-        } else {
-            CANVAS_START_HEIGHT
-        };
-
+    pub fn resize(&mut self) {
         // Resize it boy
+        self.image = imageops::resize(&self.image, CANVAS_WIDTH, CANVAS_HEIGHT, imageops::FilterType::Nearest);
+    }
+
+    /// Shrink the canvas image, this helps out when working with CPU entusive Schemas.
+    pub fn shrink(&mut self, factor: u32) {
+        let width = CANVAS_WIDTH / factor;
+        let height = CANVAS_HEIGHT / factor;
+
         self.image = imageops::resize(&self.image, width, height, imageops::FilterType::Nearest);
     }
 }
