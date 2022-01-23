@@ -1,9 +1,10 @@
 use std::{io::Write, thread};
 
 use image::{RgbImage, Rgb, imageops};
+use rand::Rng;
 
 use crate::{
-    gen::canvas::{base::Canvas, schema::Schema},
+    gen::canvas::{base::Canvas, schema::Schema}, utils::randomify::random_value,
 };
 
 /// Function that will create schemas in a loop for a given number of times.
@@ -40,7 +41,7 @@ pub fn training_data(num_schemas: u32, save: bool) {
         canvas.clear();
     };
 
-    let mut current_number = 1;
+    let mut current_number = 0;
     // Find the number of canvases we are on.
     // Get the files in the data/canvases folder
     let files = glob::glob("data/canvases/*.png").unwrap();
@@ -48,7 +49,6 @@ pub fn training_data(num_schemas: u32, save: bool) {
     for f in files {
         let file = f.unwrap();
         let filename = file.file_name().unwrap().to_str().unwrap();
-        println!("{}", filename);
         // Strip from .png
         let filename = filename.split(".").collect::<Vec<&str>>()[0];
         // Get the number which is the last char
@@ -57,10 +57,14 @@ pub fn training_data(num_schemas: u32, save: bool) {
             current_number = number;
         }
     }
+    current_number += 1;
 
     for x in 0..num_schemas {
         let th = thread::spawn(move || {
-            let mut canvas = Canvas::new(false, true);
+            // Random ligth base
+            let is_light: bool = *random_value(&vec![true, false]);
+
+            let mut canvas = Canvas::new(is_light, true);
 
             let i = x + current_number;
             let result = canvas.draw_circles();
@@ -156,7 +160,7 @@ fn verify_schema(schema: Schema, image: &mut RgbImage) {
         }
     }
 
-    if amount > 50 {
+    if amount > 100 {
         println!("Valid schema for {}", schema.title);
         add_to_set(&schema, 1);
     } else {

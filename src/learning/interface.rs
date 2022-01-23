@@ -10,18 +10,20 @@ pub fn make_schema(title: String) -> Schema {
     let mut result = Command::new("scripts/verify.bat");
     // Add the title to the command
     result.arg(title);
-    // Run the process
-    result.spawn().expect("Unable to spawn process");
+    // Run the process synchronously
+    let output = result.output().expect("Failed to run verify.bat");
+    // Get the output
+    let _ = String::from_utf8(output.stdout).expect("Failed to convert output to string");
     let path_to_json = "schema.json";
 
     // Open and read the JSON file
     let schema_json = std::fs::read_to_string(path_to_json).unwrap();
     // Read the JSON
     let schema_json: Value = serde_json::from_str(&schema_json).unwrap();
-    
+
     // Skips has some special work done to it before it goes into the Struct
     let skips = {
-        let skips_json = schema_json["skips"].as_array().unwrap();
+        let skips_json = schema_json["Skip Values"].as_array().unwrap();
         skips_json.iter().map(|x| x.as_i64().unwrap() as i32).collect()
     };
 

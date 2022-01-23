@@ -131,7 +131,8 @@ async fn main() {
         let amount = args.arg_amount.unwrap();
         for x in 0..amount {
             let mut canvas = Canvas::new(true, false);
-            canvas.draw_circles();
+            canvas.draw_squares();
+            canvas.image.save(format!("cocks/{}.png", x)).unwrap();
         }
     }
 }

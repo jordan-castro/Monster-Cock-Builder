@@ -227,6 +227,10 @@ fn should_draw(pos1: i32, pos2: i32, schema: &Schema) -> bool {
         }
     } else if schema.skip_type == SchemaSkipType::V2 {
         for value in schema.skips.iter() {
+            // Default for 0
+            if *value == 0 {
+                return false;
+            }
             if !(pos1 % value == 0 && pos2 % value == 0) {
                 return false;
             }

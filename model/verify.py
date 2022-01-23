@@ -203,7 +203,7 @@ class Verifier:  # TODO: Clustering with Kmeans
         X = self.data.drop(columns=['Result'], axis=1)
         y = self.data['Result']
         X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=4)
+            X, y, random_state=4)
 
         # Train the model
         self.knn.fit(X_train, y_train)
@@ -247,6 +247,7 @@ if __name__ == "__main__":
         # Check prediction
         if prediction == 1:
             # Convert the values to integers
-            data["Skip Values"] = [int(value) for value in data["Skip Values"].split(",")]
+            data["Skip Values"] = [int(value)
+                                   for value in data["Skip Values"].split(",")]
             write_to_schema(data)
             break
