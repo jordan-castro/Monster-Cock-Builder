@@ -213,14 +213,21 @@ fn schema_s(amount: u32) {
         // If there is no folder, create one
         std::fs::create_dir("data/canvases").unwrap();
     }
-    let mut canvas = Canvas::new(false, true);
+    // let mut canvas = Canvas::new(false, true);
 
     for x in 0..amount {
         println!("Generating {}", x);
-        // This is where the schema is hard coded.
-        canvas.draw_squares_with_gradients();
-        canvas.resize();
-        canvas.image.save(path.join(format!("canvas_schema{}.png", x))).expect("Saving schema image to data/canvases");
-        canvas.clear();
+        let mut cock = MonsterCock::new(x, CockType::Default, true);
+        cock.generate();
+        // Convert cock image to a RGBA image
+        let image = cock.canvas.create_mosiac(&cock.image);
+        
+        // image.save(format!("data/canvases/{}.png", x)).unwrap();
+        // // This is where the schema is hard coded.
+        // canvas.draw_circles();
+        // canvas.image.save(path.join(format!("canvas_schema_non_tile{}.png", x))).expect("Saving schema image to data/canvases");
+        // canvas.tile();
+        // canvas.image.save(path.join(format!("canvas_schema_tile{}.png", x))).expect("Saving schema image to data/canvases");
+        // canvas.clear();
     }
 }
