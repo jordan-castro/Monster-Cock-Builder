@@ -1,16 +1,15 @@
-use crate::gen::attributes::cocktributes::{CockTribute, attributes_json};
+use crate::gen::attributes::cocktributes::{attributes_json, CockTribute};
 use crate::utils::image_utils::crop_image;
-use crate::utils::randomify;
+use crate::utils::randomify::{self, random_value};
 
 use crate::gen::canvas::base::Canvas;
-use crate::gen::types::CockType;
 use crate::gen::colors::CockColors;
-use crate::utils::rgb_conversions::{rgba_to_rgb_u8, rgb_u8_to_i32, rgb_to_rgba_u8};
+use crate::gen::types::CockType;
 use crate::utils::names::black_list_name;
+use crate::utils::rgb_conversions::{rgb_to_rgba_u8, rgb_u8_to_i32, rgba_to_rgb_u8};
 
-use image::{Rgba, RgbaImage, buffer::ConvertBuffer, imageops};
-use rand::Rng;
-use serde_json::{Map, Value, to_writer_pretty};
+use image::{buffer::ConvertBuffer, imageops, Rgba, RgbaImage};
+use serde_json::{to_writer_pretty, Map, Value};
 
 const DEFAULT_COCK: &str = "data/art/CockSepColors.png";
 const SOLANA_COCK: &str = "data/art/Rooster2_HighRes.png";
@@ -21,27 +20,33 @@ const SOLANA_COCK: &str = "data/art/Rooster2_HighRes.png";
 ///
 #[derive(Debug, Clone)]
 pub struct MonsterCock {
-    canvas: Canvas,
+    pub canvas: Canvas,
     pub image: RgbaImage,
     pub name: String,
     pub id: u32,
     is_test_net: bool,
     pub hash: String,
     cock_colors: CockColors,
-    cocktributes: Vec<CockTribute>
+    cocktributes: Vec<CockTribute>,
 }
 
 impl MonsterCock {
-    pub (super) fn base(id: u32, generation: u32, cock_type: CockType, category: String, attributes: Option<Vec<CockTribute>>, is_test_net: bool) -> MonsterCock {
+    pub(super) fn base(
+        id: u32,
+        generation: u32,
+        cock_type: CockType,
+        category: String,
+        attributes: Option<Vec<CockTribute>>,
+        is_test_net: bool,
+    ) -> MonsterCock {
         let cocktributes = match attributes {
-            Some(attributes) => 
-                attributes,
+            Some(attributes) => attributes,
             None => randomify::randomattributes(generation),
         };
         let cock_colors = CockColors::new(cock_type, category);
         // Create the canvas
         // Choose a random light_base value
-        let light_base = rand::thread_rng().gen_range(0..2) == 1;
+        let light_base = *random_value(&vec![true, false]);
         let canvas = Canvas::new(light_base, false);
 
         MonsterCock {
@@ -58,7 +63,8 @@ impl MonsterCock {
 
     /// Generates the MonsterCock.
     pub fn generate(&mut self) {
-        self.canvas.draw_from_attributes(self.cocktributes.clone(), &mut self.cock_colors);
+        self.canvas
+            .draw_from_attributes(self.cocktributes.clone(), &mut self.cock_colors);
         // Create the image
         self.paste_cock_on_canvas();
         self.color_cock();
@@ -70,11 +76,15 @@ impl MonsterCock {
 
     /// Save the image to show later
     pub fn show_image(&mut self) -> bool {
-        self.image.save("monstercock.png").expect("Saving image to monstercock.png");
+        self.image
+            .save("monstercock.png")
+            .expect("Saving image to monstercock.png");
         // Ask for user imput
         println!("Keep image? (y/n)");
         let mut input = String::new();
-        std::io::stdin().read_line(&mut input).expect("Reading user input");
+        std::io::stdin()
+            .read_line(&mut input)
+            .expect("Reading user input");
         if input.to_lowercase().trim() != "y" {
             std::fs::remove_file("monstercock.png").expect("Removing file");
             false
@@ -86,9 +96,7 @@ impl MonsterCock {
 
     /// Color the MonsterCock. Which means to change the colors of the image cock.
     fn color_cock(&mut self) {
-        let convert_pixel = |pixel: Rgba<u8>| {
-            rgb_u8_to_i32(rgba_to_rgb_u8(pixel.0))
-        };
+        let convert_pixel = |pixel: Rgba<u8>| rgb_u8_to_i32(rgba_to_rgb_u8(pixel.0));
         let before_colors = self.cock_colors.before_colors();
         let after_colors = self.cock_colors.after_colors();
         // Loop through the pixels of the image
@@ -118,8 +126,36 @@ impl MonsterCock {
     fn paste_cock_on_canvas(&mut self) {
         // Crop the image
         self.canvas.image = crop_image(self.canvas.image.clone(), None);
-        // Convert the canvas image to a Rgba
-        let canvas_rgba = self.canvas.image.convert();
+
+        // Check the cocktributes
+        let black_list_attributes = vec![
+            CockTribute::GradientHorizontal,
+            CockTribute::GradientVertical,
+            CockTribute::SchemaCircles,
+            CockTribute::SchemaStripes,
+            CockTribute::SchemaSquares,
+            CockTribute::SchemaRoundSquares,
+            CockTribute::SchemaSpace,
+            CockTribute::SchemaGSquares,
+        ];
+        let color_background = {
+            let mut result = true;
+            for attribute in &self.cocktributes {
+                if black_list_attributes.contains(attribute) {
+                    result = false;
+                }
+            }
+            result
+        };
+        // If we should color the background then choose a random color from cock_colors
+        let canvas_rgba = {
+            // Check to color or nah
+            if color_background {
+                self.canvas
+                    .color_background(self.cock_colors.random_color_from_pallete());
+            }
+            self.canvas.image.convert()
+        };
 
         let cock_image = match self.cock_colors.cock {
             CockType::Default => DEFAULT_COCK,
@@ -133,18 +169,20 @@ impl MonsterCock {
     fn save(&mut self) {
         let cock_path = self.get_image_path();
 
-        self.image.save(cock_path.as_str()).expect(format!("Saving MonsterCock image to {}", cock_path).as_str());
+        self.image
+            .save(cock_path.as_str())
+            .expect(format!("Saving MonsterCock image to {}", cock_path).as_str());
         self.save_cock_data();
 
         // Black list the name
         let name = self.get_idless_name();
         black_list_name(name, self.is_test_net);
-    } 
+    }
 
     /// Save the cock data to a file LOCALLY.
     fn save_cock_data(&mut self) {
         let data = self.get_data();
-        
+
         // Write to file
         let json_file = std::fs::File::create("attributes.json").unwrap();
         to_writer_pretty(json_file, &data).expect("C");
@@ -152,7 +190,8 @@ impl MonsterCock {
 
     pub fn get_data(&mut self) -> Map<String, Value> {
         // Get attributes json format
-        let attributes_json = attributes_json(self.cock_colors.colors.clone(), self.cocktributes.clone());        
+        let attributes_json =
+            attributes_json(self.cock_colors.colors.clone(), self.cocktributes.clone());
         // A new map
         let mut data = Map::new();
         // Insert the JSON
@@ -173,14 +212,14 @@ impl MonsterCock {
             file_parent.push_str("mainnet");
         }
         // The file name is as follows:
-        // <name>_<id>.png
+        // <name>_#<id>.png
         let name = self.get_idless_name();
 
         format!("data/{}/{}_#{}.png", file_parent, name, self.id)
     }
 
     /// Get the cock name without the id.
-    /// 
+    ///
     /// # Returns
     /// `name: String` The name without the id.
     fn get_idless_name(&self) -> String {
@@ -192,7 +231,6 @@ impl MonsterCock {
         let name = name.get(0).unwrap().trim_end();
         name.to_string()
     }
-    
 }
 
 /// Paste a image on top of another image.
@@ -214,6 +252,11 @@ fn paste_image_on_top(image: RgbaImage, top_image: RgbaImage) -> RgbaImage {
     let top_center_y = top_image.height() / 2;
 
     // Overlay the image
-    imageops::overlay(&mut new_image, &top_image, center_x - top_center_x, center_y - top_center_y);
+    imageops::overlay(
+        &mut new_image,
+        &top_image,
+        center_x - top_center_x,
+        center_y - top_center_y,
+    );
     new_image
 }
