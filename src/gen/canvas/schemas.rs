@@ -21,6 +21,7 @@ impl Canvas {
         schema_title: &str,
         f: fn(&mut RgbImage, (u32, u32), i32, Vec<(i32, i32, i32)>),
     ) -> (Schema, (i32, i32, i32)) {
+        println!("Drawing schema: {}", schema_title);
         // Grab dimensions of the canvas
         let (width, height) = self.image.dimensions();
         let schema = {
