@@ -1,4 +1,6 @@
 use crate::gen::colors::CockColors;
+use crate::utils::image_utils::change_pixels;
+use crate::utils::rgb_conversions::rgb_to_u8;
 use crate::{gen::attributes::cocktributes::CockTribute, utils::image_utils};
 use image::{imageops, Rgb, RgbImage};
 
@@ -12,6 +14,7 @@ pub struct Canvas {
     pub image: RgbImage,
     pub(super) train: bool,
     light_base: bool,
+    is_shrunk: bool,
 }
 
 impl Canvas {
@@ -36,6 +39,7 @@ impl Canvas {
             },
             train,
             light_base,
+            is_shrunk: false,
         }
     }
 
@@ -49,6 +53,7 @@ impl Canvas {
         cock_colors: &mut CockColors,
     ) {
         let mut has_gradient = false;
+
         for attribute in cocktributes {
             match attribute {
                 CockTribute::GradientVertical => {
@@ -78,8 +83,10 @@ impl Canvas {
                 _ => {}
             };
         }
-        // Todo check if gradient still exists
-        self.resize();
+        if self.is_shrunk {
+            // Todo check if gradient still exists
+            self.resize();
+        }
     }
 
     /// Draw a gradient on a canvas.
@@ -120,7 +127,12 @@ impl Canvas {
     /// - `bigger: bool` are we resizing the canvas bigger or smaller.
     pub fn resize(&mut self) {
         // Resize it boy
-        self.image = imageops::resize(&self.image, CANVAS_WIDTH, CANVAS_HEIGHT, imageops::FilterType::Nearest);
+        self.image = imageops::resize(
+            &self.image,
+            CANVAS_WIDTH,
+            CANVAS_HEIGHT,
+            imageops::FilterType::Nearest,
+        );
     }
 
     /// Shrink the canvas image, this helps out when working with CPU entusive Schemas.
@@ -129,5 +141,21 @@ impl Canvas {
         let height = CANVAS_HEIGHT / factor;
 
         self.image = imageops::resize(&self.image, width, height, imageops::FilterType::Nearest);
+        // Set shrunk to true
+        self.is_shrunk = true;
+    }
+
+    /// Color the background of a cock. Make sure that this is called correctly.
+    /// Correct use would be to call it once the cock is already made, and there are no schemas or gradients.
+    pub fn color_background(&mut self, color: (i32, i32, i32)) {
+        let background = if self.light_base == true {
+            Rgb([255, 255, 255])
+        } else {
+            Rgb([0, 0, 0])
+        };
+        let color = rgb_to_u8(color);
+
+        // Change those pixels
+        change_pixels(&mut self.image, vec![background], vec![color]);
     }
 }

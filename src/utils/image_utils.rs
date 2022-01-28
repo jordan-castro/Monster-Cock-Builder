@@ -1,4 +1,4 @@
-use image::{RgbImage, Rgba, imageops};
+use image::{RgbImage, Rgba, imageops, Rgb};
 
 use super::rgb_conversions::rgb_to_u8;
 
@@ -21,7 +21,6 @@ pub fn make_transparent() {
     image.save(DEFAULT_COCK).expect("Saving image as transparent.");
 }
 
-///
 /// Crop a image to a specific size.
 /// 
 /// # Params
@@ -63,4 +62,22 @@ pub fn draw_gradient(image: RgbImage, start: (i32, i32, i32), end: (i32, i32, i3
     }
 
     image
+}
+
+/// Edit the pixels of a image.
+/// 
+/// # Params
+/// - `image: RgbImage` The image to edit.
+/// - `pre` The previous color of the pixel.
+/// - `post` The new color of the pixel.
+pub fn change_pixels(image: &mut RgbImage, pre: Vec<Rgb<u8>>, post: Vec<Rgb<u8>>) {
+    // Loop through all pixels and check them with pre
+    for pixel in image.pixels_mut() {
+        for (i, color) in pre.iter().enumerate() {
+            // If we get a hit, then swap it with post.
+            if pixel == color {
+                *pixel = post[i];
+            }
+        }
+    }
 }
