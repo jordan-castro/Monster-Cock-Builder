@@ -125,7 +125,6 @@ impl CockColors {
             self.category = category_keys[rand::thread_rng().gen_range(0..category_keys.len())].to_string();
         }
 
-        // println!("Category: {}", key);
         // Grab 4 random palletes from the category
         for _ in 0..4 {
             loop {
