@@ -18,6 +18,7 @@ pub fn randomattributes(generation: u32) -> Vec<CockTribute> {
     // El generation
     let cock_gen = CockTribute::Generation { generation };
     attributes.push(cock_gen);
+    let mut has_schema = false;
     // Schema
     {
         let schema = rand::thread_rng().gen_range(0..7);
@@ -32,11 +33,12 @@ pub fn randomattributes(generation: u32) -> Vec<CockTribute> {
         };
         if cock_schema.is_some() {
             attributes.push(cock_schema.unwrap());
+            has_schema = true;
         }
     }
     // Gradient
     {
-        let has_gradient = rand::thread_rng().gen_bool(0.5);
+        let has_gradient = rand::thread_rng().gen_bool(0.5) && !has_schema;
         if has_gradient {
             let vertical = rand::thread_rng().gen_bool(0.5);
             let gradient = if vertical {
