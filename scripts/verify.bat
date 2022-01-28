@@ -6,7 +6,7 @@
 set enviroment="schema_verifier"
 set python_script="model/verify.py"
 
-echo Activating conda
+echo Activating CONDA
 call conda activate %enviroment%
 
 @REM KMeans is known to have a memory leak on Windows with MKL, 
