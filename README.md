@@ -1,5 +1,8 @@
 # Monster-Cock-Builder
 
+![kQFvJDO8x5LhJeXpcPy__z3UIt0Mwi3sEa8R_eSUJSMP7e8JuufAadEGWwQ8Vypj9SPKtrlex8l7ariZ2-_bP4_R4Fs424fztVKG](https://github.com/jordan-castro/Monster-Cock-Builder/assets/86361283/22223eef-9a39-4e1f-9100-716adf840e9e)
+
+
 MonsterCocks Art NFT.
 
 MCK short for MonsterCocks is a Non-Fungible-Token (NFT) based around people's infatuation with monster cocks. MCK is the world's largest collection of digital cocks, and anyone can get their hands on one. MonsterCocks is fully unique once minted, and can never be destroyed. Each MCK is built uniquely using multiple random values. You will never find a Cock that is the same, similar but never the same.
