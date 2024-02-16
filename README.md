@@ -1,6 +1,6 @@
 # Monster-Cock-Builder
 
-![kQFvJDO8x5LhJeXpcPy__z3UIt0Mwi3sEa8R_eSUJSMP7e8JuufAadEGWwQ8Vypj9SPKtrlex8l7ariZ2-_bP4_R4Fs424fztVKG](https://github.com/jordan-castro/Monster-Cock-Builder/assets/86361283/22223eef-9a39-4e1f-9100-716adf840e9e)
+![ad](https://github.com/jordan-castro/Monster-Cock-Builder/assets/86361283/6447b1f4-b5e0-48ae-b5ff-301f058c0023)
 
 
 MonsterCocks Art NFT.
